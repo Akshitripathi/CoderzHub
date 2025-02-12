@@ -1,0 +1,90 @@
+/* Project.css */
+.project-container {
+    display: flex;
+    height: 100vh;
+    color: white;
+    margin-top: 10rem;
+  }
+  
+  /* Sidebar for collaborators */
+  .sidebar {
+    width: 25%;
+    background-color: #3c0c9d;
+    padding: 16px;
+  }
+  
+  .sidebar h2 {
+    font-size: 1.25rem;
+    font-weight: bold;
+    margin-bottom: 16px;
+  }
+  
+  .collaborators-list {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .collaborators-list li {
+    padding: 8px;
+    border-radius: 4px;
+    margin-bottom: 8px;
+    font-weight: bold;
+  }
+  
+  /* Main workspace */
+  .workspace {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 16px;
+  }
+  
+  .workspace h2 {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 16px;
+  }
+  
+  .button-container {
+    display: flex;
+    gap: 16px;
+  }
+  
+  .add-file-button, .add-folder-button, .add-project-button {
+    padding: 10px 16px;
+    border: none;
+    border-radius: 4px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.2s ease-in-out;
+  }
+  
+  .add-file-button {
+    background-color: #007bff;
+    color: white;
+  }
+  
+  .add-file-button:hover {
+    background-color: #0056b3;
+  }
+  
+  .add-folder-button {
+    background-color: #28a745;
+    color: white;
+  }
+  
+  .add-folder-button:hover {
+    background-color: #1e7e34;
+  }
+  
+  .add-project-button {
+    background-color: #ff7f50;
+    color: white;
+    margin-top: 16px;
+  }
+  
+  .add-project-button:hover {
+    background-color: #e05e2b;
+  }
+  

@@ -1,0 +1,110 @@
+/* Dashboard Layout */
+.dashboard {
+    display: flex;
+    height: 100vh;
+    /* background: #0a0a0a; */
+    color: white;
+    margin-top: 10rem;
+    margin-left: 3rem;
+
+}
+
+/* Main Content */
+.main-content {
+    flex-grow: 1;
+    margin-left: 250px;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Header */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    background: #1e1e2e;
+}
+
+.menu-btn,
+.user-icon {
+    cursor: pointer;
+}
+
+/* Search Bar */
+.search-bar {
+    display: flex;
+    align-items: center;
+    background: #333;
+    padding: 8px 12px;
+    border-radius: 10px;
+    transition: 0.3s;
+}
+
+.search-icon {
+    color: #aaa;
+}
+
+.search-input {
+    background: transparent;
+    border: none;
+    color: white;
+    outline: none;
+    margin-left: 10px;
+}
+
+/* Content */
+.content {
+    padding: 20px;
+}
+
+/* Add Project */
+.add-project {
+    background: #333;
+    padding: 20px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+.add-project:hover {
+    background: #444;
+}
+
+/* Grid */
+.grid-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+/* Chart Boxes */
+.chart-box {
+    background: #1e1e2e;
+    padding: 20px;
+    border-radius: 10px;
+}
+
+/* Loading Screen */
+.loading-screen {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background: black;
+}
+
+.loading-spinner {
+    width: 50px;
+    height: 50px;
+    border: 5px solid white;
+    border-top: 5px solid transparent;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
