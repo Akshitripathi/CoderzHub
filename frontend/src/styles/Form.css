@@ -1,106 +1,36 @@
-/* Form container */
-.container {
-    background: white;
-    padding: 30px;
-    border-radius: 10px;
-    box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.2);
-    width: 380px;
-    text-align: center;
-    animation: fadeIn 0.6s ease-in-out;
-    margin-top: 10rem;
-}
-
-/* Fade-in animation */
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(-10px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-/* Headings */
-h2 {
-    color: #1a1a2e;
-    font-size: 24px;
-    font-weight: bold;
-    margin-bottom: 10px;
-}
-
-/* Form layout */
-form {
+.form-container {
     display: flex;
     flex-direction: column;
-    margin-top: 15px;
-}
-
-/* Input fields */
-input {
-    margin: 10px 0;
-    padding: 12px;
-    border: 2px solid #ddd;
-    border-radius: 6px;
-    font-size: 16px;
-    transition: 0.3s;
-    width: 100%;
-}
-
-/* Input focus effect */
-input:focus {
-    border-color: #007bff;
-    outline: none;
-    box-shadow: 0px 0px 5px rgba(0, 123, 255, 0.5);
-}
-
-/* Button styling */
-button {
-    background: #007bff;
+    align-items: center;
+    background-color: #121212;
+    padding: 40px;
+    border-radius: 10px;
     color: white;
+    width: 400px;
+    box-shadow: 0 4px 10px rgba(255, 255, 255, 0.1);
+  }
+  
+  .form-input {
+    width: 100%;
     padding: 12px;
+    background-color: #2c2c2c;
     border: none;
-    border-radius: 6px;
-    font-size: 18px;
+    color: white;
+    margin-bottom: 10px;
+    border-radius: 5px;
+  }
+  
+  .form-button {
+    width: 100%;
+    padding: 10px;
+    background-color: #6200ea;
+    border: none;
+    color: white;
     cursor: pointer;
-    margin-top: 15px;
-    transition: background 0.3s, transform 0.2s;
-}
-
-/* Hover effect on button */
-button:hover {
-    background: #0056b3;
-    transform: scale(1.05);
-}
-
-/* Error message */
-.error {
-    color: red;
-    font-size: 14px;
-    margin-top: 8px;
-}
-
-/* Link for navigation between login & signup */
-.redirect-link {
-    margin-top: 15px;
-    font-size: 14px;
-}
-
-.redirect-link a {
-    color: #007bff;
-    text-decoration: none;
-    font-weight: bold;
-}
-
-.redirect-link a:hover {
-    text-decoration: underline;
-}
-
-/* Responsive Design */
-@media (max-width: 400px) {
-    .container {
-        width: 90%;
-        padding: 20px;
-    }
-}
+    border-radius: 5px;
+  }
+  
+  .form-button:hover {
+    background-color: #3700b3;
+  }
+  

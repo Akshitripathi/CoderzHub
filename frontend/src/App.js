@@ -10,6 +10,8 @@ import Settings from "./components/Settings";
 import Dashboard from "./components/Dashboard";
 import AdminForm from "./components/AdminForm";
 import Project from "./components/Project";
+import Deploy from "./components/Deploy";
+import Friends from "./components/Friends";
 
 
 function App() {
@@ -25,6 +27,8 @@ function App() {
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/admin-form" element={<AdminForm />} />
         <Route path="/project" element={<Project />} />
+        <Route path="/friends" element={<Friends />} />
+        <Route path="/deploy" element={<Deploy />} />
 
         <Route path="/verify-email/:token" element={<VerifyEmail />} />
       </Routes>

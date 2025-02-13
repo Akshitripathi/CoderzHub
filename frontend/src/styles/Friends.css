@@ -1,0 +1,44 @@
+.friends-container {
+    padding: 20px;
+    background-color: #121212;
+    color: white;
+    text-align: center;
+  }
+  
+  .friend-list {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .friend-item {
+    padding: 15px;
+    margin: 10px;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #222 30%, #333 70%);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 4px 8px rgba(255, 255, 255, 0.1);
+  }
+  
+  .friend-online {
+    color: #4caf50;
+  }
+  
+  .friend-offline {
+    color: #ff3d00;
+  }
+  
+  .add-friend-button {
+    padding: 12px 24px;
+    background-color: #007bff;
+    border: none;
+    color: white;
+    cursor: pointer;
+    border-radius: 5px;
+  }
+  
+  .add-friend-button:hover {
+    background-color: #0056b3;
+  }
+  
