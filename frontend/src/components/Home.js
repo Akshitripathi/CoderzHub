@@ -132,7 +132,7 @@ const Home = () => {
                 {!user ? (
                     <button onClick={() => navigate("/signup")}>Get Started Now</button>
                 ) : (
-                    <button onClick={() => navigate("/projects")}>Go to Projects</button>
+                    <button onClick={() => navigate("/project")}>Go to Projects</button>
                 )}
             </section>
 

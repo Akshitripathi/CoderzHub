@@ -12,7 +12,7 @@ import AdminForm from "./components/AdminForm";
 import Project from "./components/Project";
 import Deploy from "./components/Deploy";
 import Friends from "./components/Friends";
-
+import Codespace from "./components/Codespace";
 
 function App() {
   return (
@@ -29,6 +29,7 @@ function App() {
         <Route path="/project" element={<Project />} />
         <Route path="/friends" element={<Friends />} />
         <Route path="/deploy" element={<Deploy />} />
+        <Route path="/codespace" element={<Codespace />} />
 
         <Route path="/verify-email/:token" element={<VerifyEmail />} />
       </Routes>

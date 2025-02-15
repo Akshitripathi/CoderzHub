@@ -1,14 +1,20 @@
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { Button } from "../ui/button";
-import "../styles/Project.css"; // Importing the new CSS file
+import "../styles/Project.css"; // Importing the CSS file
 
 export default function Project() {
   const navigate = useNavigate();
+
   const [collaborators, setCollaborators] = useState([
     { id: 1, name: "Alice", online: true, color: "#FF5733" },
     { id: 2, name: "Bob", online: false, color: "#33FF57" },
     { id: 3, name: "Charlie", online: true, color: "#3357FF" },
+  ]);
+
+  // Dummy project data
+  const [projects, setProjects] = useState([
+    { id: 1, name: "AI Chatbot", description: "A chatbot powered by AI.", status: "In Progress" },
   ]);
 
   return (
@@ -36,6 +42,23 @@ export default function Project() {
         <Button onClick={() => navigate("/admin-form")} className="add-project-button">
           Add Project
         </Button>
+
+        {/* Dummy Project Section */}
+        <div className="projects-section">
+          <h2>Your Projects</h2>
+          {projects.map((project) => (
+            <div key={project.id} className="project-card">
+              <h3>{project.name}</h3>
+              <p>{project.description}</p>
+              <span className={`status ${project.status === "In Progress" ? "in-progress" : "completed"}`}>
+                {project.status}
+              </span>
+              <Button className="open-codespace-button" onClick={() => navigate("/codespace")}>
+                Open Codespace
+              </Button>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
