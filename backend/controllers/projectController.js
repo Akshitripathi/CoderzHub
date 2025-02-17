@@ -99,4 +99,4 @@ const updateProject = async (req, res) => {
     }
 };
 
-module.exports(addProject, getProject, updateProject , deleteProject)
+module.exports= {addProject, getProject, updateProject , deleteProject}
