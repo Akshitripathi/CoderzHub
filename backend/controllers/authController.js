@@ -5,39 +5,61 @@ const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 require('dotenv').config();
 
+
 const transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
-        user: "akshi1233.be22@chitkara.edu.in", 
-        pass: "Sparks@14209AkshiManiT"  
+        user: process.env.EMAIL_USER, 
+        pass: process.env.EMAIL_PASS 
     }
 });
 
+
 const register = async (req, res) => {
-    const { username, email, password } = req.body;
+    const { name,username, email, password, phone_no, profile_picture, bio, github_link, linkedin_link } = req.body;
+
     try {
         if (password.length < 6) {
             return res.status(400).json({ message: 'Password must be at least 6 characters long', success: false });
         }
 
-        const existingUser = await User.findOne({ email });
+        const existingUser = await User.findOne({ $or: [{ email }, { phone_no }] });
         if (existingUser) {
-            return res.status(400).json({ message: 'User with this email already exists', success: false });
+            return res.status(400).json({ message: 'Email or Phone Number already in use', success: false });
         }
-        
+
         const hashedPassword = await bcrypt.hash(password, 10);
         const verificationToken = crypto.randomBytes(32).toString('hex');
 
         const newUser = new User({
+            name,
             username,
             email,
             password: hashedPassword,
+            phone_no,
+            profile_picture,
+            bio,
+            social_profiles: [github_link, linkedin_link],
             verificationToken
         });
 
         await newUser.save();
 
         console.log(`Verification token: ${verificationToken}`);
+
+
+        const mailOptions = {
+            from: process.env.EMAIL_USER,
+            to: email,
+            subject: "Welcome to CoderzHub",
+            text: `Hello, \n\nWelcome to CoderzHub! We're excited to have you on board. If you need any help, feel free to reach out.\n\nBest regards,\nThe CoderzHub Team`
+        };
+        
+       
+        transporter.sendMail(mailOptions, (err, info) => {
+            if (err) console.error("Error sending verification email:", err);
+            else console.log("Verification email sent:", info.response);
+        });
 
         return res.status(201).json({ message: 'User registered successfully. Please verify your email.', success: true });
     } catch (error) {
@@ -46,10 +68,11 @@ const register = async (req, res) => {
     }
 };
 
+
 const login = async (req, res) => {
     try {
-        const { email, password } = req.body;
-        const user = await User.findOne({ email });
+        const { identifier, password } = req.body;
+        const user = await User.findOne({ $or: [{ email: identifier }, { name: identifier }] });
 
         if (!user) {
             return res.status(400).json({ success: false, message: "User not found" });
@@ -65,21 +88,6 @@ const login = async (req, res) => {
             process.env.JWT_SECRET,
             { expiresIn: "1h" }
         );
-        
-        const mailOptions = {
-            from: "akshi1233.be22@chitkara.edu.in",
-            to: user.email,
-            subject: "Welcome to Our Platform!",
-            text: `Hello ${user.username},\n\nWelcome to our platform! We're excited to have you on board.\n\nBest Regards,\nYour Team`
-        };
-
-        transporter.sendMail(mailOptions, (error, info) => {
-            if (error) {
-                console.error("Error sending email:", error);
-            } else {
-                console.log("Greeting email sent:", info.response);
-            }
-        });
 
         res.status(200).json({ success: true, token, message: "Login successful" });
     } catch (error) {
@@ -90,13 +98,12 @@ const login = async (req, res) => {
 
 const getProfile = async (req, res) => {
     try {
-        console.log("User requesting profile:", req.user); 
-
-        if (!req.user) {
-            return res.status(401).json({ success: false, message: "Unauthorized - No user found" });
+        const user = await User.findById(req.user._id).select("-password");
+        if (!user) {
+            return res.status(404).json({ success: false, message: "User not found" });
         }
 
-        res.json({ success: true, user: req.user });
+        res.json({ success: true, user });
     } catch (error) {
         console.error("Error fetching user profile:", error);
         res.status(500).json({ success: false, message: "Server error" });
@@ -104,24 +111,22 @@ const getProfile = async (req, res) => {
 };
 
 
+const verifyEmail = async (req, res) => {
+    const { token } = req.params;
+    try {
+        const user = await User.findOne({ verificationToken: token });
+        if (!user) {
+            return res.status(400).json({ message: 'Invalid or expired verification token', success: false });
+        }
 
-// const verifyEmail = async (req, res) => {
-//     const { token } = req.params;
-//     try {
-//         const user = await User.findOne({ verificationToken: token });
-//         if (!user) {
-//             return res.status(400).json({ message: 'Invalid or expired verification token', success: false });
-//         }
+        user.verificationToken = null;
+        await user.save();
 
-//         user.isVerified = true;
-//         user.verificationToken = null;
-//         await user.save();
-
-//         return res.status(200).json({ message: 'Email verified successfully', success: true });
-//     } catch (error) {
-//         return res.status(500).json({ message: 'Server error', error: error.message });
-//     }
-// };
+        return res.status(200).json({ message: 'Email verified successfully', success: true });
+    } catch (error) {
+        return res.status(500).json({ message: 'Server error', error: error.message });
+    }
+};
 
 
 const requestPasswordReset = async (req, res) => {
@@ -132,10 +137,9 @@ const requestPasswordReset = async (req, res) => {
             return res.status(404).json({ message: 'User not found', success: false });
         }
 
-        
         const resetToken = crypto.randomBytes(32).toString('hex');
         user.resetPasswordToken = resetToken;
-        user.resetPasswordExpires = Date.now() + 3600000; // 1 hour expiry
+        user.resetPasswordExpires = Date.now() + 3600000; 
         await user.save();
 
         console.log(`Password reset token: ${resetToken}`);
@@ -167,4 +171,47 @@ const resetPassword = async (req, res) => {
     }
 };
 
-module.exports = { register, login, getProfile, requestPasswordReset, resetPassword };
+
+const updateProfile = async (req, res) => {
+    try {
+        const userId = req.user.id; 
+        const { name, email, phone_no, bio, github_link, linkedin_link, profile_picture } = req.body;
+
+        
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ success: false, message: "User not found" });
+        }
+
+        
+        user.name = name || user.name;
+        user.email = email || user.email;
+        user.phone_no = phone_no || user.phone_no;
+        user.bio = bio || user.bio;
+        user.github_link = github_link || user.github_link;
+        user.linkedin_link = linkedin_link || user.linkedin_link;
+        user.profile_picture = profile_picture || user.profile_picture;
+
+        await user.save();
+
+         res.json({
+            success: true,
+            message: "Profile updated successfully!",
+            user: {
+                name: user.name,
+                email: user.email,
+                phone_no: user.phone_no,
+                bio: user.bio,
+                github_link: user.github_link,
+                linkedin_link: user.linkedin_link,
+                profile_picture: user.profile_picture,
+            }
+        });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ success: false, message: "Server error. Please try again." });
+    }
+};
+
+
+module.exports = {updateProfile, register, login, getProfile, verifyEmail, requestPasswordReset, resetPassword };

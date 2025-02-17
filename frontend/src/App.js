@@ -2,7 +2,6 @@ import { Routes, Route } from "react-router-dom";
 import Signup from "./components/Signup";
 import Login from "./components/Login";
 import Profile from "./components/Profile";
-import VerifyEmail from "./components/EmailVerification";
 import Navbar from "./components/Navbar";
 import Home from "./components/Home";
 import './App.css';
@@ -13,6 +12,7 @@ import Project from "./components/Project";
 import Deploy from "./components/Deploy";
 import Friends from "./components/Friends";
 import Codespace from "./components/Codespace";
+import EditProfile from "./components/EditProfile";
 
 function App() {
   return (
@@ -30,8 +30,7 @@ function App() {
         <Route path="/friends" element={<Friends />} />
         <Route path="/deploy" element={<Deploy />} />
         <Route path="/codespace" element={<Codespace />} />
-
-        <Route path="/verify-email/:token" element={<VerifyEmail />} />
+        <Route path="/edit-profile" element={<EditProfile />} />
       </Routes>
     </>
   );

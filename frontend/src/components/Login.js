@@ -4,7 +4,7 @@ import { loginUser } from "../api";
 import "../styles/Form.css";
 
 const Login = () => {
-    const [formData, setFormData] = useState({ email: "", password: "" });
+    const [formData, setFormData] = useState({ identifier: "", password: "" });
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
@@ -22,12 +22,9 @@ const Login = () => {
             setLoading(false);
     
             if (response.success) {
-                console.log("Login successful. Token:", response.token);  // ✅ Debug log
-    
-                // ✅ Store token in localStorage
+                console.log("Login successful. Token:", response.token);  
                 localStorage.setItem("token", response.token);
-                
-                navigate("/dashboard");
+                navigate("/profile");
             } else {
                 setError(response.message);
             }
@@ -38,14 +35,13 @@ const Login = () => {
         }
     };
     
-
     return (
         <div className="signup-body">
             <div className="container">
                 <h2>Login to Your Account</h2>
                 {error && <p className="error">{error}</p>}
                 <form onSubmit={handleSubmit}>
-                    <input type="email" name="email" placeholder="Email" onChange={handleChange} required />
+                    <input type="text" name="identifier" placeholder="Email or Username" onChange={handleChange} required />
                     <input type="password" name="password" placeholder="Password" onChange={handleChange} required />
                     <button type="submit">{loading ? "Logging in..." : "Login"}</button>
                 </form>

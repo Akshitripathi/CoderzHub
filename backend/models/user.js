@@ -1,54 +1,33 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 
-const UserSchema = new mongoose.Schema(
-  {
-    username: {
-      type: String,
-      required: [true, "Username is required"],
-      minlength: [3, "Username must be at least 3 characters"],
-      maxlength: [30, "Username cannot exceed 30 characters"],
-      trim: true,
-    },
-    email: {
-      type: String,
-      required: [true, "Email is required"],
-      unique: true,
-      lowercase: true,
-      match: [/.+@.+\..+/, "Invalid email format"],
-    },
-    password: {
-      type: String,
-      required: [true, "Password is required"],
-      minlength: [6, "Password must be at least 6 characters"],
-    },
-    role: {
-      type: String,
-      enum: ["user", "admin"],
-      default: "user",
-    },
-    profilePicture: {
-      type: String,
-      default: "https://example.com/default-profile.png",
-    },
-    bio: {
-      type: String,
-      maxlength: 500,
-    },
-    socialLinks: {
-      github: { type: String },
-      linkedin: { type: String },
-      twitter: { type: String },
-    },
-    resetPasswordToken: {
-      type: String,
-      default: null,
-    },
-    resetPasswordExpires: {
-      type: Date,
-      default: null,
-    },
-  },
-  { timestamps: true }
-);
+const userSchema = new mongoose.Schema({
+  username: { type: String, required: true, unique: true },  
+    name: { type: String, required: true },
+    email: { type: String, required: true, unique: true },
+    password: { type: String, required: true },
+    phone_no: { type: Number, required: true, unique: true },
+    profile_picture: { type: String },  
+    bio: { type: String, default: '' },  
+    role: { type: String, enum: ['Admin', 'Moderator', 'Member', 'Guest'], default: 'Member' },
+    github_link: { type: String },
+    linkedin_link: { type: String },
+    friends: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }], 
+    friend_requests: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],  
+    projects: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Project' }],
+    collaborations: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Project' }], 
+    bookmarked_projects: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Project' }], 
+    status: { type: String, enum: ['Online', 'Offline'], default: 'Online' },
+    social_profiles: [{ type: String }], 
+    notifications: [{ 
+        message: String, 
+        read: { type: Boolean, default: false }, 
+        createdAt: { type: Date, default: Date.now } 
+    }], 
+    last_seen: { type: Date, default: Date.now }, 
+    createdAt: { type: Date, default: Date.now },
+    updatedAt: { type: Date, default: Date.now },
+    account_status: { type: String, enum: ['Active', 'Suspended', 'Deactivated'], default: 'Active' },
+    two_factor_auth: { type: Boolean, default: false } 
+});
 
-module.exports = mongoose.model("user", UserSchema);
+module.exports = mongoose.model('User', userSchema);

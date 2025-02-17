@@ -80,4 +80,26 @@ export const fetchProfile = async () => {
     return response.json();
 };
 
+export const updateProfile = async (formData) => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+        throw new Error("No authentication token found!");
+    }
+
+    const response = await fetch("http://localhost:5000/api/auth/updateprofile", {
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+        },
+        body: JSON.stringify(formData)
+    });
+
+    if (!response.ok) {
+        throw new Error("Failed to update profile");
+    }
+
+    return response.json();
+};
+
 
