@@ -98,13 +98,12 @@ const Profile = () => {
                 <h3>Social Links</h3>
                 {user.github_link && <a href={user.github_link} target="_blank" rel="noopener noreferrer">GitHub</a>}
                 {user.linkedin_link && <a href={user.linkedin_link} target="_blank" rel="noopener noreferrer">LinkedIn</a>}
-                {user.instagram_link && <a href={user.instagram_link} target="_blank" rel="noopener noreferrer">Instagram</a>}
-                {/* {user.social_profiles?.map((link, index) => (
+                {user.social_profiles?.map((link, index) => (
                     <a key={index} href={link} target="_blank" rel="noopener noreferrer">{link}</a>
-                ))} */}
+                ))}
             </div>
 
-            {/* Footer Section */}
+            
             <div className="profile-footer">
                 <button onClick={() => navigate("/edit-profile")}>Edit Profile</button>
             </div>

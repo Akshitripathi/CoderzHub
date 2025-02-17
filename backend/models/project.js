@@ -12,15 +12,7 @@ const projectsSchema = new mongoose.Schema({
     visibility: { type: String, enum: ['Public', 'Private', 'Restricted'], default: 'Public' }, 
     tags: [{ type: String }], 
     likes: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
-    comments: [{ 
-        user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-        text: { type: String },
-        createdAt: { type: Date, default: Date.now }
-    }], 
-    tasks: [{ 
-        title: { type: String },
-        completed: { type: Boolean, default: false }
-    }], 
+    
     createdAt: { type: Date, default: Date.now }, 
     updatedAt: { type: Date, default: Date.now }
 });
