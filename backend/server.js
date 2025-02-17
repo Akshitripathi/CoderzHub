@@ -15,6 +15,7 @@ app.use(cors({ origin: 'http://localhost:3000', credentials: true }));
 connectWithDb();
 
 app.use('/api/auth', authRoutes);
+app.use('/api/project', projectRoutes);
 
 const PORT = 5000;
 app.listen(PORT, () => {
