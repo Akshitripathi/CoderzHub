@@ -103,86 +103,96 @@ export const updateProfile = async (formData) => {
 };
 
 
-const API_URL = 'http://localhost:5000/api'; 
-
-const makeRequest = async (url, method, body = null, token = null) => {
-  const headers = {
-    'Content-Type': 'application/json',
-  };
-
-  if (token) {
-    headers['Authorization'] = `Bearer ${token}`;
-  }
-
-  const options = {
-    method,
-    headers,
-  };
-
-  if (body) {
-    options.body = JSON.stringify(body);
-  }
-
-  try {
-    const response = await fetch(`${API_URL}${url}`, options);
-    const data = await response.json();
-
-    if (!response.ok) {
-      throw new Error(data.message || 'Something went wrong');
+export const fetchFriends = async () => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+        throw new Error("No authentication token found!");
     }
 
-    return data;
-  } catch (error) {
-    throw new Error(error.message);
-  }
+    const response = await fetch("http://localhost:5000/api/friends", {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+        }
+    });
+
+    if (!response.ok) {
+        throw new Error("Failed to fetch friends list");
+    }
+
+    return response.json();
+};
+
+
+
+const API_URL = "http://localhost:5000/api/project";
+
+const makeRequest = async (endpoint, method, body = null, token = null) => {
+    try {
+        const headers = { "Content-Type": "application/json" };
+        if (token) headers["Authorization"] = `Bearer ${token}`;
+
+        const response = await fetch(`${API_URL}${endpoint}`, {
+            method,
+            headers,
+            body: body ? JSON.stringify(body) : null,
+        });
+
+        return await response.json();
+    } catch (error) {
+        return { success: false, message: "Failed to connect to the server" };
+    }
 };
 
 export const createProject = async (projectData) => {
-  const token = localStorage.getItem('token');
-  return makeRequest('/create-project', 'POST', projectData, token);
+    const token = localStorage.getItem("token");
+    return makeRequest("/create-project", "POST", projectData, token);
 };
 
 export const getProjects = async () => {
-  const token = localStorage.getItem('token');
-  return makeRequest('/get-all-project', 'GET', null, token);
+    const token = localStorage.getItem("token");
+    return makeRequest("/get-all-project", "GET", null, token);
 };
 
 export const getProjectById = async (id) => {
-  const token = localStorage.getItem('token');
-  return makeRequest(`/get-project/${id}`, 'GET', null, token);
+    const token = localStorage.getItem("token");
+    return makeRequest(`/get-project/${id}`, "GET", null, token);
 };
 
 export const updateProject = async (id, updatedData) => {
-  const token = localStorage.getItem('token');
-  return makeRequest(`/update-project/${id}`, 'PUT', updatedData, token);
+    const token = localStorage.getItem("token");
+    return makeRequest(`/update-project/${id}`, "PUT", updatedData, token);
 };
 
 export const deleteProject = async (id) => {
-  const token = localStorage.getItem('token');
-  return makeRequest(`/delete-project/${id}`, 'DELETE', null, token);
+    const token = localStorage.getItem("token");
+    return makeRequest(`/delete-project/${id}`, "DELETE", null, token);
 };
 
+
 export const addCollaborator = async (projectId, collaboratorData) => {
-  const token = localStorage.getItem('token');
-  return makeRequest('/add-collaborator-project', 'POST', { projectId, ...collaboratorData }, token);
+    const token = localStorage.getItem("token");
+    return makeRequest("/add-collaborator-project", "POST", { projectId, ...collaboratorData }, token);
 };
 
 export const removeCollaborator = async (projectId, collaboratorId) => {
-  const token = localStorage.getItem('token');
-  return makeRequest('/remove-collaborator-project', 'POST', { projectId, collaboratorId }, token);
+    const token = localStorage.getItem("token");
+    return makeRequest("/remove-collaborator-project", "POST", { projectId, collaboratorId }, token);
 };
 
+
 export const likeProject = async (projectId) => {
-  const token = localStorage.getItem('token');
-  return makeRequest('/like-project', 'POST', { projectId }, token);
+    const token = localStorage.getItem("token");
+    return makeRequest("/like-project", "POST", { projectId }, token);
 };
 
 export const unlikeProject = async (projectId) => {
-  const token = localStorage.getItem('token');
-  return makeRequest('/unlike-project', 'POST', { projectId }, token);
+    const token = localStorage.getItem("token");
+    return makeRequest("/unlike-project", "POST", { projectId }, token);
 };
 
 export const changeProjectStatus = async (projectId, newStatus) => {
-  const token = localStorage.getItem('token');
-  return makeRequest('/change-status-project', 'POST', { projectId, newStatus }, token);
+    const token = localStorage.getItem("token");
+    return makeRequest("/change-status-project", "POST", { projectId, newStatus }, token);
 };

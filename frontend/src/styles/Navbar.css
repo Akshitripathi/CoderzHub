@@ -3,7 +3,7 @@ nav {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: rgba(10, 25, 47, 0.9); /* Semi-transparent dark blue */
+  background: rgba(10, 25, 47, 0.85); /* Semi-transparent dark blue */
   backdrop-filter: blur(10px);
   color: white;
   padding: 15px 30px;
@@ -13,7 +13,7 @@ nav {
   top: 0;
   left: 0;
   z-index: 1000;
-  transition: all 0.4s ease-in-out;
+  transition: all 0.3s ease-in-out;
 }
 
 /* Logo */
@@ -34,12 +34,15 @@ nav ul {
   list-style: none;
   display: flex;
   gap: 25px;
+  align-items: center;
+  margin-right: 3rem;
 }
 
 nav ul li {
   position: relative;
 }
 
+/* Navbar Links */
 nav ul li a {
   text-decoration: none;
   color: white;
@@ -47,11 +50,20 @@ nav ul li a {
   font-weight: 500;
   transition: color 0.3s ease-in-out;
   position: relative;
+  padding: 8px 12px;
+  border-radius: 6px;
+}
+
+/* Hover Effects */
+nav ul li a:hover {
+  color: #64ffda;
+  background: rgba(100, 255, 218, 0.15);
+  transition: all 0.3s ease-in-out;
 }
 
 /* Underline Hover Effect */
 nav ul li a::after {
-  content: '';
+  content: "";
   width: 0;
   height: 2px;
   background: #64ffda;
@@ -66,16 +78,12 @@ nav ul li a:hover::after {
   width: 100%;
 }
 
-nav ul li a:hover {
-  color: #64ffda;
-}
-
-/* Buttons (Signup/Login) */
+/* Buttons (Signup/Login/Logout) */
 nav ul li button {
   background: none;
   border: 2px solid #64ffda;
   color: white;
-  padding: 8px 14px;
+  padding: 8px 16px;
   font-size: 1rem;
   font-weight: bold;
   cursor: pointer;
@@ -92,7 +100,7 @@ nav ul li button:hover {
   box-shadow: 0 0 10px #64ffda;
 }
 
-/* Responsive Navbar (Hamburger Menu) */
+/* Hamburger Menu (Hidden by Default) */
 .menu-toggle {
   display: none;
   font-size: 1.8rem;
@@ -101,7 +109,7 @@ nav ul li button:hover {
 }
 
 /* Mobile View */
-@media (max-width: 768px) {
+@media (max-width: 850px) {
   nav ul {
     display: none;
     flex-direction: column;
@@ -109,7 +117,7 @@ nav ul li button:hover {
     top: 100%;
     right: 0;
     background: rgba(10, 25, 47, 0.95);
-    width: 200px;
+    width: 220px;
     padding: 20px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
     border-radius: 10px;

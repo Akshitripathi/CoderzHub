@@ -2,29 +2,33 @@ import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { Button } from "../ui/button";
 import { getProjects, addCollaborator, removeCollaborator, changeProjectStatus } from "../api";
-import "../styles/Project.css"; 
+import "../styles/Project.css";
 
 export default function Project() {
   const navigate = useNavigate();
-
-  const [collaborators, setCollaborators] = useState([]);
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Fetch projects and collaborators on page load
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Fetch projects from the API
-        const projectsResponse = await getProjects();
-        setProjects(projectsResponse.projects);
+        const response = await getProjects();
+        console.log("🔍 API Response:", response); 
 
-        // Assuming collaborators are part of each project, we can set them accordingly
-        // You may need to adjust the API to fetch collaborators separately if needed
-        setCollaborators(projectsResponse.collaborators || []);
+        if (!response) throw new Error("No response received from API.");
+
+        if (response.success && Array.isArray(response.projects)) {
+          setProjects(response.projects);
+        } else if (Array.isArray(response)) {
+          setProjects(response);
+        } else {
+          throw new Error(response.message || "Invalid response format.");
+        }
       } catch (err) {
-        setError("Failed to load project data.");
+        console.error("⚠️ API Error:", err.message);
+        setError(err.message || "Failed to load projects.");
+        setProjects([]);
       } finally {
         setLoading(false);
       }
@@ -33,40 +37,12 @@ export default function Project() {
     fetchData();
   }, []);
 
-  // Handle adding a collaborator
-  const handleAddCollaborator = async (projectId, collaboratorData) => {
-    try {
-      await addCollaborator(projectId, collaboratorData);
-      // Refresh collaborator list
-      const updatedProject = projects.find((p) => p.id === projectId);
-      updatedProject.collaborators.push(collaboratorData);
-      setProjects([...projects]);
-    } catch (error) {
-      setError("Failed to add collaborator.");
-    }
-  };
-
-  // Handle removing a collaborator
-  const handleRemoveCollaborator = async (projectId, collaboratorId) => {
-    try {
-      await removeCollaborator(projectId, collaboratorId);
-      const updatedProject = projects.find((p) => p.id === projectId);
-      updatedProject.collaborators = updatedProject.collaborators.filter(
-        (collaborator) => collaborator.id !== collaboratorId
-      );
-      setProjects([...projects]);
-    } catch (error) {
-      setError("Failed to remove collaborator.");
-    }
-  };
-
-  // Handle changing project status
   const handleChangeStatus = async (projectId, newStatus) => {
     try {
       await changeProjectStatus(projectId, newStatus);
-      const updatedProject = projects.find((p) => p.id === projectId);
-      updatedProject.status = newStatus;
-      setProjects([...projects]);
+      setProjects((prev) =>
+        prev.map((p) => (p.id === projectId ? { ...p, status: newStatus } : p))
+      );
     } catch (error) {
       setError("Failed to update project status.");
     }
@@ -77,67 +53,52 @@ export default function Project() {
 
   return (
     <div className="project-container">
-      {/* Sidebar for collaborators */}
-      <div className="sidebar">
-        <h2>Collaborators</h2>
-        <ul className="collaborators-list">
-          {collaborators.map((collab) => (
-            <li key={collab.id} style={{ backgroundColor: collab.color }}>
-              {collab.name} {collab.online ? "(Online)" : "(Offline)"}
-              <Button
-                className="remove-collaborator-button"
-                onClick={() => handleRemoveCollaborator(collab.projectId, collab.id)}
-              >
-                Remove
-              </Button>
-            </li>
-          ))}
-        </ul>
-      </div>
-
-      {/* Main workspace */}
       <div className="workspace">
-        <h2>Codespace</h2>
-        <div className="button-container">
-          <Button className="add-file-button">Add File</Button>
-          <Button className="add-folder-button">Add Folder</Button>
-        </div>
-
         <Button onClick={() => navigate("/admin-form")} className="add-project-button">
-          Add Project
+          Add New Project
         </Button>
 
-        {/* Projects Section */}
         <div className="projects-section">
           <h2>Your Projects</h2>
-          {projects.map((project) => (
-            <div key={project.id} className="project-card">
-              <h3>{project.name}</h3>
-              <p>{project.description}</p>
-              <span
-                className={`status ${project.status === "In Progress" ? "in-progress" : "completed"}`}
-              >
-                {project.status}
-              </span>
-              <Button className="open-codespace-button" onClick={() => navigate(`/codespace/${project.id}`)}>
-                Open Codespace
-              </Button>
-              <div className="project-actions">
-                <Button
-                  onClick={() => handleChangeStatus(project.id, "Completed")}
-                  className="change-status-button"
-                >
-                  Mark as Completed
-                </Button>
-                <Button
-                  onClick={() => handleChangeStatus(project.id, "In Progress")}
-                  className="change-status-button"
-                >
-                  Mark as In Progress
-                </Button>
+          {projects.length > 0 ? (
+            projects.map((project) => (
+              <div key={project.id} className="project-card">
+                <h3>{project.name}</h3>
+                <p className="description">{project.description}</p>
+
+                <div className="project-details">
+                  <span className={`status ${project.status.toLowerCase()}`}>{project.status}</span>
+                  <p><strong>Languages Used:</strong> {project.languages_used.join(", ")}</p>
+                  <p><strong>Tags:</strong> {project.tags.join(", ")}</p>
+                  <p><strong>Visibility:</strong> {project.visibility}</p>
+                  <p><strong>Created:</strong> {new Date(project.createdAt).toLocaleDateString()}</p>
+                </div>
+
+                {/* Collaborators Section */}
+                <div className="collaborators-section">
+                  <h4>Collaborators</h4>
+                  <ul>
+                    {project.collaborators.map((collab) => (
+                      <li key={collab.id}>
+                        <span>{collab.username} ({collab.email})</span>
+                        {collab.online ? <span className="online">🟢 Online</span> : <span className="offline">🔴 Offline</span>}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                {/* Project Actions */}
+                <div className="project-actions">
+                  <Button onClick={() => navigate(`/project/${project.id}`)}>🔍 View Details</Button>
+                  <Button className="change-status-button" onClick={() => handleChangeStatus(project.id, project.status === "Completed" ? "In Progress" : "Completed")}>
+                    🔄 Change Status
+                  </Button>
+                </div>
               </div>
-            </div>
-          ))}
+            ))
+          ) : (
+            <p>No projects found.</p>
+          )}
         </div>
       </div>
     </div>

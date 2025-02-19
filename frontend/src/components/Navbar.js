@@ -13,20 +13,20 @@ const Navbar = () => {
             <ul>
                 {!user ? (
                     <>
+                        <li><Link to="/">Home</Link></li>
                         <li><Link to="/login">Login</Link></li>
                         <li><Link to="/signup">Signup</Link></li>
-                        <li><Link to="/">Home</Link></li>
 
                     </>
                 ) : (
                     <>
+                        <li><Link to="/">Home</Link></li>
+                        <li><Link to="/dashboard">Dashboard</Link></li>
                         <li><Link to="/project">Projects</Link></li>
                         <li><Link to="/friends">Friends</Link></li>
-                        <li><Link to="/settings">Settings</Link></li>
                         <li><Link to="/deploy">Deploy</Link></li>
-                        <li><Link to="/dashboard">Dashboard</Link></li>
                         <li><Link to="/profile">Profile</Link></li>
-                        <li><Link to="/">Home</Link></li>
+                        <li><Link to="/settings">Settings</Link></li>
                         <li><button onClick={logout}>Logout</button></li>
                     </>
                 )}

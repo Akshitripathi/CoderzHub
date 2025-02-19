@@ -1,40 +1,266 @@
+/* Admin Form Container */
 .admin-form-container {
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 100vh;
-  background-color: #121212;
-  color: white;
+  height: 100vh;
+  font-family: 'Arial', sans-serif;
 }
 
+/* Admin Form Card */
 .admin-card {
-  background-color: #1e1e1e;
+  background-color: #ffffff;
   padding: 30px;
-  border-radius: 10px;
-  box-shadow: 0 4px 10px rgba(255, 255, 255, 0.1);
-  width: 400px;
+  border-radius: 12px;
+  box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.3);
+  width: 100%;
+  max-width: 500px;
+  text-align: center;
 }
 
-.admin-input {
+/* Form Title */
+.form-title {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: #062023;
+  margin-bottom: 20px;
+}
+
+/* Input Fields */
+.input-field {
+  width: 90%;
+  padding: 12px;
+  margin: 10px 0;
+  background-color: #ffffff;
+  border: 1px solid #444;
+  color: #000;
+  border-radius: 5px;
+  font-size: 1rem;
+  outline: none;
+  transition: all 0.3s ease;
+}
+
+.input-field:focus {
+  border-color: #00bcd4;
+  box-shadow: 0px 0px 6px rgba(0, 188, 212, 0.5);
+}
+
+.input-field::placeholder {
+  color: #666;
+}
+
+/* Error Messages */
+.error-message {
+  color: #f44336;
+  font-size: 0.9rem;
+  text-align: left;
+  margin-bottom: 10px;
+}
+
+/* Collaborator Section */
+.collaborator-section {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 15px;
+}
+
+.collaborator-text {
+  font-size: 1rem;
+  font-weight: bold;
+  color: #062023;
+}
+
+.add-collaborator-button {
+  background-color: #00bcd4;
+  color: #fff;
+  border-radius: 5px;
+  padding: 8px 12px;
+  transition: background 0.3s ease;
+}
+
+.add-collaborator-button:hover {
+  background-color: #008ba3;
+}
+
+/* Collaborator Form */
+.collaborator-form {
+  background: #f4f4f4;
+  padding: 15px;
+  border-radius: 8px;
+  margin-top: 15px;
+  box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.15);
+  text-align: left;
+}
+
+/* Collaborator Label */
+.collaborator-label {
+  font-size: 1rem;
+  font-weight: bold;
+  color: #062023;
+  display: block;
+  margin-bottom: 8px;
+}
+
+/* Styled Select Dropdown */
+.collaborator-form select {
   width: 100%;
   padding: 12px;
-  background-color: #2c2c2c;
-  border: none;
-  color: white;
-  margin-bottom: 10px;
+  border: 1px solid #444;
+  background-color: #fff;
+  color: #000;
   border-radius: 5px;
+  font-size: 1rem;
+  appearance: none;
+  cursor: pointer;
+  transition: border 0.3s ease;
 }
 
-.admin-button {
+/* Custom Dropdown Arrow */
+.collaborator-form select {
+  background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='16' height='16' fill='%23000'%3E%3Cpath d='M7 10l5 5 5-5H7z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 14px;
+}
+
+/* Dropdown Hover & Focus Effects */
+.collaborator-form select:focus,
+.collaborator-form select:hover {
+  border-color: #00bcd4;
+  box-shadow: 0px 0px 6px rgba(0, 188, 212, 0.5);
+}
+
+/* Input Fields Inside Collaborator Form */
+.collaborator-form .input-field {
+  margin-top: 10px;
+  width: 93%;
+}
+
+/* Next Button */
+.next-button {
+  background-color: #00bcd4;
+  color: white;
+  font-weight: bold;
   width: 100%;
   padding: 10px;
-  background-color: #007bff;
-  border: none;
-  color: white;
-  cursor: pointer;
   border-radius: 5px;
+  margin-top: 15px;
+  transition: background 0.3s ease;
 }
 
-.admin-button:hover {
-  background-color: #0056b3;
+.next-button:hover {
+  background-color: #008ba3;
+}
+
+/* Permissions Section */
+.permissions-section {
+  background: #f4f4f4;
+  padding: 15px;
+  border-radius: 8px;
+  margin-top: 15px;
+}
+
+/* Permissions Label */
+.permissions-label {
+  font-size: 1rem;
+  font-weight: bold;
+  color: #062023;
+  margin-bottom: 8px;
+  display: block;
+}
+
+/* Permissions List */
+.permissions-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 1rem;
+  color: #333;
+  margin-top: 5px;
+}
+
+/* Save Collaborator Button */
+.save-collaborator-button {
+  background-color: #2ecc71;
+  color: white;
+  font-weight: bold;
+  width: 100%;
+  padding: 10px;
+  border-radius: 5px;
+  margin-top: 10px;
+  transition: background 0.3s ease;
+}
+
+.save-collaborator-button:hover {
+  background-color: #27ae60;
+}
+
+/* Saved Collaborators */
+.saved-collaborators {
+  margin-top: 20px;
+  padding: 15px;
+  background: #f4f4f4;
+  border-radius: 8px;
+}
+
+/* Saved Collaborators Title */
+.saved-collaborators-title {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #062023;
+  margin-bottom: 10px;
+}
+
+/* Collaborator Item */
+.collaborator-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #ffffff;
+  padding: 10px;
+  border-radius: 6px;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+  margin-top: 8px;
+  font-size: 1rem;
+  color: #333;
+}
+
+/* Delete Icon */
+.delete-icon {
+  cursor: pointer;
+  color: #f44336;
+  transition: color 0.3s ease;
+}
+
+.delete-icon:hover {
+  color: #d32f2f;
+}
+
+/* Submit Button */
+.submit-button {
+  background-color: #00bcd4;
+  color: white;
+  font-weight: bold;
+  width: 100%;
+  padding: 12px;
+  margin-top: 1rem;
+  border-radius: 5px;
+  transition: background 0.3s ease;
+}
+
+.submit-button:hover {
+  background-color: #008ba3;
+}
+
+/* Responsive Design */
+@media (max-width: 500px) {
+  .admin-card {
+    width: 90%;
+    padding: 20px;
+  }
+
+  .form-title {
+    font-size: 1.5rem;
+  }
 }

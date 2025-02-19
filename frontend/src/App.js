@@ -1,10 +1,10 @@
+import './App.css';
 import { Routes, Route } from "react-router-dom";
 import Signup from "./components/Signup";
 import Login from "./components/Login";
 import Profile from "./components/Profile";
 import Navbar from "./components/Navbar";
 import Home from "./components/Home";
-import './App.css';
 import Settings from "./components/Settings";
 import Dashboard from "./components/Dashboard";
 import AdminForm from "./components/AdminForm";

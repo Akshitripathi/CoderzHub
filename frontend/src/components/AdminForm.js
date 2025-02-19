@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { Card, CardContent } from "../ui/card";
 import { Button } from "../ui/button";
-import { Plus } from "lucide-react";
-import "../styles/AdminForm.css"; // Import external CSS
+import { Plus, Trash } from "lucide-react";
+import "../styles/AdminForm.css"; 
 
 export default function AdminForm() {
   const [formData, setFormData] = useState({
@@ -31,7 +31,7 @@ export default function AdminForm() {
     let errors = {};
     if (!formData.adminName.trim()) errors.adminName = "Admin Name is required";
     if (!formData.projectName.trim()) errors.projectName = "Project Name is required";
-    if (!formData.tools.trim()) errors.tools = "Tools Required field is empty";
+    if (!formData.tools.trim()) errors.tools = "Tools field is required";
     setErrors(errors);
     return Object.keys(errors).length === 0;
   };
@@ -62,6 +62,13 @@ export default function AdminForm() {
     setNewCollaborator({ type: "invite", email: "", username: "", permissions: [] });
     setShowCollaboratorForm(false);
     setShowPermissions(false);
+  };
+
+  const removeCollaborator = (index) => {
+    setFormData((prev) => ({
+      ...prev,
+      collaborators: prev.collaborators.filter((_, i) => i !== index),
+    }));
   };
 
   const handleSubmit = (e) => {
@@ -106,7 +113,7 @@ export default function AdminForm() {
                   <input type="text" name="username" placeholder="Existing Username" value={newCollaborator.username} onChange={handleCollaboratorChange} className="input-field" />
                 )}
                 <Button type="button" onClick={addCollaborator} className="next-button">
-                  Next: Set Permissions
+                  Set Permissions for Collaborator
                 </Button>
               </div>
             )}
@@ -133,6 +140,7 @@ export default function AdminForm() {
                   {formData.collaborators.map((collab, index) => (
                     <li key={index} className="collaborator-item">
                       {collab.type === "invite" ? collab.email : collab.username} - Permissions: {collab.permissions.join(", ")}
+                      <Trash className="delete-icon" onClick={() => removeCollaborator(index)} />
                     </li>
                   ))}
                 </ul>
