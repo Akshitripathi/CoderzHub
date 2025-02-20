@@ -1,32 +1,33 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Button } from "../ui/button.js";
-import { Home, Folder, Settings, Link, UploadCloud, Plus } from "lucide-react";
+import { Home, Folder, Users, UploadCloud, Plus } from "lucide-react";
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid } from "recharts";
-import "../styles/Dashboard.css"; // Import the CSS file
-
-const workData = [
-  { name: "Jan", hours: 30 },
-  { name: "Feb", hours: 45 },
-  { name: "Mar", hours: 60 },
-  { name: "Apr", hours: 20 },
-];
-
-const connectionsData = [
-  { name: "A", count: 5 },
-  { name: "B", count: 10 },
-  { name: "C", count: 3 },
-  { name: "D", count: 7 },
-];
+import { getProjects, fetchFriends } from "../api"; // ✅ FIXED IMPORTS
+import "../styles/Dashboard.css";
 
 export default function Dashboard() {
-  const [active, setActive] = useState("Home");
+  const [projects, setProjects] = useState([]);
+  const [connections, setConnections] = useState(0);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
-    setTimeout(() => setLoading(false), 2000);
+    const fetchDashboardData = async () => {
+      try {
+        const projectsResponse = await getProjects(); // ✅ FIXED FUNCTION NAME
+        const friendsResponse = await fetchFriends(); // ✅ FIXED FUNCTION NAME
+
+        if (projectsResponse.success) setProjects(projectsResponse.projects);
+        if (friendsResponse.success) setConnections(friendsResponse.friends.length); // Assuming friends list
+      } catch (err) {
+        console.error("Error fetching dashboard data", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchDashboardData();
   }, []);
 
   if (loading) {
@@ -45,41 +46,56 @@ export default function Dashboard() {
   return (
     <div className="dashboard">
       <div className="main-content">
-        {/* Content */}
         <motion.main className="content">
-          {active === "Home" && (
-            <div>
-              {/* Add Project Box */}
-              <div className="add-project" onClick={() => navigate("/project")}> {/* Redirect to Projects Page */}
-                <Plus size={28} className="icon" />
-                <h2>Add Project</h2>
-              </div>
-              <div className="grid-container">
-                {/* Time Spent on Projects */}
-                <div className="chart-box">
-                  <h2>Time Spent on Projects</h2>
-                  <LineChart width={350} height={220} data={workData} className="chart">
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="name" stroke="#ccc" />
-                    <YAxis stroke="#ccc" />
-                    <Tooltip />
-                    <Line type="monotone" dataKey="hours" stroke="#82ca9d" strokeWidth={2} />
-                  </LineChart>
-                </div>
-                {/* Number of Connections */}
-                <div className="chart-box">
-                  <h2>Number of Connections</h2>
-                  <BarChart width={350} height={220} data={connectionsData} className="chart">
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="name" stroke="#ccc" />
-                    <YAxis stroke="#ccc" />
-                    <Tooltip />
-                    <Bar dataKey="count" fill="#8884d8" barSize={30} />
-                  </BarChart>
-                </div>
-              </div>
+          <div className="dashboard-header">
+            <h1>Welcome to Your Dashboard</h1>
+          </div>
+
+          <div className="dashboard-cards">
+            <div className="dashboard-card">
+              <Folder size={28} className="icon" />
+              <h2>{projects.length}</h2>
+              <p>Projects</p>
             </div>
-          )}
+            <div className="dashboard-card">
+              <Users size={28} className="icon" />
+              <h2>{connections}</h2>
+              <p>Connections</p>
+            </div>
+          </div>
+
+          <div className="grid-container">
+            <div className="chart-box">
+              <h2>Projects Overview</h2>
+              <LineChart width={350} height={220} data={projects} className="chart">
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="name" stroke="#ccc" />
+                <YAxis stroke="#ccc" />
+                <Tooltip />
+                <Line type="monotone" dataKey="tasks" stroke="#82ca9d" strokeWidth={2} />
+              </LineChart>
+            </div>
+
+            <div className="chart-box">
+              <h2>Connections Growth</h2>
+              <BarChart width={350} height={220} data={[{ name: "Friends", count: connections }]} className="chart">
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="name" stroke="#ccc" />
+                <YAxis stroke="#ccc" />
+                <Tooltip />
+                <Bar dataKey="count" fill="#8884d8" barSize={30} />
+              </BarChart>
+            </div>
+          </div>
+
+          <div className="action-buttons">
+            <button className="dashboard-btn" onClick={() => navigate("/project")}>
+              <Plus size={18} /> Add New Project
+            </button>
+            <button className="dashboard-btn" onClick={() => navigate("/friends")}>
+              <Users size={18} /> View Connections
+            </button>
+          </div>
         </motion.main>
       </div>
     </div>

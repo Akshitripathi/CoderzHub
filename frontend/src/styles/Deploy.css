@@ -1,36 +1,35 @@
 .deploy-container {
-    padding: 20px;
-    background-color: #121212;
-    color: white;
-    text-align: center;
-  }
-  
-  .project-item {
-    padding: 15px;
-    margin: 10px;
-    border-radius: 8px;
-    background: linear-gradient(135deg, #222 30%, #333 70%);
-    box-shadow: 0 4px 8px rgba(255, 255, 255, 0.1);
-  }
-  
-  .deployed {
-    background-color: #008080;
-  }
-  
-  .pending {
-    background-color: #ff9800;
-  }
-  
-  .deploy-button {
-    padding: 12px 24px;
-    background-color: #4caf50;
-    color: white;
-    border: none;
-    cursor: pointer;
-    border-radius: 5px;
-  }
-  
-  .deploy-button:hover {
-    background-color: #388e3c;
-  }
-  
+  text-align: center;
+  padding: 20px;
+  margin-top:7rem;
+}
+
+.deploy-container h2 {
+  margin-bottom: 20px;
+}
+
+.project-item {
+  list-style: none;
+  padding: 10px;
+  border-radius: 5px;
+  margin: 10px 0;
+  background: rgba(255, 255, 255, 0.1);
+  transition: 0.3s;
+}
+
+.project-item:hover {
+  transform: scale(1.02);
+}
+
+.deploy-button {
+  background: #28a745;
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.deploy-button:hover {
+  background: #218838;
+}

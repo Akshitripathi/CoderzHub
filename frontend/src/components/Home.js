@@ -93,7 +93,6 @@ const Home = () => {
                 </div>
             </section>
 
-            {/* Use Cases */}
             <section className="use-cases">
                 <h2>Who is CoderzHub for?</h2>
                 <div className="use-case-grid">
@@ -112,7 +111,7 @@ const Home = () => {
                 </div>
             </section>
 
-            {/* Testimonials */}
+
             <section className="testimonials">
                 <h2>What Developers Say</h2>
                 <div className="testimonial-card">
@@ -125,7 +124,7 @@ const Home = () => {
                 </div>
             </section>
 
-            {/* Call to Action */}
+
             <section className="cta">
                 <h2>Ready to Code Smarter?</h2>
                 <p>Join thousands of developers using CoderzHub for seamless collaboration.</p>
@@ -135,16 +134,6 @@ const Home = () => {
                     <button onClick={() => navigate("/project")}>Go to Projects</button>
                 )}
             </section>
-
-            {/* Footer */}
-            <footer>
-                <p>© 2025 CoderzHub. All Rights Reserved.</p>
-                <div className="footer-links">
-                    <a href="/about">About</a>
-                    <a href="/contact">Contact</a>
-                    <a href="/privacy">Privacy Policy</a>
-                </div>
-            </footer>
         </div>
     );
 };

@@ -46,13 +46,22 @@ export const verifyEmail = async (token) => {
 
 
 export const loginUser = async (userData) => {
-    const response = await fetch('http://localhost:5000/api/auth/login', {  // Ensure port is correct
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(userData),
+    const response = await fetch("http://localhost:5000/api/auth/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(userData),
     });
-    return response.json();
-};
+  
+    const data = await response.json();
+  
+    if (data.token) {
+      localStorage.setItem("token", data.token);
+      window.dispatchEvent(new Event("authChange")); 
+    }
+  
+    return data;
+  };
+  
 
 
 export const fetchProfile = async () => {

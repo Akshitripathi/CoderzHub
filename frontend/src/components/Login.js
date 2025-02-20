@@ -12,6 +12,7 @@ const Login = () => {
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
+    
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -36,7 +37,7 @@ const Login = () => {
     };
     
     return (
-        <div className="signup-body">
+        <div className="login-body">
             <div className="container">
                 <h2>Login to Your Account</h2>
                 {error && <p className="error">{error}</p>}

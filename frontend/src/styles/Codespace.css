@@ -1,15 +1,18 @@
-/* General container styling */
+@import url('https://fonts.googleapis.com/css2?family=Quantico:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+
 .codespace-container {
     display: flex;
     flex-direction: column;
     height: 100vh;
     background-color: #1e1e1e;
     color: white;
-    font-family: 'Arial', sans-serif;
+    font-family: "Quantico", serif;
+    font-weight: 400;
+    font-style: normal;
     margin-top: 6rem;
   }
   
-  /* Navbar */
+
   .navbar {
     background-color: #121212;
     padding: 10px 20px;
@@ -19,7 +22,6 @@
     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
   }
   
-  /* Toolbar */
   .toolbar {
     display: flex;
     justify-content: center;
@@ -45,14 +47,14 @@
     background-color: #444;
   }
   
-  /* Layout for the main coding space */
+
   .codespace-layout {
     display: flex;
     flex: 1;
     padding: 10px;
   }
   
-  /* File Explorer */
+
   .file-explorer {
     width: 20%;
     background-color: #252526;
@@ -82,7 +84,7 @@
     background-color: #444;
   }
   
-  /* Code Editor */
+
   .code-editor {
     flex: 1;
     background-color: #1e1e1e;
@@ -102,7 +104,7 @@
     border-radius: 5px;
   }
   
-  /* Input & Output */
+
   .input-output {
     width: 25%;
     background-color: #252526;

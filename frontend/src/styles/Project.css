@@ -1,13 +1,15 @@
-/* General Container */
+@import url('https://fonts.googleapis.com/css2?family=Quantico:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+
 .project-container {
   display: flex;
   justify-content: center;
   padding: 20px;
   margin-top: 10rem;
-  font-family: 'Arial', sans-serif;
+  font-family: "Quantico", serif;
+    font-weight: 400;
+    font-style: normal;
 }
 
-/* Workspace */
 .workspace {
   width: 80%;
   padding: 20px;
@@ -16,7 +18,7 @@
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
 }
 
-/* Project Section */
+
 .projects-section h2 {
   font-size: 28px;
   color: #2c3e50;
@@ -38,7 +40,7 @@
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
 }
 
-/* Project Details */
+
 .project-details {
   margin-top: 10px;
   font-size: 16px;
@@ -64,8 +66,6 @@
 }
 
 
-
-/* Collaborators */
 .collaborators-section {
   margin-top: 20px;
   color: #7f8c8d;
@@ -96,11 +96,12 @@
   margin-right: 4rem;
 }
 
-/* General Button Styles */
+
 button {
-  font-family: 'Poppins', sans-serif;
+  font-family: "Quantico", serif;
+    font-weight: 400;
+    font-style: normal;
   font-size: 16px;
-  font-weight: 600;
   padding: 12px 18px;
   border: none;
   margin-right: 1rem;
@@ -111,7 +112,7 @@ button {
   text-transform: uppercase;
 }
 
-/* Add Project Button */
+
 .add-project-button {
   background: linear-gradient(135deg, #3b82f6, #2563eb);
   color: white;
@@ -124,7 +125,6 @@ button {
   transform: translateY(-3px);
 }
 
-/* Change Status Button */
 .change-status-button {
   background: linear-gradient(135deg, #f97316, #ea580c);
   color: white;
@@ -137,7 +137,7 @@ button {
   transform: translateY(-3px);
 }
 
-/* Open Project Button */
+
 .open-project-button {
   background: linear-gradient(135deg, #10b981, #059669);
   color: white;
@@ -150,7 +150,6 @@ button {
   transform: translateY(-3px);
 }
 
-/* Disabled Button */
 button:disabled {
   background: #9ca3af;
   cursor: not-allowed;

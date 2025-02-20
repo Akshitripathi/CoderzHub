@@ -1,12 +1,27 @@
 
+@import url('https://fonts.googleapis.com/css2?family=Quantico:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+
 .signup-body {
   display: flex;
   justify-content: center;
   align-items: center;
   height: 100vh;
   color: rgb(0, 0, 0);
-  font-family: 'Arial', sans-serif;
-  margin-top: 10rem;
+  font-family: "Quantico", serif;
+    font-weight: 400;
+    font-style: normal;
+  margin-top: 13rem;
+}
+.login-body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  color: rgb(0, 0, 0);
+  font-family: "Quantico", serif;
+    font-weight: 400;
+    font-style: normal;
+  margin-top: 5rem;
 }
 
 

@@ -1,13 +1,16 @@
-/* Admin Form Container */
+@import url('https://fonts.googleapis.com/css2?family=Quantico:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+
 .admin-form-container {
   display: flex;
   justify-content: center;
   align-items: center;
   height: 100vh;
-  font-family: 'Arial', sans-serif;
+  font-family: "Quantico", serif;
+    font-weight: 400;
+    font-style: normal;
 }
 
-/* Admin Form Card */
+
 .admin-card {
   background-color: #ffffff;
   padding: 30px;
@@ -18,7 +21,7 @@
   text-align: center;
 }
 
-/* Form Title */
+
 .form-title {
   font-size: 1.8rem;
   font-weight: bold;
@@ -26,8 +29,11 @@
   margin-bottom: 20px;
 }
 
-/* Input Fields */
+
 .input-field {
+  font-family: "Quantico", serif;
+    font-weight: 400;
+    font-style: normal;
   width: 90%;
   padding: 12px;
   margin: 10px 0;
@@ -49,7 +55,7 @@
   color: #666;
 }
 
-/* Error Messages */
+
 .error-message {
   color: #f44336;
   font-size: 0.9rem;
@@ -57,7 +63,7 @@
   margin-bottom: 10px;
 }
 
-/* Collaborator Section */
+
 .collaborator-section {
   display: flex;
   align-items: center;
@@ -83,7 +89,7 @@
   background-color: #008ba3;
 }
 
-/* Collaborator Form */
+
 .collaborator-form {
   background: #f4f4f4;
   padding: 15px;
@@ -93,7 +99,7 @@
   text-align: left;
 }
 
-/* Collaborator Label */
+
 .collaborator-label {
   font-size: 1rem;
   font-weight: bold;
@@ -102,7 +108,7 @@
   margin-bottom: 8px;
 }
 
-/* Styled Select Dropdown */
+
 .collaborator-form select {
   width: 100%;
   padding: 12px;
@@ -116,7 +122,7 @@
   transition: border 0.3s ease;
 }
 
-/* Custom Dropdown Arrow */
+
 .collaborator-form select {
   background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='16' height='16' fill='%23000'%3E%3Cpath d='M7 10l5 5 5-5H7z'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
@@ -124,20 +130,20 @@
   background-size: 14px;
 }
 
-/* Dropdown Hover & Focus Effects */
+
 .collaborator-form select:focus,
 .collaborator-form select:hover {
   border-color: #00bcd4;
   box-shadow: 0px 0px 6px rgba(0, 188, 212, 0.5);
 }
 
-/* Input Fields Inside Collaborator Form */
+
 .collaborator-form .input-field {
   margin-top: 10px;
   width: 93%;
 }
 
-/* Next Button */
+
 .next-button {
   background-color: #00bcd4;
   color: white;
@@ -153,7 +159,7 @@
   background-color: #008ba3;
 }
 
-/* Permissions Section */
+
 .permissions-section {
   background: #f4f4f4;
   padding: 15px;
@@ -161,7 +167,7 @@
   margin-top: 15px;
 }
 
-/* Permissions Label */
+
 .permissions-label {
   font-size: 1rem;
   font-weight: bold;
@@ -170,7 +176,7 @@
   display: block;
 }
 
-/* Permissions List */
+
 .permissions-item {
   display: flex;
   align-items: center;
@@ -180,7 +186,7 @@
   margin-top: 5px;
 }
 
-/* Save Collaborator Button */
+
 .save-collaborator-button {
   background-color: #2ecc71;
   color: white;
@@ -196,7 +202,7 @@
   background-color: #27ae60;
 }
 
-/* Saved Collaborators */
+
 .saved-collaborators {
   margin-top: 20px;
   padding: 15px;
@@ -204,7 +210,7 @@
   border-radius: 8px;
 }
 
-/* Saved Collaborators Title */
+
 .saved-collaborators-title {
   font-size: 1.2rem;
   font-weight: bold;
@@ -212,7 +218,7 @@
   margin-bottom: 10px;
 }
 
-/* Collaborator Item */
+
 .collaborator-item {
   display: flex;
   justify-content: space-between;
@@ -226,7 +232,7 @@
   color: #333;
 }
 
-/* Delete Icon */
+
 .delete-icon {
   cursor: pointer;
   color: #f44336;
@@ -237,7 +243,7 @@
   color: #d32f2f;
 }
 
-/* Submit Button */
+
 .submit-button {
   background-color: #00bcd4;
   color: white;
@@ -253,7 +259,7 @@
   background-color: #008ba3;
 }
 
-/* Responsive Design */
+
 @media (max-width: 500px) {
   .admin-card {
     width: 90%;
