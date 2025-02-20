@@ -16,7 +16,7 @@ const Home = () => {
                 {!user ? (
                     <button onClick={() => navigate("/signup")}>Join Now</button>
                 ) : (
-                    <button onClick={() => navigate("/projects")}>Explore Projects</button>
+                    <button onClick={() => navigate("/project")}>Explore Projects</button>
                 )}
             </section>
 
@@ -60,8 +60,8 @@ const Home = () => {
                         <p>Admins can assign roles to developers, ensuring secure and efficient project handling.</p>
                     </div>
                     <div className="feature-card">
-                        <h3>🎥 Video & Chat Integration</h3>
-                        <p>In-app video conferencing and chat for smooth developer communication.</p>
+                        <h3>🎥 Chat Integration</h3>
+                        <p>Chat for smooth developer communication.</p>
                     </div>
                     <div className="feature-card">
                         <h3>🔐 Secure Authentication</h3>

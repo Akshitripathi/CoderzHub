@@ -75,10 +75,10 @@ const Settings = () => {
             <span>Enable Chat</span>
             <Switch checked={enableChat} onChange={() => toggleSetting(setEnableChat)} />
           </div>
-          <div className="setting-option">
+          {/* <div className="setting-option">
             <span>Enable Video Calls</span>
             <Switch checked={enableVideo} onChange={() => toggleSetting(setEnableVideo)} />
-          </div>
+          </div> */}
         </div>
 
         {/* Security Settings */}

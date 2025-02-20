@@ -9,8 +9,6 @@ import Settings from "./components/Settings";
 import Dashboard from "./components/Dashboard";
 import AdminForm from "./components/AdminForm";
 import Project from "./components/Project";
-import Deploy from "./components/Deploy";
-import Friends from "./components/Friends";
 import Codespace from "./components/Codespace";
 import EditProfile from "./components/EditProfile";
 import { useEffect, useState } from "react";
@@ -63,8 +61,6 @@ function App() {
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/admin-form" element={<AdminForm />} />
           <Route path="/project" element={<Project />} />
-          <Route path="/friends" element={<Friends />} />
-          <Route path="/deploy" element={<Deploy />} />
           <Route path="/codespace" element={<Codespace />} />
           <Route path="/edit-profile" element={<EditProfile />} />
         </Routes>
