@@ -1,0 +1,137 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Quantico:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+.edit-profile-container {
+    font-family: "Quantico", serif;
+    font-weight: 400;
+    font-style: normal;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px 20px;
+    max-width: 1200px;
+    
+  margin-top:8rem;
+    margin-left: 10rem;
+    margin-bottom: 3rem;
+    background-color: #f4f7fc;
+    border-radius: 16px;
+    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+.edit-profile-container:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+}
+
+.edit-profile-container h2 {
+    font-size: 32px;
+    color: #2c3e50;
+    margin-bottom: 20px;
+    font-weight: 600;
+}
+
+.edit-profile-container .error {
+    color: red;
+    font-size: 16px;
+    margin-top: 20px;
+}
+
+.edit-profile-container .success {
+    color: green;
+    font-size: 16px;
+    margin-top: 20px;
+}
+
+.edit-profile-container form {
+    width: 100%;
+}
+
+.input-group {
+    margin-bottom: 20px;
+    width: 100%;
+}
+
+.input-group label {
+    font-size: 16px;
+    color: #2c3e50;
+    font-weight: 500;
+    margin-bottom: 8px;
+    display: block;
+}
+
+.input-group input,
+.input-group textarea {
+    width: 90%;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    font-size: 16px;
+    color: #2c3e50;
+    background-color: #fff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+.input-group input:focus,
+.input-group textarea:focus {
+    border-color: #5d9dff;
+    box-shadow: 0 0 8px rgba(93, 157, 255, 0.5);
+}
+
+.input-group textarea {
+    resize: vertical;
+    height: 120px;
+}
+
+.form-actions {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.form-actions button {
+    padding: 12px 30px;
+    background-color: #5d9dff;
+    color: white;
+    font-size: 16px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.3s;
+    font-weight: 600;
+}
+
+.form-actions button:hover {
+    background-color: #4b8bd6;
+    transform: translateY(-2px);
+}
+
+.form-actions button:disabled {
+    background-color: #a0c4f3;
+    cursor: not-allowed;
+}
+
+@media (max-width: 768px) {
+    .edit-profile-container {
+        padding: 20px;
+    }
+
+    .edit-profile-container h2 {
+        font-size: 28px;
+    }
+
+    .input-group label {
+        font-size: 14px;
+    }
+
+    .input-group input,
+    .input-group textarea {
+        font-size: 14px;
+    }
+
+    .form-actions button {
+        padding: 10px 25px;
+        font-size: 14px;
+    }
+}
