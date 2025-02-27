@@ -1,7 +1,15 @@
 import { useState, useEffect } from "react";
-import { useParams,useLocation } from "react-router-dom";
-import { Play, Square, Split, MessageCircle, Video } from "lucide-react";
+import { useParams, useLocation } from "react-router-dom";
+import { Play, Square, Split, MessageCircle, Video, Sun, Moon, Plus, Trash2, Save } from "lucide-react";
 import { Button } from "../ui/button";
+import CodeMirror from '@uiw/react-codemirror';
+import 'codemirror/lib/codemirror.css';
+import 'codemirror/theme/material.css';
+import 'codemirror/mode/javascript/javascript';
+import 'codemirror/mode/python/python';
+import 'codemirror/mode/clike/clike';
+import 'codemirror/mode/xml/xml';
+
 import "../styles/Codespace.css";
 
 export default function Codespace() {
@@ -23,6 +31,7 @@ export default function Codespace() {
   const [code, setCode] = useState("// Write your code here...");
   const [input, setInput] = useState("");
   const [output, setOutput] = useState("");
+  const [theme, setTheme] = useState("light");
 
   useEffect(() => {
     setFiles(languageFiles[language] || []);
@@ -33,11 +42,34 @@ export default function Codespace() {
     setOutput(`Output for: ${input}`);
   };
 
+  const clearOutput = () => {
+    setOutput("");
+  };
+
+  const toggleTheme = () => {
+    setTheme((prevTheme) => (prevTheme === "light" ? "dark" : "light"));
+  };
+
+  const addFile = () => {
+    const newFileName = prompt("Enter new file name:");
+    if (newFileName) {
+      setFiles([...files, newFileName]);
+    }
+  };
+
+  const saveFile = () => {
+    console.log(`Saving file: ${selectedFile}`);
+    // Implement file saving logic here
+  };
+
   return (
-    <div className="codespace-container">
+    <div className={`codespace-container ${theme}`}>
       <div className="toolbar">
         <Button className="toolbar-btn" onClick={runCode}>
           <Play size={18} /> Run
+        </Button>
+        <Button className="toolbar-btn" onClick={clearOutput}>
+          <Trash2 size={18} /> Clear Output
         </Button>
         <Button className="toolbar-btn">
           <Square size={18} /> Terminate
@@ -50,6 +82,15 @@ export default function Codespace() {
         </Button>
         <Button className="toolbar-btn">
           <Video size={18} /> Video Call
+        </Button>
+        <Button className="toolbar-btn" onClick={toggleTheme}>
+          {theme === "light" ? <Moon size={18} /> : <Sun size={18} />} Theme
+        </Button>
+        <Button className="toolbar-btn" onClick={addFile}>
+          <Plus size={18} /> Add File
+        </Button>
+        <Button className="toolbar-btn" onClick={saveFile}>
+          <Save size={18} /> Save
         </Button>
       </div>
 
@@ -71,10 +112,16 @@ export default function Codespace() {
 
         <div className="code-editor">
           <h3>{selectedFile}</h3>
-          <textarea
-            className="editor"
+          <CodeMirror
             value={code}
-            onChange={(e) => setCode(e.target.value)}
+            options={{
+              mode: language.toLowerCase(),
+              theme: "material",
+              lineNumbers: true,
+            }}
+            onBeforeChange={(editor, data, value) => {
+              setCode(value);
+            }}
           />
         </div>
 
