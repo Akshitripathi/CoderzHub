@@ -90,7 +90,7 @@ export default function Project() {
                 {/* Project Actions */}
                 <div className="project-actions">
                   <Button 
-                    onClick={() => project._id && navigate(`/project/${project._id}`)}
+                    onClick={() => project._id && navigate(`/codespace/${project._id}`)}
                     className="view-details-button"
                   >
                     🔍 View Details

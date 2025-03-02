@@ -11,9 +11,9 @@ import { keymap } from "@codemirror/view";
 import { defaultKeymap, indentWithTab } from "@codemirror/commands";
 import { autocompletion } from "@codemirror/autocomplete";
 import { lintGutter } from "@codemirror/lint";
-import { FaFolderPlus, FaFileAlt, FaSave, FaPlay, FaMoon, FaSun, FaTrash } from 'react-icons/fa';
+import { FaFolderPlus, FaFileAlt, FaSave, FaPlay, FaMoon, FaSun, FaTrash, FaEdit } from 'react-icons/fa';
 import '../styles/Codespace.css';
-import { getProjectFiles, saveFileContent, compileCode } from "../api";
+import { getProjectFiles, saveFileContent, compileCode, deleteFile, renameFile } from "../api";
 
 export default function CodeEditor({ language = "JavaScript" }) {
   const { projectId } = useParams();
@@ -21,8 +21,10 @@ export default function CodeEditor({ language = "JavaScript" }) {
   const editorViewRef = useRef(null);
   const [theme, setTheme] = useState("dark");
   const [output, setOutput] = useState("");
-  const [files, setFiles] = useState({});
+  const [files, setFiles] = useState([]);
   const [currentFile, setCurrentFile] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   const languageExtensions = {
     JavaScript: javascript(),
@@ -38,12 +40,15 @@ export default function CodeEditor({ language = "JavaScript" }) {
         console.log("Fetching files for project:", projectId);
         const projectFiles = await getProjectFiles(projectId);
         console.log("Fetched files:", projectFiles);
-        setFiles(projectFiles);
-        if (Object.keys(projectFiles).length > 0) {
-          setCurrentFile(Object.keys(projectFiles)[0]);
+        setFiles(Array.isArray(projectFiles) ? projectFiles : []);
+        if (projectFiles.length > 0) {
+          setCurrentFile(projectFiles[0].filepath);
         }
       } catch (error) {
         console.error("Error fetching project files:", error);
+        setError(error.message || "Failed to load project files.");
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -58,7 +63,7 @@ export default function CodeEditor({ language = "JavaScript" }) {
     }
 
     const startState = EditorState.create({
-      doc: currentFile ? files[currentFile].content : "// Start coding...",
+      doc: currentFile ? files.find(file => file.filepath === currentFile)?.content || "// Start coding..." : "// Start coding...",
       extensions: [
         keymap.of([...defaultKeymap, indentWithTab]),
         autocompletion(),
@@ -87,18 +92,35 @@ export default function CodeEditor({ language = "JavaScript" }) {
 
   const handleAddFile = (fileName) => {
     if (!fileName) return;
-    const filePath = `${projectId}/${fileName}`;
-    setFiles({ ...files, [filePath]: { content: "" } });
+    const filePath = `projects/${projectId}/${fileName}`;
+    setFiles([...files, { filename: fileName, filepath: filePath, content: "" }]);
     setCurrentFile(filePath);
   };
 
   const handleSaveFile = async () => {
     if (currentFile) {
       const content = editorViewRef.current.state.doc.toString();
-      setFiles({ ...files, [currentFile]: { content } });
+      setFiles(files.map(file => file.filepath === currentFile ? { ...file, content } : file));
       await saveFileContent(projectId, currentFile, content);
     }
   };
+
+  const handleDeleteFile = async (file) => {
+    await deleteFile(projectId, file);
+    const newFiles = files.filter(f => f.filepath !== file);
+    setFiles(newFiles);
+    setCurrentFile(newFiles.length > 0 ? newFiles[0].filepath : null);
+  };
+
+  const handleRenameFile = async (oldFile, newFile) => {
+    await renameFile(projectId, oldFile, newFile);
+    const newFiles = files.map(file => file.filepath === oldFile ? { ...file, filename: newFile, filepath: newFile } : file);
+    setFiles(newFiles);
+    setCurrentFile(newFile);
+  };
+
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p className="error">{error}</p>;
 
   return (
     <div className="codespace-container">
@@ -113,9 +135,11 @@ export default function CodeEditor({ language = "JavaScript" }) {
           <h3>Explorer</h3>
           <button onClick={() => handleAddFile(prompt("Enter file name"))}><FaFileAlt /> New File</button>
           <div className="file-list">
-            {Object.keys(files).map(file => (
-              <div key={file} className={`file-item ${currentFile === file ? 'active' : ''}`} onClick={() => setCurrentFile(file)}>
-                {file} <FaTrash onClick={() => setFiles(prev => { const newFiles = { ...prev }; delete newFiles[file]; return newFiles; })} />
+            {files.map(file => (
+              <div key={file.filepath} className={`file-item ${currentFile === file.filepath ? 'active' : ''}`} onClick={() => setCurrentFile(file.filepath)}>
+                {file.filename} 
+                <FaEdit onClick={() => handleRenameFile(file.filepath, prompt("Enter new file name", file.filename))} />
+                <FaTrash onClick={() => handleDeleteFile(file.filepath)} />
               </div>
             ))}
           </div>

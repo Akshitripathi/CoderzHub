@@ -10,6 +10,90 @@
     font-weight: 400;
     font-style: normal;
     margin-top: 5rem;
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border-radius: 15px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.codespace-container h2 {
+    color: #fff;
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    border-bottom: 2px solid #4a90e2;
+    padding-bottom: 0.5rem;
+}
+
+.codespace-container ul {
+    list-style: none;
+    padding: 0;
+}
+
+.codespace-container li {
+    margin: 0.8rem 0;
+    padding: 0.8rem;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.codespace-container li:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateX(10px);
+}
+
+.codespace-container a {
+    color: #4a90e2;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    font-size: 1.1rem;
+}
+
+.codespace-container a:hover {
+    color: #6ba5e7;
+}
+
+.codespace-container a::before {
+    content: "📄";
+    margin-right: 10px;
+}
+
+.error {
+    color: #ff6b6b;
+    background: rgba(255, 107, 107, 0.1);
+    padding: 1rem;
+    border-radius: 8px;
+    text-align: center;
+    margin: 2rem auto;
+    max-width: 600px;
+}
+
+/* Loading animation */
+.loading {
+    text-align: center;
+    color: #4a90e2;
+    font-size: 1.2rem;
+    margin: 2rem 0;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .codespace-container {
+        margin: 1rem;
+        padding: 1rem;
+    }
+
+    .codespace-container h2 {
+        font-size: 2rem;
+    }
+
+    .codespace-container a {
+        font-size: 1rem;
+    }
 }
 
 .navbar {

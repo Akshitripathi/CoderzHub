@@ -225,12 +225,12 @@ export const getProjectFiles = async (projectId) => {
     const token = localStorage.getItem("token");
     const response = await makeRequest(`/get-project-files/${projectId}`, "GET", null, token);
     console.log("API response for project files:", response);
-    return response.files || {};
+    return Array.isArray(response.files) ? response.files : [];
 };
 
 export const saveFileContent = async (projectId, filePath, content) => {
     const token = localStorage.getItem("token");
-    return makeRequest(`/save-file`, "POST", { projectId, filePath, content }, token);
+    return makeRequest(`/project/${projectId}/save-file`, "POST", { filePath, content }, token);
 };
 
 export const compileCode = async (language, code) => {
@@ -241,3 +241,35 @@ export const compileCode = async (language, code) => {
     });
     return response.json();
 };
+
+const API_BASE_URL = 'http://localhost:5000/api';
+
+export async function deleteFile(projectId, filename) {
+  try {
+    const response = await fetch(`${API_BASE_URL}/project/${projectId}/files/${filename}`, {
+      method: 'DELETE',
+    });
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('Error deleting file:', error);
+    throw error;
+  }
+}
+
+export async function renameFile(projectId, oldFilename, newFilename) {
+  try {
+    const response = await fetch(`${API_BASE_URL}/project/${projectId}/files/${oldFilename}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ newFilename }),
+    });
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('Error renaming file:', error);
+    throw error;
+  }
+}

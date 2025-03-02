@@ -81,8 +81,7 @@ export default function AdminForm() {
     try {
       const response = await createProject(projectData);
       if (response && response.project) {
-        const language = encodeURIComponent(formData.languages_used[0]);
-        navigate(`/codespace/${response.project._id}?lang=${language}`);
+        navigate(`/codespace/${response.project._id}`);
       } else {
         console.error("Project creation failed:", response?.message || "Unknown error");
       }
