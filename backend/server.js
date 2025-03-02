@@ -4,7 +4,7 @@ const cors = require('cors');
 const connectWithDb = require('./config/db');
 const authRoutes = require('./routes/authRoutes');
 const projectRoutes = require('./routes/projectRoutes');
-const friendsRoutes= require('./routes//friendsRoutes.js');
+const compileRouter = require('./routes/compile');
 
 dotenv.config();
 
@@ -18,7 +18,7 @@ connectWithDb();
 
 app.use('/api/auth', authRoutes);
 app.use('/api/project', projectRoutes);
-app.use('/api/friends', friendsRoutes);
+app.use('/api', compileRouter);
 
 const PORT = 5000;
 app.listen(PORT, () => {

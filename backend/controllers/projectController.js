@@ -6,20 +6,18 @@ exports.createProject = async (req, res) => {
     try {
         const { name, description, admin, collaborators, files_folder, languages_used, visibility, tags } = req.body;
 
-        // Validate admin ID
         const adminUser = await User.findById(admin);
         if (!adminUser) {
             return res.status(404).json({ message: 'Admin user not found' });
         }
 
-        // Ensure collaborators are stored as ObjectId
-        const collaboratorIds = collaborators.map(collab => new mongoose.Types.ObjectId(collab.user));
+        const collaboratorIds = collaborators.map(collab => new mongoose.Types.ObjectId(collab));
 
         const project = new Project({
             name,
             description,
             admin: new mongoose.Types.ObjectId(admin),
-            collaborators: collaboratorIds,  // Convert to ObjectId array
+            collaborators: collaboratorIds,  
             files_folder,
             languages_used,
             visibility,
@@ -28,7 +26,6 @@ exports.createProject = async (req, res) => {
 
         await project.save();
 
-        // Add project to admin's projects list
         adminUser.projects.push(project._id);
         await adminUser.save();
 

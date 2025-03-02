@@ -9,91 +9,160 @@
     font-family: "Quantico", serif;
     font-weight: 400;
     font-style: normal;
-    margin-top: 6rem;
-  }
-  
+    margin-top: 5rem;
+}
 
-  .navbar {
+.navbar {
     background-color: #121212;
     padding: 10px 20px;
     text-align: center;
     font-size: 1.5rem;
     font-weight: bold;
     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
-  }
-  
-  .toolbar {
+}
+
+.file-icon, .folder-icon {
+  color: white !important;
+  font-size: 1.2rem;
+  display: inline-block;
+}
+
+
+.code-space-button{
+  font-family: "Quantico", serif;
+    font-weight: 400;
+    font-style: normal;
+  font-size: 16px;
+  padding: 12px 18px;
+  border: none;
+  width: 10rem;
+  margin-right: 1rem;
+  margin-top: 10rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+}
+
+.toolbar {
     display: flex;
     justify-content: center;
     gap: 15px;
     padding: 10px;
     background-color: #181818;
     box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
-  }
-  
-  .toolbar-btn {
-    background-color: #333;
-    color: white;
-    border: none;
-    padding: 8px 15px;
+}
+
+.editor-toolbar {
+    display: flex;
+    gap: 10px;
+    padding: 10px;
+    background-color: #2d2d2d;
+    border-bottom: 1px solid #404040;
+}
+
+.toolbar-btn {
     display: flex;
     align-items: center;
-    gap: 5px;
+    gap: 8px;
+    padding: 8px 16px;
+    background-color: #4a4a4a;
+    color: #ffffff;
+    border: none;
+    border-radius: 4px;
     cursor: pointer;
-    border-radius: 5px;
-  }
-  
-  .toolbar-btn:hover {
-    background-color: #444;
-  }
-  
+    transition: background-color 0.2s;
+}
 
-  .codespace-layout {
+.toolbar-btn:hover {
+    background-color: #5a5a5a;
+}
+
+.codespace-layout {
     display: flex;
     flex: 1;
     padding: 10px;
-  }
-  
+}
 
-  .file-explorer {
-    width: 20%;
+.file-explorer {
+    width: 250px;
     background-color: #252526;
-    padding: 10px;
-    border-right: 2px solid #444;
-  }
-  
-  .file-explorer h3 {
-    border-bottom: 1px solid #555;
-    padding-bottom: 5px;
-  }
-  
-  .file-explorer ul {
-    list-style: none;
-    padding: 0;
-  }
-  
-  .file-explorer li {
-    padding: 8px;
-    background-color: #333;
-    margin: 5px 0;
-    border-radius: 5px;
-    cursor: pointer;
-  }
-  
-  .file-explorer li:hover {
-    background-color: #444;
-  }
-  
+    border-right: 1px solid #404040;
+}
 
-  .code-editor {
+.file-explorer-header {
+    padding: 10px;
+    border-bottom: 1px solid #404040;
+}
+
+.file-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.icon-button {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 8px;
+    background-color: transparent;
+    color: #cccccc;
+    border: 1px solid #404040;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+}
+
+.icon-button:hover {
+    background-color: #404040;
+}
+
+.file-tree {
+    padding: 10px;
+}
+
+.folder-item, .file-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px;
+    cursor: pointer;
+    border-radius: 4px;
+    margin-bottom: 2px;
+}
+
+.folder-item:hover, .file-item:hover {
+    background-color: #2d2d2d;
+}
+
+.file-item.active {
+    background-color: #37373d;
+}
+
+.folder-icon, .file-icon {
+    color: #cccccc;
+}
+
+.file-actions {
+    margin-left: auto;
+    display: none;
+}
+
+.file-item:hover .file-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.code-editor {
     flex: 1;
     background-color: #1e1e1e;
     padding: 10px;
     border-left: 2px solid #444;
     border-right: 2px solid #444;
-  }
-  
-  .editor {
+}
+
+.editor {
     width: 95%;
     height: 80%;
     background-color: #252526;
@@ -102,21 +171,20 @@
     padding: 10px;
     font-size: 1rem;
     border-radius: 5px;
-  }
-  
+}
 
-  .input-output {
+.input-output {
     width: 25%;
     background-color: #252526;
     padding: 10px;
-  }
-  
-  .input-output h3 {
+}
+
+.input-output h3 {
     border-bottom: 1px solid #555;
     padding-bottom: 5px;
-  }
-  
-  .input-box {
+}
+
+.input-box {
     width: 100%;
     height: 40px;
     background-color: #333;
@@ -124,9 +192,9 @@
     border: none;
     padding: 5px;
     border-radius: 5px;
-  }
-  
-  .output-box {
+}
+
+.output-box {
     width: 100%;
     height: 100px;
     background-color: #000;
@@ -135,5 +203,155 @@
     padding: 5px;
     border-radius: 5px;
     overflow-y: auto;
-  }
-  
+}
+
+/* New styles for the CodeMirror editor */
+.editor-wrapper {
+    position: relative;
+    height: 100%;
+    width: 100%;
+}
+
+.theme-toggle {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: #333;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    z-index: 10;
+}
+
+.theme-toggle:hover {
+    background: #444;
+}
+
+/* CodeMirror specific styles */
+.cm-editor {
+    height: 100% !important;
+    font-family: 'Fira Code', monospace;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.cm-editor.cm-focused {
+    outline: none;
+}
+
+/* Light theme customization */
+.cm-editor.light-theme {
+    background: #ffffff;
+    color: #2c3e50;
+}
+
+/* Dark theme customization */
+.cm-editor.dark-theme {
+    background: #1e1e1e;
+    color: #d4d4d4;
+}
+
+/* Syntax highlighting colors */
+.cm-keyword { color: #569cd6; }
+.cm-operator { color: #d4d4d4; }
+.cm-variable { color: #9cdcfe; }
+.cm-string { color: #ce9178; }
+.cm-comment { color: #6a9955; }
+.cm-number { color: #b5cea8; }
+
+/* Gutter styling */
+.cm-gutters {
+    border-right: 1px solid #404040;
+    background-color: #252526;
+    padding: 0 3px;
+}
+
+.cm-lineNumbers {
+    color: #858585;
+}
+
+/* Active line highlight */
+.cm-activeLine {
+    background: rgba(44, 62, 80, 0.1);
+}
+
+/* Selection styling */
+.cm-selectionBackground {
+    background: #264f78 !important;
+}
+
+/* Scrollbar styling */
+.cm-scroller::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+.cm-scroller::-webkit-scrollbar-track {
+    background: #1e1e1e;
+}
+
+.cm-scroller::-webkit-scrollbar-thumb {
+    background: #424242;
+    border-radius: 5px;
+}
+
+.cm-scroller::-webkit-scrollbar-thumb:hover {
+    background: #4f4f4f;
+}
+
+/* Error and warning indicators */
+.cm-diagnostic-error {
+    border-bottom: 2px wavy #ff0000;
+}
+
+.cm-diagnostic-warning {
+    border-bottom: 2px wavy #ffa500;
+}
+
+/* Improved scrollbar styling */
+::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: #1e1e1e;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #424242;
+    border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #4f4f4f;
+}
+
+.output-panel {
+    width: 300px;
+    background-color: #1e1e1e;
+    border-left: 1px solid #404040;
+    padding: 10px;
+}
+
+.output-content {
+    background-color: #000000;
+    border-radius: 4px;
+    padding: 10px;
+    height: calc(100% - 40px);
+    overflow: auto;
+    font-family: 'Consolas', monospace;
+}
+
+.output-content pre {
+    margin: 0;
+    color: #00ff00;
+    white-space: pre-wrap;
+}
+
+.editor-container {
+    height: calc(100% - 50px);
+    background-color: #1e1e1e;
+}
