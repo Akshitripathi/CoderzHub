@@ -1,30 +1,32 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { loginUser } from "../api";
+import { AuthContext } from "../context/AuthContext";
 import "../styles/Form.css";
 
 const Login = () => {
     const [formData, setFormData] = useState({ identifier: "", password: "" });
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
+    const { login } = useContext(AuthContext);
     const navigate = useNavigate();
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
-    
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
-        
+
         try {
             const response = await loginUser(formData);
             setLoading(false);
-    
+
             if (response.success) {
-                console.log("Login successful. Token:", response.token);  
+                console.log("Login successful. Token:", response.token);
                 localStorage.setItem("token", response.token);
+                login(response.token);
                 navigate("/profile");
             } else {
                 setError(response.message);
@@ -35,7 +37,7 @@ const Login = () => {
             setError("Something went wrong. Please try again.");
         }
     };
-    
+
     return (
         <div className="login-body">
             <div className="container">

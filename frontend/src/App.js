@@ -15,6 +15,7 @@ import ProjectDetails from "./components/ProjectDetails";
 import { useEffect, useState } from "react";
 import Footer from "./components/Footer";
 import { AuthProvider } from "./context/AuthContext.js";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
   const [dots, setDots] = useState([]);
@@ -57,14 +58,14 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/login" element={<Login />} />
-            <Route path="/profile" element={<Profile />} />
-            <Route path="/settings" element={<Settings />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/admin-form" element={<AdminForm />} />
-            <Route path="/project" element={<Project />} />
-            <Route path="/codespace/:projectId" element={<Codespace />} />
-            <Route path="/edit-profile" element={<EditProfile />} />
-            <Route path="/project/:id" element={<ProjectDetails />} />
+            <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+            <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
+            <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+            <Route path="/admin-form" element={<ProtectedRoute><AdminForm /></ProtectedRoute>} />
+            <Route path="/project" element={<ProtectedRoute><Project /></ProtectedRoute>} />
+            <Route path="/codespace/:projectId" element={<ProtectedRoute><Codespace /></ProtectedRoute>} />
+            <Route path="/edit-profile" element={<ProtectedRoute><EditProfile /></ProtectedRoute>} />
+            <Route path="/project/:id" element={<ProtectedRoute><ProjectDetails /></ProtectedRoute>} />
           </Routes>
           <Footer />
         </AuthProvider>
