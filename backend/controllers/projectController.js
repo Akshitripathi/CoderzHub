@@ -1,6 +1,8 @@
 const Project = require('../models/project');
 const User = require('../models/user');
 const mongoose = require('mongoose');
+const fs = require('fs');
+const path = require('path');
 
 exports.createProject = async (req, res) => {
     try {
@@ -192,5 +194,57 @@ exports.changeProjectStatus = async (req, res) => {
         res.status(200).json({ message: 'Project status updated successfully', project });
     } catch (error) {
         res.status(500).json({ message: 'Error updating project status', error: error.message });
+    }
+};
+
+exports.getProjectFiles = async (req, res) => {
+    try {
+        const { projectId } = req.params;
+        const project = await Project.findById(projectId);
+        if (!project) return res.status(404).json({ message: 'Project not found' });
+
+        const filesDir = path.join(__dirname, '..', 'projects', projectId);
+        const files = {};
+
+        // Ensure the directory exists
+        if (!fs.existsSync(filesDir)) {
+            return res.status(404).json({ message: 'Project files directory not found' });
+        }
+
+        fs.readdirSync(filesDir).forEach(file => {
+            const filePath = path.join(filesDir, file);
+            const stat = fs.statSync(filePath);
+            if (stat.isFile()) {
+                files[file] = { content: fs.readFileSync(filePath, 'utf-8') };
+            }
+        });
+
+        res.status(200).json({ files });
+    } catch (error) {
+        console.error('Error fetching project files:', error);
+        res.status(500).json({ message: 'Error fetching project files', error: error.message });
+    }
+};
+
+exports.saveFileContent = async (req, res) => {
+    try {
+        const { projectId, filePath, content } = req.body;
+        const project = await Project.findById(projectId);
+        if (!project) return res.status(404).json({ message: 'Project not found' });
+
+        const fullPath = path.join(__dirname, '..', 'projects', projectId, filePath);
+
+        // Ensure the directory exists
+        const dir = path.dirname(fullPath);
+        if (!fs.existsSync(dir)) {
+            fs.mkdirSync(dir, { recursive: true });
+        }
+
+        fs.writeFileSync(fullPath, content);
+
+        res.status(200).json({ message: 'File saved successfully' });
+    } catch (error) {
+        console.error('Error saving file:', error);
+        res.status(500).json({ message: 'Error saving file', error: error.message });
     }
 };

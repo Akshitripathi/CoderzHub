@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { useParams } from "react-router-dom";
 import { EditorState } from "@codemirror/state";
 import { EditorView } from "@codemirror/view";
 import { javascript } from "@codemirror/lang-javascript";
@@ -12,16 +13,16 @@ import { autocompletion } from "@codemirror/autocomplete";
 import { lintGutter } from "@codemirror/lint";
 import { FaFolderPlus, FaFileAlt, FaSave, FaPlay, FaMoon, FaSun, FaTrash } from 'react-icons/fa';
 import '../styles/Codespace.css';
+import { getProjectFiles, saveFileContent, compileCode } from "../api";
 
 export default function CodeEditor({ language = "JavaScript" }) {
+  const { projectId } = useParams();
   const editorRef = useRef(null);
   const editorViewRef = useRef(null);
   const [theme, setTheme] = useState("dark");
   const [output, setOutput] = useState("");
   const [files, setFiles] = useState({});
   const [currentFile, setCurrentFile] = useState(null);
-  const [folders, setFolders] = useState({});
-  const [activePath, setActivePath] = useState("/");
 
   const languageExtensions = {
     JavaScript: javascript(),
@@ -30,6 +31,24 @@ export default function CodeEditor({ language = "JavaScript" }) {
     Java: cpp(),
     XML: xml(),
   };
+
+  useEffect(() => {
+    const fetchFiles = async () => {
+      try {
+        console.log("Fetching files for project:", projectId);
+        const projectFiles = await getProjectFiles(projectId);
+        console.log("Fetched files:", projectFiles);
+        setFiles(projectFiles);
+        if (Object.keys(projectFiles).length > 0) {
+          setCurrentFile(Object.keys(projectFiles)[0]);
+        }
+      } catch (error) {
+        console.error("Error fetching project files:", error);
+      }
+    };
+
+    fetchFiles();
+  }, [projectId]);
 
   useEffect(() => {
     if (!editorRef.current) return;
@@ -57,33 +76,27 @@ export default function CodeEditor({ language = "JavaScript" }) {
     return () => {
       editorViewRef.current?.destroy();
     };
-  }, [language, theme, currentFile]);
+  }, [language, theme, currentFile, files]);
 
-  const compileCode = async () => {
+  const handleCompileCode = async () => {
+    await handleSaveFile();
     const code = editorViewRef.current.state.doc.toString();
-    try {
-      const response = await fetch("/api/compile", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ language, code }),
-      });
-      const result = await response.json();
-      setOutput(result.output);
-    } catch {
-      setOutput("Error compiling code");
-    }
+    const result = await compileCode(language, code);
+    setOutput(result.output);
   };
 
-  const addFile = (fileName) => {
+  const handleAddFile = (fileName) => {
     if (!fileName) return;
-    const filePath = `${activePath}${fileName}`;
+    const filePath = `${projectId}/${fileName}`;
     setFiles({ ...files, [filePath]: { content: "" } });
     setCurrentFile(filePath);
   };
 
-  const saveFile = () => {
+  const handleSaveFile = async () => {
     if (currentFile) {
-      setFiles({ ...files, [currentFile]: { content: editorViewRef.current.state.doc.toString() } });
+      const content = editorViewRef.current.state.doc.toString();
+      setFiles({ ...files, [currentFile]: { content } });
+      await saveFileContent(projectId, currentFile, content);
     }
   };
 
@@ -98,7 +111,7 @@ export default function CodeEditor({ language = "JavaScript" }) {
       <div className="codespace-layout">
         <div className="file-explorer">
           <h3>Explorer</h3>
-          <button onClick={() => addFile(prompt("Enter file name"))}><FaFileAlt /> New File</button>
+          <button onClick={() => handleAddFile(prompt("Enter file name"))}><FaFileAlt /> New File</button>
           <div className="file-list">
             {Object.keys(files).map(file => (
               <div key={file} className={`file-item ${currentFile === file ? 'active' : ''}`} onClick={() => setCurrentFile(file)}>
@@ -108,12 +121,14 @@ export default function CodeEditor({ language = "JavaScript" }) {
           </div>
         </div>
         <div className="code-editor">
-          <button className="toolbar-btn" onClick={saveFile}><FaSave /> Save</button>
-          <button className="toolbar-btn" onClick={compileCode}><FaPlay /> Run</button>
+          <div className="editor-toolbar">
+            <button className="toolbar-btn" onClick={handleSaveFile}><FaSave /> Save</button>
+            <button className="toolbar-btn" onClick={handleCompileCode}><FaPlay /> Run</button>
+          </div>
           <div ref={editorRef} className={`editor-wrapper ${theme}-theme`}></div>
         </div>
         <div className="output-panel">
-          <h3>Output</h3>
+          <h3>Output</h3>         
           <pre>{output}</pre>
         </div>
       </div>

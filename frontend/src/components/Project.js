@@ -89,7 +89,12 @@ export default function Project() {
 
                 {/* Project Actions */}
                 <div className="project-actions">
-                  <Button onClick={() => navigate(`/project/${project.id}`)}>🔍 View Details</Button>
+                  <Button 
+                    onClick={() => project._id && navigate(`/project/${project._id}`)}
+                    className="view-details-button"
+                  >
+                    🔍 View Details
+                  </Button>
                   <Button className="change-status-button" onClick={() => handleChangeStatus(project.id, project.status === "Completed" ? "In Progress" : "Completed")}>
                     🔄 Change Status
                   </Button>

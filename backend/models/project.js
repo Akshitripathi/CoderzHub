@@ -11,6 +11,10 @@ const projectSchema = new mongoose.Schema({
   tags: [{ type: String }],
   status: { type: String, enum: ['Active', 'Completed', 'Archived'], default: 'Active' },
   likes: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+  files: [{
+    filename: String,
+    filepath: String
+  }],
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now }
 });

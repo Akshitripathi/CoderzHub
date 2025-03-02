@@ -158,6 +158,7 @@ const makeRequest = async (endpoint, method, body = null, token = null) => {
         return data;
 
     } catch (error) {
+        console.log(error);
         return { success: false, message: "Failed to connect to the server" };
     }
 };
@@ -218,4 +219,25 @@ export const unlikeProject = async (projectId) => {
 export const changeProjectStatus = async (projectId, newStatus) => {
     const token = localStorage.getItem("token");
     return makeRequest("/change-status-project", "POST", { projectId, newStatus }, token);
+};
+
+export const getProjectFiles = async (projectId) => {
+    const token = localStorage.getItem("token");
+    const response = await makeRequest(`/get-project-files/${projectId}`, "GET", null, token);
+    console.log("API response for project files:", response);
+    return response.files || {};
+};
+
+export const saveFileContent = async (projectId, filePath, content) => {
+    const token = localStorage.getItem("token");
+    return makeRequest(`/save-file`, "POST", { projectId, filePath, content }, token);
+};
+
+export const compileCode = async (language, code) => {
+    const response = await fetch("/api/compile", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ language, code }),
+    });
+    return response.json();
 };
