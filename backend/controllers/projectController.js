@@ -31,6 +31,15 @@ exports.createProject = async (req, res) => {
         adminUser.projects.push(project._id);
         await adminUser.save();
 
+        // Add project to each collaborator's collaborations array
+        for (const collabId of collaboratorIds) {
+            const collaborator = await User.findById(collabId);
+            if (collaborator) {
+                collaborator.collaborations.push(project._id);
+                await collaborator.save();
+            }
+        }
+
         res.status(201).json({ message: 'Project created successfully', project });
     } catch (error) {
         console.error(error);
