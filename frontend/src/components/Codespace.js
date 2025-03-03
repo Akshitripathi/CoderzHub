@@ -8,10 +8,10 @@ import { lintGutter } from "@codemirror/lint";
 import { EditorState } from "@codemirror/state";
 import { oneDark } from "@codemirror/theme-one-dark";
 import { EditorView, keymap } from "@codemirror/view";
-import { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { FaEdit, FaFileAlt, FaMoon, FaPlay, FaSave, FaSun, FaTrash } from 'react-icons/fa';
 import { useParams } from "react-router-dom";
-import { compileCode, deleteFile, getProjectFiles, renameFile, saveFileContent } from "../api";
+import { compileCode, deleteFile, fetchProfile, getProjectFiles, renameFile, saveFileContent } from "../api";
 import { useAuth } from "../context/AuthContext"; // Import useAuth hook
 import '../styles/Codespace.css';
 import ChatIcon from './ChatIcon'; // Import ChatIcon component
@@ -27,6 +27,7 @@ export default function CodeEditor({ language = "JavaScript" }) {
   const [currentFile, setCurrentFile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [profileUsername, setProfileUsername] = useState(""); // Store username from profile
 
   const languageExtensions = {
     JavaScript: javascript(),
@@ -35,6 +36,21 @@ export default function CodeEditor({ language = "JavaScript" }) {
     Java: cpp(),
     XML: xml(),
   };
+
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      try {
+        const response = await fetchProfile();
+        if (response.success) {
+          setProfileUsername(response.user.username); // Extract username from profile
+        }
+      } catch (error) {
+        console.error("Error fetching profile:", error);
+      }
+    };
+
+    fetchUserProfile();
+  }, []);
 
   useEffect(() => {
     const fetchFiles = async () => {
@@ -103,16 +119,7 @@ export default function CodeEditor({ language = "JavaScript" }) {
     if (currentFile) {
       const content = editorViewRef.current.state.doc.toString();
       setFiles(files.map(file => file.filepath === currentFile ? { ...file, content } : file));
-      try {
-        const response = await saveFileContent(projectId, currentFile, content);
-        if (response.success) {
-          console.log('File saved successfully');
-        } else {
-          console.error('Failed to save file:', response.message);
-        }
-      } catch (error) {
-        console.error('Error saving file:', error);
-      }
+      await saveFileContent(projectId, currentFile, content);
     }
   };
 
@@ -167,7 +174,7 @@ export default function CodeEditor({ language = "JavaScript" }) {
           <pre>{output}</pre>
         </div>
       </div>
-      <ChatIcon projectId={projectId} userId={user?.id} /> {/* Add ChatIcon component */}
+      <ChatIcon projectId={projectId} username={profileUsername || user?.username} /> {/* Use profile username */}
     </div>
   );
 }

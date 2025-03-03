@@ -1,6 +1,9 @@
+
+const API_BASE_URL = 'http://localhost:5000/api';
+
 export const registerUser = async (userData) => {
     try {
-        const response = await fetch('http://localhost:5000/api/auth/register', {
+        const response = await fetch(`${API_BASE_URL}/auth/register`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(userData),
@@ -11,9 +14,8 @@ export const registerUser = async (userData) => {
     }
 };
 
-
 export const requestPasswordReset = async (email) => {
-    const response = await fetch('http://localhost:5000/api/auth/request-password-reset', {
+    const response = await fetch(`${API_BASE_URL}/auth/request-password-reset`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email }),
@@ -22,7 +24,7 @@ export const requestPasswordReset = async (email) => {
 };
 
 export const resetPassword = async (token, newPassword) => {
-    const response = await fetch('http://localhost:5000/api/auth/reset-password', {
+    const response = await fetch(`${API_BASE_URL}/auth/reset-password`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ token, newPassword }),
@@ -30,10 +32,9 @@ export const resetPassword = async (token, newPassword) => {
     return response.json();
 };
 
-
 export const verifyEmail = async (token) => {
     try {
-        const response = await fetch(`http://localhost:5000/api/auth/verify-email/${token}`, {
+        const response = await fetch(`${API_BASE_URL}/auth/verify-email/${token}`, {
             method: "GET",
         });
         
@@ -43,9 +44,8 @@ export const verifyEmail = async (token) => {
     }
 };
 
-
 export const loginUser = async (userData) => {
-    const response = await fetch("http://localhost:5000/api/auth/login", {
+    const response = await fetch(`${API_BASE_URL}/auth/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(userData),
@@ -62,8 +62,6 @@ export const loginUser = async (userData) => {
     return data;
 };
   
-
-
 export const fetchProfile = async () => {
     const token = localStorage.getItem("token");
     console.log("Token from localStorage:", token); 
@@ -72,7 +70,7 @@ export const fetchProfile = async () => {
         throw new Error("No authentication token found!");
     }
 
-    const response = await fetch("http://localhost:5000/api/auth/getprofile", {
+    const response = await fetch(`${API_BASE_URL}/auth/getprofile`, {
         method: "GET",
         headers: { 
             "Content-Type": "application/json",
@@ -95,7 +93,7 @@ export const updateProfile = async (formData) => {
         throw new Error("No authentication token found!");
     }
 
-    const response = await fetch("http://localhost:5000/api/auth/updateprofile", {
+    const response = await fetch(`${API_BASE_URL}/auth/updateprofile`, {
         method: "PUT",
         headers: {
             "Content-Type": "application/json",
@@ -111,14 +109,13 @@ export const updateProfile = async (formData) => {
     return response.json();
 };
 
-
 export const fetchFriends = async () => {
     const token = localStorage.getItem("token");
     if (!token) {
         throw new Error("No authentication token found!");
     }
 
-    const response = await fetch("http://localhost:5000/api/friends", {
+    const response = await fetch(`${API_BASE_URL}/friends`, {
         method: "GET",
         headers: {
             "Content-Type": "application/json",
@@ -133,16 +130,12 @@ export const fetchFriends = async () => {
     return response.json();
 };
 
-
-
-const API_URL = "http://localhost:5000/api/project";
-
 const makeRequest = async (endpoint, method, body = null, token = null) => {
     try {
         const headers = { "Content-Type": "application/json" };
         if (token) headers["Authorization"] = `Bearer ${token}`;
 
-        const response = await fetch(`${API_URL}${endpoint}`, {
+        const response = await fetch(`${API_BASE_URL}${endpoint}`, {
             method,
             headers,
             body: body ? JSON.stringify(body) : null,
@@ -173,10 +166,9 @@ export const createProject = async (projectData) => {
     return response;
 };
 
-
 export const getProjects = async () => {
     const token = localStorage.getItem("token");
-    return makeRequest("/get-all-project", "GET", null, token);
+    return makeRequest("/project/get-all-project", "GET", null, token);
 };
 
 export const getProjectById = async (id) => {
@@ -194,7 +186,6 @@ export const deleteProject = async (id) => {
     return makeRequest(`/delete-project/${id}`, "DELETE", null, token);
 };
 
-
 export const addCollaborator = async (projectId, collaboratorData) => {
     const token = localStorage.getItem("token");
     return makeRequest("/add-collaborator-project", "POST", { projectId, ...collaboratorData }, token);
@@ -204,7 +195,6 @@ export const removeCollaborator = async (projectId, collaboratorId) => {
     const token = localStorage.getItem("token");
     return makeRequest("/remove-collaborator-project", "POST", { projectId, collaboratorId }, token);
 };
-
 
 export const likeProject = async (projectId) => {
     const token = localStorage.getItem("token");
@@ -224,11 +214,9 @@ export const changeProjectStatus = async (projectId, newStatus) => {
 export const getProjectFiles = async (projectId) => {
     const token = localStorage.getItem("token");
     const response = await makeRequest(`/get-project-files/${projectId}`, "GET", null, token);
-    console.log("API response for project files:", response);
+    console.log("API response for all project files:", response);
     return Array.isArray(response.files) ? response.files : [];
 };
-
-const API_BASE_URL = 'http://localhost:5000/api';
 
 const makeRequest1 = async (url, options) => {
     try {
@@ -261,7 +249,7 @@ export const saveFileContent = async (projectId, filePath, content) => {
 };
 
 export const compileCode = async (language, code) => {
-    const response = await fetch("/api/compile", {
+    const response = await fetch(`${API_BASE_URL}/compile`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ language, code }),
@@ -298,3 +286,25 @@ export async function renameFile(projectId, oldFilename, newFilename) {
     throw error;
   }
 }
+
+export const getFileContent = async (projectId, filePath) => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+        throw new Error("No authentication token found!");
+    }
+
+    const response = await fetch(`${API_BASE_URL}/project/${projectId}/files/content`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+        },
+        body: JSON.stringify({ filePath })
+    });
+
+    if (!response.ok) {
+        throw new Error("Failed to fetch file content");
+    }
+
+    return response.json();
+};
