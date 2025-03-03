@@ -228,9 +228,36 @@ export const getProjectFiles = async (projectId) => {
     return Array.isArray(response.files) ? response.files : [];
 };
 
+const API_BASE_URL = 'http://localhost:5000/api';
+
+const makeRequest1 = async (url, options) => {
+    try {
+        const response = await fetch(url, options);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('Error making request:', error);
+        throw error;
+    }
+};
+
 export const saveFileContent = async (projectId, filePath, content) => {
-    const token = localStorage.getItem("token");
-    return makeRequest(`/project/${projectId}/save-file`, "POST", { filePath, content }, token);
+    const url = `${API_BASE_URL}/project/${projectId}/save-file`;
+    console.log("Saving file to URL:", url); // Debugging
+    console.log("Project ID:", projectId); // Debugging
+    console.log("File Path:", filePath); // Debugging
+    console.log("Content:", content); // Debugging
+    const options = {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ projectId, filePath, content }),
+    };
+    return makeRequest1(url, options);
 };
 
 export const compileCode = async (language, code) => {
@@ -241,8 +268,6 @@ export const compileCode = async (language, code) => {
     });
     return response.json();
 };
-
-const API_BASE_URL = 'http://localhost:5000/api';
 
 export async function deleteFile(projectId, filename) {
   try {

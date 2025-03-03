@@ -101,7 +101,16 @@ export default function CodeEditor({ language = "JavaScript" }) {
     if (currentFile) {
       const content = editorViewRef.current.state.doc.toString();
       setFiles(files.map(file => file.filepath === currentFile ? { ...file, content } : file));
-      await saveFileContent(projectId, currentFile, content);
+      try {
+        const response = await saveFileContent(projectId, currentFile, content);
+        if (response.success) {
+          console.log('File saved successfully');
+        } else {
+          console.error('Failed to save file:', response.message);
+        }
+      } catch (error) {
+        console.error('Error saving file:', error);
+      }
     }
   };
 

@@ -20,7 +20,7 @@ router.post('/like-project', projectController.likeProject);
 router.post('/unlike-project', projectController.unlikeProject);
 router.post('/change-status-project', projectController.changeProjectStatus);
 router.get('/get-project-files/:projectId', projectController.getProjectFiles);
-router.post('/save-file', projectController.saveFileContent);
+router.post('/:projectId/save-file', projectController.saveFileContent); // Correct route
 
 // Upload file and add reference to project
 router.post('/:projectId/upload', upload.single('file'), async (req, res) => {
@@ -39,29 +39,6 @@ router.post('/:projectId/upload', upload.single('file'), async (req, res) => {
     await project.save();
 
     res.send(fileReference);
-  } catch (error) {
-    res.status(500).send(error.message);
-  }
-});
-
-// Save file content
-router.post('/:projectId/save-file', async (req, res) => {
-  try {
-    const { filePath, content } = req.body;
-    const project = await Project.findById(req.params.projectId);
-    if (!project) {
-      return res.status(404).send('Project not found');
-    }
-
-    const fileIndex = project.files.findIndex(file => file.filepath === filePath);
-    if (fileIndex === -1) {
-      return res.status(404).send('File not found');
-    }
-
-    const absolutePath = path.join(__dirname, '..', filePath);
-    fs.writeFileSync(absolutePath, content);
-
-    res.send({ success: true });
   } catch (error) {
     res.status(500).send(error.message);
   }

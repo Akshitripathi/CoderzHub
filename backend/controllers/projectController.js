@@ -102,23 +102,18 @@ exports.deleteProject = async (req, res) => {
     }
 };
 
-
-
 exports.addCollaborator = async (req, res) => {
     try {
         const { projectId, userId } = req.body;
 
-        
         const project = await Project.findById(projectId);
         const user = await User.findById(userId);
         if (!project || !user) return res.status(404).json({ message: 'Project or User not found' });
 
-        
         if (!project.collaborators.includes(userId)) {
             project.collaborators.push(userId);
             await project.save();
 
-            
             user.collaborations.push(projectId);
             await user.save();
         }
@@ -128,7 +123,6 @@ exports.addCollaborator = async (req, res) => {
         res.status(500).json({ message: 'Error adding collaborator', error: error.message });
     }
 };
-
 
 exports.removeCollaborator = async (req, res) => {
     try {
@@ -150,7 +144,6 @@ exports.removeCollaborator = async (req, res) => {
     }
 };
 
-
 exports.likeProject = async (req, res) => {
     try {
         const { projectId, userId } = req.body;
@@ -158,7 +151,6 @@ exports.likeProject = async (req, res) => {
         const project = await Project.findById(projectId);
         if (!project) return res.status(404).json({ message: 'Project not found' });
 
-        // Add like if not already liked
         if (!project.likes.includes(userId)) {
             project.likes.push(userId);
             await project.save();
@@ -170,7 +162,6 @@ exports.likeProject = async (req, res) => {
     }
 };
 
-
 exports.unlikeProject = async (req, res) => {
     try {
         const { projectId, userId } = req.body;
@@ -178,7 +169,6 @@ exports.unlikeProject = async (req, res) => {
         const project = await Project.findById(projectId);
         if (!project) return res.status(404).json({ message: 'Project not found' });
 
-        // Remove like if exists
         project.likes = project.likes.filter(like => like.toString() !== userId);
         await project.save();
 
@@ -187,7 +177,6 @@ exports.unlikeProject = async (req, res) => {
         res.status(500).json({ message: 'Error unliking project', error: error.message });
     }
 };
-
 
 exports.changeProjectStatus = async (req, res) => {
     try {
@@ -215,7 +204,6 @@ exports.getProjectFiles = async (req, res) => {
         const filesDir = path.join(__dirname, '..', 'projects', projectId);
         const files = {};
 
-        // Ensure the directory exists
         if (!fs.existsSync(filesDir)) {
             return res.status(404).json({ message: 'Project files directory not found' });
         }
@@ -243,13 +231,23 @@ exports.saveFileContent = async (req, res) => {
 
         const fullPath = path.join(__dirname, '..', 'projects', projectId, filePath);
 
-        // Ensure the directory exists
         const dir = path.dirname(fullPath);
         if (!fs.existsSync(dir)) {
             fs.mkdirSync(dir, { recursive: true });
         }
 
         fs.writeFileSync(fullPath, content);
+
+        // Check if file already exists in project files
+        const fileIndex = project.files.findIndex(file => file.filepath === filePath);
+        if (fileIndex === -1) {
+            project.files.push({ filename: path.basename(filePath), filepath: filePath });
+        } else {
+            project.files[fileIndex].filename = path.basename(filePath);
+            project.files[fileIndex].filepath = filePath;
+        }
+
+        await project.save();
 
         res.status(200).json({ message: 'File saved successfully' });
     } catch (error) {
