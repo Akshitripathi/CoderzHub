@@ -1,56 +1,54 @@
-import { useParams } from "react-router-dom";
-import { useState, useEffect } from "react";
-import { getProjectById, getProjectFiles } from "../api";
+import axios from 'axios';
+import React, { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
 import "../styles/ProjectDetails.css";
+import ChatIcon from './ChatIcon';
 
-export default function ProjectDetails() {
-  const { id } = useParams();
-  const [project, setProject] = useState(null);
-  const [files, setFiles] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+const ProjectDetails = ({ userId }) => {
+    const { id } = useParams();
+    const [project, setProject] = useState(null);
+    const [files, setFiles] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
-  useEffect(() => {
-    const fetchProjectDetails = async () => {
-      try {
-        const projectResponse = await getProjectById(id);
-        const filesResponse = await getProjectFiles(id);
+    useEffect(() => {
+        const fetchProject = async () => {
+            try {
+                const response = await axios.get(`/api/projects/${id}`);
+                setProject(response.data);
+                setLoading(false);
+            } catch (error) {
+                console.error('Error fetching project:', error);
+                setError(error.message || "Failed to load project details.");
+                setLoading(false);
+            }
+        };
 
-        if (projectResponse.success && filesResponse.success) {
-          setProject(projectResponse.project);
-          setFiles(filesResponse.files);
-        } else {
-          throw new Error("Failed to fetch project details or files.");
-        }
-      } catch (err) {
-        setError(err.message || "Failed to load project details.");
-      } finally {
-        setLoading(false);
-      }
-    };
+        fetchProject();
+    }, [id]);
 
-    fetchProjectDetails();
-  }, [id]);
+    if (loading) return <p>Loading...</p>;
+    if (error) return <p className="error">{error}</p>;
 
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p className="error">{error}</p>;
+    return (
+        <div className="project-details-container">
+            <h1>{project.name}</h1>
+            <p>{project.description}</p>
+            <div className="files-section">
+                <h3>Files</h3>
+                <ul>
+                    {files.map((file) => (
+                        <li key={file.filename}>
+                            <a href={`http://localhost:5000/${file.filepath}`} target="_blank" rel="noopener noreferrer">
+                                {file.filename}
+                            </a>
+                        </li>
+                    ))}
+                </ul>
+            </div>
+            <ChatIcon projectId={id} userId={userId} />
+        </div>
+    );
+};
 
-  return (
-    <div className="project-details-container">
-      <h2>{project.name}</h2>
-      <p>{project.description}</p>
-      <div className="files-section">
-        <h3>Files</h3>
-        <ul>
-          {files.map((file) => (
-            <li key={file.filename}>
-              <a href={`http://localhost:5000/${file.filepath}`} target="_blank" rel="noopener noreferrer">
-                {file.filename}
-              </a>
-            </li>
-          ))}
-        </ul>
-      </div>
-    </div>
-  );
-}
+export default ProjectDetails;

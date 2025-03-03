@@ -1,22 +1,24 @@
-import { useEffect, useRef, useState } from "react";
-import { useParams } from "react-router-dom";
-import { EditorState } from "@codemirror/state";
-import { EditorView } from "@codemirror/view";
+import { autocompletion } from "@codemirror/autocomplete";
+import { defaultKeymap, indentWithTab } from "@codemirror/commands";
+import { cpp } from "@codemirror/lang-cpp";
 import { javascript } from "@codemirror/lang-javascript";
 import { python } from "@codemirror/lang-python";
-import { cpp } from "@codemirror/lang-cpp";
 import { xml } from "@codemirror/lang-xml";
-import { oneDark } from "@codemirror/theme-one-dark";
-import { keymap } from "@codemirror/view";
-import { defaultKeymap, indentWithTab } from "@codemirror/commands";
-import { autocompletion } from "@codemirror/autocomplete";
 import { lintGutter } from "@codemirror/lint";
-import { FaFolderPlus, FaFileAlt, FaSave, FaPlay, FaMoon, FaSun, FaTrash, FaEdit } from 'react-icons/fa';
+import { EditorState } from "@codemirror/state";
+import { oneDark } from "@codemirror/theme-one-dark";
+import { EditorView, keymap } from "@codemirror/view";
+import { useEffect, useRef, useState } from "react";
+import { FaEdit, FaFileAlt, FaMoon, FaPlay, FaSave, FaSun, FaTrash } from 'react-icons/fa';
+import { useParams } from "react-router-dom";
+import { compileCode, deleteFile, getProjectFiles, renameFile, saveFileContent } from "../api";
+import { useAuth } from "../context/AuthContext"; // Import useAuth hook
 import '../styles/Codespace.css';
-import { getProjectFiles, saveFileContent, compileCode, deleteFile, renameFile } from "../api";
+import ChatIcon from './ChatIcon'; // Import ChatIcon component
 
 export default function CodeEditor({ language = "JavaScript" }) {
   const { projectId } = useParams();
+  const { user } = useAuth(); // Get the user from the AuthContext
   const editorRef = useRef(null);
   const editorViewRef = useRef(null);
   const [theme, setTheme] = useState("dark");
@@ -161,10 +163,11 @@ export default function CodeEditor({ language = "JavaScript" }) {
           <div ref={editorRef} className={`editor-wrapper ${theme}-theme`}></div>
         </div>
         <div className="output-panel">
-          <h3>Output</h3>         
+          <h3>Output</h3>
           <pre>{output}</pre>
         </div>
       </div>
+      <ChatIcon projectId={projectId} userId={user?.id} /> {/* Add ChatIcon component */}
     </div>
   );
 }

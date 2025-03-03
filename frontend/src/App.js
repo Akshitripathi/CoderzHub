@@ -1,24 +1,24 @@
-import "./App.css";
-import { Routes, Route } from "react-router-dom"; // ✅ No BrowserRouter here!
-import Signup from "./components/Signup";
-import Login from "./components/Login";
-import Profile from "./components/Profile";
-import Navbar from "./components/Navbar";
-import Home from "./components/Home";
-import Settings from "./components/Settings";
-import Dashboard from "./components/Dashboard";
-import AdminForm from "./components/AdminForm";
-import Project from "./components/Project";
-import Codespace from "./components/Codespace";
-import EditProfile from "./components/EditProfile";
-import ProjectDetails from "./components/ProjectDetails";
 import { useEffect, useState } from "react";
+import { Route, Routes } from "react-router-dom";
+import "./App.css";
+import AdminForm from "./components/AdminForm";
+import Codespace from "./components/Codespace";
+import Dashboard from "./components/Dashboard";
+import EditProfile from "./components/EditProfile";
 import Footer from "./components/Footer";
-import { AuthProvider } from "./context/AuthContext.js";
-import ProtectedRoute from "./components/ProtectedRoute";
+import Home from "./components/Home";
+import Login from "./components/Login";
+import Navbar from "./components/Navbar";
+import Profile from "./components/Profile";
+import Project from "./components/Project";
+import ProjectDetails from "./components/ProjectDetails";
+import Settings from "./components/Settings";
+import Signup from "./components/Signup";
+import { AuthProvider, useAuth } from "./context/AuthContext.js";
 
 function App() {
   const [dots, setDots] = useState([]);
+  const { user } = useAuth();
 
   useEffect(() => {
     const numDots = 30;
@@ -58,14 +58,15 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/login" element={<Login />} />
-            <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
-            <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
-            <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-            <Route path="/admin-form" element={<ProtectedRoute><AdminForm /></ProtectedRoute>} />
-            <Route path="/project" element={<ProtectedRoute><Project /></ProtectedRoute>} />
-            <Route path="/codespace/:projectId" element={<ProtectedRoute><Codespace /></ProtectedRoute>} />
-            <Route path="/edit-profile" element={<ProtectedRoute><EditProfile /></ProtectedRoute>} />
-            <Route path="/project/:id" element={<ProtectedRoute><ProjectDetails /></ProtectedRoute>} />
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/settings" element={<Settings />} />
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/admin-form" element={<AdminForm />} />
+            <Route path="/project" element={<Project />} />
+            <Route path="/codespace/:projectId" element={<Codespace />} />
+            <Route path="/edit-profile" element={<EditProfile />} />
+            <Route path="/project/:id" element={<ProjectDetails userId={user?.id} />} />
+
           </Routes>
           <Footer />
         </AuthProvider>
