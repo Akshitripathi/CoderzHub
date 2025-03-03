@@ -1,11 +1,11 @@
-import { autocompletion } from "@codemirror/autocomplete";
-import { defaultKeymap, indentWithTab } from "@codemirror/commands";
-import { cpp } from "@codemirror/lang-cpp";
+import { useEffect, useRef, useState } from "react";
+import { useParams } from "react-router-dom";
+import { EditorState } from "@codemirror/state";
+import { EditorView } from "@codemirror/view";
 import { javascript } from "@codemirror/lang-javascript";
 import { python } from "@codemirror/lang-python";
+import { cpp } from "@codemirror/lang-cpp";
 import { xml } from "@codemirror/lang-xml";
-import { lintGutter } from "@codemirror/lint";
-import { EditorState } from "@codemirror/state";
 import { oneDark } from "@codemirror/theme-one-dark";
 import { keymap } from "@codemirror/view";
 import { defaultKeymap, indentWithTab } from "@codemirror/commands";
@@ -13,7 +13,8 @@ import { autocompletion } from "@codemirror/autocomplete";
 import { lintGutter } from "@codemirror/lint";
 import { FaFolderPlus, FaFileAlt, FaSave, FaPlay, FaMoon, FaSun, FaTrash, FaEdit } from 'react-icons/fa';
 import '../styles/Codespace.css';
-import { getProjectFiles, saveFileContent, compileCode, deleteFile, renameFile } from "../api";
+import { getAllProjectFiles, saveFileContent, compileCode, deleteFile, renameFile, getFileContent } from "../api";
+import { useAuth } from "../context/AuthContext"; // Add this import
 
 function CodeEditor({ language = "JavaScript" }) {
   const { projectId } = useParams();
@@ -102,8 +103,38 @@ function CodeEditor({ language = "JavaScript" }) {
     if (currentFile) {
       const content = editorViewRef.current.state.doc.toString();
       setFiles(files.map(file => file.filepath === currentFile ? { ...file, content } : file));
-      await saveFileContent(projectId, currentFile, content);
+      try {
+        const response = await saveFileContent(projectId, currentFile, content);
+        if (response.success) {
+          console.log('File saved successfully');
+        } else {
+          console.error('Failed to save file:', response.message);
+        }
+      } catch (error) {
+        console.error('Error saving file:', error);
+      }
     }
+  };
+
+  const handleDeleteFile = async (file) => {
+    await deleteFile(projectId, file);
+    const newFiles = files.filter(f => f.filepath !== file);
+    setFiles(newFiles);
+    setCurrentFile(newFiles.length > 0 ? newFiles[0].filepath : null);
+  };
+
+  const handleRenameFile = async (oldFile, newFile) => {
+    const oldFilename = oldFile.split('/').pop(); 
+    const newFilename = newFile.split('/').pop(); 
+    const newFilePath = oldFile.replace(oldFilename, newFilename); // Construct the new file path
+    console.log("Old Filename:", oldFilename); // Debugging statement
+    console.log("New Filename:", newFilename); // Debugging statement
+    console.log("New File Path:", newFilePath); // Debugging statement
+    
+    await renameFile(projectId, oldFilename, newFilename);
+    const newFiles = files.map(file => file.filepath === oldFile ? { ...file, filename: newFilename, filepath: newFilePath } : file);
+    setFiles(newFiles);
+    setCurrentFile(newFilePath);
   };
 
   const handleFileClick = async (filePath) => {
@@ -158,7 +189,9 @@ function CodeEditor({ language = "JavaScript" }) {
           <div className="file-list">
             {files.map(file => (
               <div key={file.filepath} className={`file-item ${currentFile === file.filepath ? 'active' : ''}`} onClick={() => handleFileClick(file.filepath)}>
-                {file.filename}
+                {file.filename} 
+                <FaEdit onClick={(e) => { e.stopPropagation(); handleRenameFile(file.filepath, prompt("Enter new file name", file.filename)) }} />
+                <FaTrash onClick={(e) => { e.stopPropagation(); handleDeleteFile(file.filepath) }} />
               </div>
             ))}
           </div>
@@ -171,10 +204,11 @@ function CodeEditor({ language = "JavaScript" }) {
           <div ref={editorRef} className={`editor-wrapper ${theme}-theme`}></div>
         </div>
         <div className="output-panel">
-          <h3>Output</h3>
+          <h3>Output</h3>         
           <pre>{output}</pre>
         </div>
       </div>
+      {/* <ChatIcon  projectId={projectId}/> */}
     </div>
   );
 }

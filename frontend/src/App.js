@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { Route, Routes } from "react-router-dom";
 import "./App.css";
-import { Routes, Route } from "react-router-dom"; // ✅ No BrowserRouter here!
 import Signup from "./components/Signup";
 import Login from "./components/Login";
 import Profile from "./components/Profile";
@@ -14,10 +13,10 @@ import Project from "./components/Project";
 import Codespace from "./components/Codespace";
 import EditProfile from "./components/EditProfile";
 import ProjectDetails from "./components/ProjectDetails";
-import { useEffect, useState } from "react";
 import Footer from "./components/Footer";
 import { AuthProvider } from "./context/AuthContext.js";
 import ProtectedRoute from "./components/ProtectedRoute";
+import { useAuth } from "./context/AuthContext"; // Add this import
 
 function App() {
   const [dots, setDots] = useState([]);

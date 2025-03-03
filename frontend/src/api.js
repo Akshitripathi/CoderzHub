@@ -1,5 +1,4 @@
 
-const API_BASE_URL = 'http://localhost:5000/api';
 
 export const registerUser = async (userData) => {
     try {
@@ -297,27 +296,7 @@ export async function renameFile(projectId, oldFilename, newFilename) {
   }
 }
 
-export const getFileContent = async (projectId, filePath) => {
-    const token = localStorage.getItem("token");
-    if (!token) {
-        throw new Error("No authentication token found!");
-    }
 
-    const response = await fetch(`http://localhost:5000/api/project/${projectId}/files/content`, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`
-        },
-        body: JSON.stringify({ filePath })
-    });
-
-    if (!response.ok) {
-        throw new Error("Failed to fetch file content");
-    }
-
-    return response.json();
-};
 
 export const getFileContent = async (projectId, filePath) => {
     const token = localStorage.getItem("token");
