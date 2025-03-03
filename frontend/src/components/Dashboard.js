@@ -1,9 +1,9 @@
-import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Home, Folder, Users, UploadCloud, Plus } from "lucide-react";
-import { LineChart, Line, BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid } from "recharts";
-import { getProjects, fetchFriends } from "../api"; // ✅ FIXED IMPORTS
+import { Folder, Plus, Users } from "lucide-react";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { Bar, BarChart, CartesianGrid, Line, LineChart, Tooltip, XAxis, YAxis } from "recharts";
+import { fetchFriends, getProjects } from "../api"; // ✅ FIXED IMPORTS
 import "../styles/Dashboard.css";
 
 export default function Dashboard() {

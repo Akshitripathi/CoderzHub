@@ -72,7 +72,7 @@ const register = async (req, res) => {
 const login = async (req, res) => {
     try {
         const { identifier, password } = req.body;
-        const user = await User.findOne({ $or: [{ email: identifier }, { name: identifier }] });
+        const user = await User.findOne({ $or: [{ email: identifier }, { username: identifier }] });
 
         if (!user) {
             return res.status(400).json({ success: false, message: "User not found" });

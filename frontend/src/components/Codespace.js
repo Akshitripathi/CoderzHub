@@ -1,22 +1,23 @@
-import { useEffect, useRef, useState } from "react";
-import { useParams } from "react-router-dom";
-import { EditorState } from "@codemirror/state";
-import { EditorView } from "@codemirror/view";
+import { autocompletion } from "@codemirror/autocomplete";
+import { defaultKeymap, indentWithTab } from "@codemirror/commands";
+import { cpp } from "@codemirror/lang-cpp";
 import { javascript } from "@codemirror/lang-javascript";
 import { python } from "@codemirror/lang-python";
-import { cpp } from "@codemirror/lang-cpp";
 import { xml } from "@codemirror/lang-xml";
+import { lintGutter } from "@codemirror/lint";
+import { EditorState } from "@codemirror/state";
 import { oneDark } from "@codemirror/theme-one-dark";
 import { keymap } from "@codemirror/view";
 import { defaultKeymap, indentWithTab } from "@codemirror/commands";
 import { autocompletion } from "@codemirror/autocomplete";
 import { lintGutter } from "@codemirror/lint";
-import { FaFolderPlus, FaFileAlt, FaSave, FaPlay, FaMoon, FaSun } from 'react-icons/fa';
+import { FaFolderPlus, FaFileAlt, FaSave, FaPlay, FaMoon, FaSun, FaTrash, FaEdit } from 'react-icons/fa';
 import '../styles/Codespace.css';
-import { getAllProjectFiles, saveFileContent, compileCode, getFileContent } from "../api";
+import { getProjectFiles, saveFileContent, compileCode, deleteFile, renameFile } from "../api";
 
 function CodeEditor({ language = "JavaScript" }) {
   const { projectId } = useParams();
+  const { user } = useAuth(); // Get the user from the AuthContext
   const editorRef = useRef(null);
   const editorViewRef = useRef(null);
   const [theme, setTheme] = useState("dark");
@@ -25,7 +26,6 @@ function CodeEditor({ language = "JavaScript" }) {
   const [currentFile, setCurrentFile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [profileUsername, setProfileUsername] = useState(null);
 
   const languageExtensions = {
     JavaScript: javascript(),
@@ -34,21 +34,6 @@ function CodeEditor({ language = "JavaScript" }) {
     Java: cpp(),
     XML: xml(),
   };
-
-  useEffect(() => {
-    const fetchUserProfile = async () => {
-      try {
-        const response = await fetchProfile();
-        if (response.success) {
-          setProfileUsername(response.user.username); 
-        }
-      } catch (error) {
-        console.error("Error fetching profile:", error);
-      }
-    };
-
-    fetchUserProfile();
-  }, []);
 
   useEffect(() => {
     const fetchFiles = async () => {
@@ -117,16 +102,7 @@ function CodeEditor({ language = "JavaScript" }) {
     if (currentFile) {
       const content = editorViewRef.current.state.doc.toString();
       setFiles(files.map(file => file.filepath === currentFile ? { ...file, content } : file));
-      try {
-        const response = await saveFileContent(projectId, currentFile, content);
-        if (response.success) {
-          console.log('File saved successfully');
-        } else {
-          console.error('Failed to save file:', response.message);
-        }
-      } catch (error) {
-        console.error('Error saving file:', error);
-      }
+      await saveFileContent(projectId, currentFile, content);
     }
   };
 
@@ -195,11 +171,10 @@ function CodeEditor({ language = "JavaScript" }) {
           <div ref={editorRef} className={`editor-wrapper ${theme}-theme`}></div>
         </div>
         <div className="output-panel">
-          <h3>Output</h3>         
+          <h3>Output</h3>
           <pre>{output}</pre>
         </div>
       </div>
-      <ChatIcon  projectId={projectId} username={profileUsername|| user?.username}/>
     </div>
   );
 }

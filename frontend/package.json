@@ -21,6 +21,7 @@
     "@radix-ui/react-slot": "^1.1.2",
     "@shadcn/ui": "^0.0.4",
     "@uiw/react-codemirror": "^4.23.8",
+    "axios": "^1.8.1",
     "class-variance-authority": "^0.7.1",
     "codemirror": "^5.65.18",
     "cra-template": "^1.3.0",
