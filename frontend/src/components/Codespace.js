@@ -195,39 +195,57 @@ function CodeEditor({ language = "JavaScript" }) {
 
   return (
     <div className="codespace-container">
-      <div className="navbar">
-        <h1>CoderzHub Editor</h1>
-        <button className="theme-toggle" onClick={() => setTheme(theme === "light" ? "dark" : "light")}>
-          {theme === "light" ? <FaMoon /> : <FaSun />}
-        </button>
-      </div>
-      <div className="codespace-layout">
-        <div className="file-explorer">
-          <h3>Explorer</h3>
-          <button onClick={() => handleAddFile(prompt("Enter file name"))}><FaFileAlt /> New File</button>
-          <div className="file-list">
-            {files.map(file => (
-              <div key={file.filepath} className={`file-item ${currentFile === file.filepath ? 'active' : ''}`} onClick={() => handleFileClick(file.filepath)}>
-                {file.filename} 
-                <FaEdit onClick={(e) => { e.stopPropagation(); handleRenameFile(file.filepath, prompt("Enter new file name", file.filename)) }} />
-                <FaTrash onClick={(e) => { e.stopPropagation(); handleDeleteFile(file.filepath) }} />
-              </div>
-            ))}
-          </div>
+        <div className="navbar">
+            <h1>CoderzHub Editor</h1>
+            <button className="theme-toggle">
+                {theme === "light" ? <FaMoon size={18} /> : <FaSun size={18} />}
+            </button>
         </div>
-        <div className="code-editor">
-          <div className="editor-toolbar">
-            <button className="toolbar-btn" onClick={handleSaveFile}><FaSave /> Save</button>
-            <button className="toolbar-btn" onClick={handleCompileCode}><FaPlay /> Run</button>
-          </div>
-          <div ref={editorRef} className={`editor-wrapper ${theme}-theme`}></div>
+        <div className="codespace-layout">
+            <div className="file-explorer">
+                <h3>Explorer</h3>
+                <button className="toolbar-btn" onClick={() => handleAddFile(prompt("Enter file name"))}>
+                    <FaFileAlt /> New File
+                </button>
+                <div className="file-list">
+                    {files.map(file => (
+                        <div 
+                            key={file.filepath} 
+                            className={`file-item ${currentFile === file.filepath ? 'active' : ''}`}
+                            onClick={() => handleFileClick(file.filepath)}
+                        >
+                            <span>{file.filename}</span>
+                            <div className="file-actions">
+                                <FaEdit onClick={(e) => { 
+                                    e.stopPropagation(); 
+                                    handleRenameFile(file.filepath, prompt("Enter new file name", file.filename))
+                                }} />
+                                <FaTrash onClick={(e) => { 
+                                    e.stopPropagation(); 
+                                    handleDeleteFile(file.filepath)
+                                }} />
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </div>
+            <div className="code-editor">
+                <div className="editor-toolbar">
+                    <button className="toolbar-btn" onClick={handleSaveFile}>
+                        <FaSave /> Save
+                    </button>
+                    <button className="toolbar-btn" onClick={handleCompileCode}>
+                        <FaPlay /> Run
+                    </button>
+                </div>
+                <div ref={editorRef} className={`editor-wrapper ${theme}-theme`} />
+            </div>
+            <div className="output-panel">
+                <h3>Output</h3>
+                <pre>{output}</pre>
+            </div>
         </div>
-        <div className="output-panel">
-          <h3>Output</h3>         
-          <pre>{output}</pre>
-        </div>
-      </div>
-      <ChatIcon  projectId={projectId} username={profileUsername || user?.username}/>
+        <ChatIcon projectId={projectId} username={profileUsername || user?.username} />
     </div>
   );
 }

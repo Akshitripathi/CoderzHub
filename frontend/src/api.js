@@ -171,7 +171,7 @@ export const createProject = async (projectData) => {
 
 export const getProjects = async () => {
     const token = localStorage.getItem("token");
-    return makeRequest("/project/get-all-project", "GET", null, token);
+    return makeRequest("/get-all-project", "GET", null, token);
 };
 
 export const getProjectById = async (id) => {
