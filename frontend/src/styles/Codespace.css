@@ -6,8 +6,10 @@
     height: 100vh;
     background-color: #1a1a1a;
     color: #e0e0e0;
-    font-family: 'Inter', 'Segoe UI', sans-serif;
-    margin: 0;
+    font-family: "Quantico", serif;
+    font-weight: 400;
+    font-style: normal;
+    margin-top: 10rem;
     padding: 1rem;
 }
 

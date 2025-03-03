@@ -14,6 +14,7 @@ export default function AdminForm() {
   });
 
   const [collaboratorInput, setCollaboratorInput] = useState(""); // Username or Email
+  const [collaborators, setCollaborators] = useState([]); // Store collaborator names
   const [errors, setErrors] = useState({});
   const navigate = useNavigate();
 
@@ -47,6 +48,11 @@ export default function AdminForm() {
             ...prevData,
             collaborators: [...prevData.collaborators, data.userId],
           }));
+
+          setCollaborators((prevCollaborators) => [
+            ...prevCollaborators,
+            usernameInput,
+          ]);
 
           setCollaboratorInput(""); // Clear input field
           console.log("Collaborator added:", data.userId);
@@ -155,6 +161,11 @@ export default function AdminForm() {
         <button type="button" className="add-btn" onClick={handleAddCollaborator}>
           Add Collaborator
         </button>
+        <ul>
+          {collaborators.map((collaborator, index) => (
+            <li key={index}>{collaborator}</li>
+          ))}
+        </ul>
 
         <button type="submit">Create Project</button>
       </form>
