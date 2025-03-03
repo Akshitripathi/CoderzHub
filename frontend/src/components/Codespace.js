@@ -124,6 +124,8 @@ function CodeEditor({ language = "JavaScript" }) {
         const response = await saveFileContent(projectId, currentFile, content);
         if (response.success) {
           console.log('File saved successfully');
+          const updatedFiles = await getAllProjectFiles(projectId); // Fetch updated files
+          setFiles(Array.isArray(updatedFiles) ? updatedFiles : []); // Update the files state
         } else {
           console.error('Failed to save file:', response.message);
         }
