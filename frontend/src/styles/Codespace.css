@@ -6,10 +6,8 @@
     height: 100vh;
     background-color: #1a1a1a;
     color: #e0e0e0;
-    font-family: "Quantico", serif;
-    font-weight: 400;
-    font-style: normal;
-    margin-top: 10rem;
+    font-family: 'Inter', 'Segoe UI', sans-serif;
+    margin: 0;
     padding: 1rem;
 }
 
@@ -196,8 +194,6 @@
 .file-list {
     overflow-y: auto;
     max-height: calc(100% - 100px);
-    font-family: 'Fira Code', 'Consolas', monospace;
-    font-size: 13px;
 }
 
 .file-actions {
@@ -263,13 +259,12 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 4px 8px;
+    padding: 0.6rem 0.8rem;
     margin: 0.3rem 0;
     border-radius: 6px;
     cursor: pointer;
     transition: all 0.2s ease;
     background-color: #2d2d2d;
-    border-left: 2px solid transparent;
 }
 
 .file-item:hover {
@@ -278,8 +273,8 @@
 }
 
 .file-item.active {
-    background-color: #37373d;
-    border-left: 2px solid #4a9eff;
+    background-color: #3a3a3a;
+    border-left: 3px solid #4a9eff;
 }
 
 .file-item svg {
@@ -358,10 +353,8 @@
 .editor-wrapper {
     position: relative;
     height: calc(100% - 60px);
-    padding: 0;
+    padding: 1rem;
     width: 100%;
-    font-family: 'Fira Code', 'Consolas', monospace;
-    background-color: #1e1e1e;
 }
 
 .theme-toggle {
@@ -386,93 +379,13 @@
 /* CodeMirror specific styles */
 .cm-editor {
     height: 100% !important;
+    font-family: 'Fira Code', monospace;
     font-size: 14px;
     line-height: 1.6;
-    text-align: left;
 }
 
 .cm-editor.cm-focused {
     outline: none;
-}
-
-/* Line numbers styling */
-.cm-gutters {
-    border-right: 1px solid #404040;
-    background-color: #1e1e1e;
-    padding: 0 3px;
-    min-width: 40px;
-}
-
-.cm-lineNumbers {
-    color: #858585;
-    font-size: 12px;
-    padding: 0 8px;
-}
-
-.cm-activeLineGutter {
-    background-color: #2c313a;
-}
-
-/* Line highlight */
-.cm-activeLine {
-    background-color: rgba(44, 49, 58, 0.5) !important;
-}
-
-/* Selection styling */
-.cm-selectionBackground {
-    background: #264f78 !important;
-}
-
-.cm-focused .cm-selectionBackground {
-    background: #264f78 !important;
-}
-
-/* Code syntax highlighting */
-.cm-content {
-    padding: 4px 0;
-    color: #d4d4d4;
-}
-
-.cm-line {
-    padding: 0 8px;
-}
-
-/* Enhanced syntax highlighting */
-.cm-keyword { color: #569cd6; font-weight: bold; }
-.cm-operator { color: #d4d4d4; }
-.cm-variable { color: #9cdcfe; }
-.cm-string { color: #ce9178; }
-.cm-comment { color: #6a9955; font-style: italic; }
-.cm-number { color: #b5cea8; }
-.cm-property { color: #9cdcfe; }
-.cm-function { color: #dcdcaa; }
-.cm-definition { color: #4ec9b0; }
-
-/* Code folding */
-.cm-foldGutter {
-    width: 14px;
-    color: #858585;
-    text-align: center;
-}
-
-.cm-foldGutter-open, .cm-foldGutter-folded {
-    cursor: pointer;
-}
-
-.cm-foldGutter-open:hover, .cm-foldGutter-folded:hover {
-    color: #c5c5c5;
-}
-
-/* Cursor styling */
-.cm-cursor {
-    border-left: 2px solid #80a4c2 !important;
-}
-
-/* Matching brackets */
-.cm-matchingBracket {
-    background-color: #4c4c4c;
-    color: #fff !important;
-    border: 1px solid #565656;
 }
 
 /* Light theme customization */
@@ -569,8 +482,6 @@
     border-radius: 8px;
     padding: 1rem;
     box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
-    font-family: 'Fira Code', 'Consolas', monospace;
-    font-size: 13px;
 }
 
 .output-content {
@@ -586,8 +497,6 @@
     margin: 0;
     color: #00ff00;
     white-space: pre-wrap;
-    padding: 8px;
-    text-align: left;
 }
 
 .output-panel h3 {
