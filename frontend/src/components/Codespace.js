@@ -13,12 +13,13 @@ import { autocompletion } from "@codemirror/autocomplete";
 import { lintGutter } from "@codemirror/lint";
 import { FaFolderPlus, FaFileAlt, FaSave, FaPlay, FaMoon, FaSun, FaTrash, FaEdit } from 'react-icons/fa';
 import '../styles/Codespace.css';
-import { getAllProjectFiles, saveFileContent, compileCode, deleteFile, renameFile, getFileContent } from "../api";
-import { useAuth } from "../context/AuthContext"; // Add this import
+import { getAllProjectFiles, saveFileContent, compileCode, deleteFile, renameFile, getFileContent, fetchProfile } from "../api";
+import { useAuth } from "../context/AuthContext"; 
+import ChatIcon from "./ChatIcon.js";
 
 function CodeEditor({ language = "JavaScript" }) {
   const { projectId } = useParams();
-  const { user } = useAuth(); // Get the user from the AuthContext
+  const { user } = useAuth(); 
   const editorRef = useRef(null);
   const editorViewRef = useRef(null);
   const [theme, setTheme] = useState("dark");
@@ -27,6 +28,7 @@ function CodeEditor({ language = "JavaScript" }) {
   const [currentFile, setCurrentFile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [profileUsername, setProfileUsername] = useState(null);
 
   const languageExtensions = {
     JavaScript: javascript(),
@@ -35,6 +37,21 @@ function CodeEditor({ language = "JavaScript" }) {
     Java: cpp(),
     XML: xml(),
   };
+
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      try {
+        const response = await fetchProfile();
+        if (response.success) {
+          setProfileUsername(response.user.username); // Extract username from profile
+        }
+      } catch (error) {
+        console.error("Error fetching profile:", error);
+      }
+    };
+
+    fetchUserProfile();
+  }, []);
 
   useEffect(() => {
     const fetchFiles = async () => {
@@ -208,7 +225,7 @@ function CodeEditor({ language = "JavaScript" }) {
           <pre>{output}</pre>
         </div>
       </div>
-      {/* <ChatIcon  projectId={projectId}/> */}
+      <ChatIcon  projectId={projectId} username={profileUsername || user?.username}/>
     </div>
   );
 }

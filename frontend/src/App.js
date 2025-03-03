@@ -12,7 +12,6 @@ import AdminForm from "./components/AdminForm";
 import Project from "./components/Project";
 import Codespace from "./components/Codespace";
 import EditProfile from "./components/EditProfile";
-import ProjectDetails from "./components/ProjectDetails";
 import Footer from "./components/Footer";
 import { AuthProvider } from "./context/AuthContext.js";
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -67,7 +66,6 @@ function App() {
             <Route path="/project" element={<ProtectedRoute><Project /></ProtectedRoute>} />
             <Route path="/codespace/:projectId" element={<ProtectedRoute><Codespace /></ProtectedRoute>} />
             <Route path="/edit-profile" element={<ProtectedRoute><EditProfile /></ProtectedRoute>} />
-            <Route path="/project/:id" element={<ProtectedRoute><ProjectDetails /></ProtectedRoute>} />
           </Routes>
           <Footer />
         </AuthProvider>

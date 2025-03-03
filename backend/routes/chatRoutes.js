@@ -3,6 +3,6 @@ const router = express.Router();
 const chatController = require('../controllers/chatController');
 
 router.get('/:projectId', chatController.getChats);
-router.post('/', chatController.addChat);
+router.post('/add', chatController.addChat); // Update the route to '/add'
 
 module.exports = router;

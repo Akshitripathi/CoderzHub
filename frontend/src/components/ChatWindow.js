@@ -28,7 +28,7 @@ const ChatWindow = ({ projectId, username, onClose }) => {
         }
     
         try {
-            const response = await axios.post('http://localhost:5000/api/chats', { 
+            const response = await axios.post('http://localhost:5000/api/chats/add', { 
                 projectId, 
                 username, 
                 message: newMessage 

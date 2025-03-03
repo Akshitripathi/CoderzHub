@@ -296,8 +296,6 @@ export async function renameFile(projectId, oldFilename, newFilename) {
   }
 }
 
-
-
 export const getFileContent = async (projectId, filePath) => {
     const token = localStorage.getItem("token");
     if (!token) {
