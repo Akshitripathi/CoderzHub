@@ -11,7 +11,6 @@ export const registerUser = async (userData) => {
     }
 };
 
-
 export const requestPasswordReset = async (email) => {
     const response = await fetch('http://localhost:5000/api/auth/request-password-reset', {
         method: "POST",
@@ -30,7 +29,6 @@ export const resetPassword = async (token, newPassword) => {
     return response.json();
 };
 
-
 export const verifyEmail = async (token) => {
     try {
         const response = await fetch(`http://localhost:5000/api/auth/verify-email/${token}`, {
@@ -42,7 +40,6 @@ export const verifyEmail = async (token) => {
         return { success: false, message: "Verification failed. Try again later." };
     }
 };
-
 
 export const loginUser = async (userData) => {
     const response = await fetch("http://localhost:5000/api/auth/login", {
@@ -62,8 +59,6 @@ export const loginUser = async (userData) => {
     return data;
 };
   
-
-
 export const fetchProfile = async () => {
     const token = localStorage.getItem("token");
     console.log("Token from localStorage:", token); 
@@ -111,7 +106,6 @@ export const updateProfile = async (formData) => {
     return response.json();
 };
 
-
 export const fetchFriends = async () => {
     const token = localStorage.getItem("token");
     if (!token) {
@@ -132,7 +126,6 @@ export const fetchFriends = async () => {
 
     return response.json();
 };
-
 
 
 const API_URL = "http://localhost:5000/api/project";
@@ -173,7 +166,6 @@ export const createProject = async (projectData) => {
     return response;
 };
 
-
 export const getProjects = async () => {
     const token = localStorage.getItem("token");
     return makeRequest("/get-all-project", "GET", null, token);
@@ -194,7 +186,6 @@ export const deleteProject = async (id) => {
     return makeRequest(`/delete-project/${id}`, "DELETE", null, token);
 };
 
-
 export const addCollaborator = async (projectId, collaboratorData) => {
     const token = localStorage.getItem("token");
     return makeRequest("/add-collaborator-project", "POST", { projectId, ...collaboratorData }, token);
@@ -204,7 +195,6 @@ export const removeCollaborator = async (projectId, collaboratorId) => {
     const token = localStorage.getItem("token");
     return makeRequest("/remove-collaborator-project", "POST", { projectId, collaboratorId }, token);
 };
-
 
 export const likeProject = async (projectId) => {
     const token = localStorage.getItem("token");
@@ -221,14 +211,15 @@ export const changeProjectStatus = async (projectId, newStatus) => {
     return makeRequest("/change-status-project", "POST", { projectId, newStatus }, token);
 };
 
-export const getProjectFiles = async (projectId) => {
+
+export const getAllProjectFiles = async (projectId) => {
     const token = localStorage.getItem("token");
     const response = await makeRequest(`/get-project-files/${projectId}`, "GET", null, token);
-    console.log("API response for project files:", response);
+    console.log("API response for all project files:", response);
     return Array.isArray(response.files) ? response.files : [];
 };
 
-const API_BASE_URL = 'http://localhost:5000/api';
+
 
 const makeRequest1 = async (url, options) => {
     try {
@@ -245,7 +236,7 @@ const makeRequest1 = async (url, options) => {
 };
 
 export const saveFileContent = async (projectId, filePath, content) => {
-    const url = `${API_BASE_URL}/project/${projectId}/save-file`;
+    const url = `${API_URL}/${projectId}/save-file`;
     console.log("Saving file to URL:", url); // Debugging
     console.log("Project ID:", projectId); // Debugging
     console.log("File Path:", filePath); // Debugging
@@ -271,7 +262,7 @@ export const compileCode = async (language, code) => {
 
 export async function deleteFile(projectId, filename) {
   try {
-    const response = await fetch(`${API_BASE_URL}/project/${projectId}/files/${filename}`, {
+    const response = await fetch(`${API_URL}/${projectId}/files/${filename}`, {
       method: 'DELETE',
     });
     const data = await response.json();
@@ -284,13 +275,16 @@ export async function deleteFile(projectId, filename) {
 
 export async function renameFile(projectId, oldFilename, newFilename) {
   try {
-    const response = await fetch(`${API_BASE_URL}/project/${projectId}/files/${oldFilename}`, {
+    const response = await fetch(`http://localhost:5000/api/project/${projectId}/files/${oldFilename}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({ newFilename }),
     });
+    if (!response.ok) {
+      throw new Error('Failed to rename file');
+    }
     const data = await response.json();
     return data;
   } catch (error) {
@@ -298,3 +292,25 @@ export async function renameFile(projectId, oldFilename, newFilename) {
     throw error;
   }
 }
+
+export const getFileContent = async (projectId, filePath) => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+        throw new Error("No authentication token found!");
+    }
+
+    const response = await fetch(`http://localhost:5000/api/project/${projectId}/files/content`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+        },
+        body: JSON.stringify({ filePath })
+    });
+
+    if (!response.ok) {
+        throw new Error("Failed to fetch file content");
+    }
+
+    return response.json();
+};

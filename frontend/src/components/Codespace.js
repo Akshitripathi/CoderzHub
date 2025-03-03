@@ -11,11 +11,11 @@ import { keymap } from "@codemirror/view";
 import { defaultKeymap, indentWithTab } from "@codemirror/commands";
 import { autocompletion } from "@codemirror/autocomplete";
 import { lintGutter } from "@codemirror/lint";
-import { FaFolderPlus, FaFileAlt, FaSave, FaPlay, FaMoon, FaSun, FaTrash, FaEdit } from 'react-icons/fa';
+import { FaFolderPlus, FaFileAlt, FaSave, FaPlay, FaMoon, FaSun } from 'react-icons/fa';
 import '../styles/Codespace.css';
-import { getProjectFiles, saveFileContent, compileCode, deleteFile, renameFile } from "../api";
+import { getAllProjectFiles, saveFileContent, compileCode, getFileContent } from "../api";
 
-export default function CodeEditor({ language = "JavaScript" }) {
+function CodeEditor({ language = "JavaScript" }) {
   const { projectId } = useParams();
   const editorRef = useRef(null);
   const editorViewRef = useRef(null);
@@ -25,6 +25,7 @@ export default function CodeEditor({ language = "JavaScript" }) {
   const [currentFile, setCurrentFile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [profileUsername, setProfileUsername] = useState(null);
 
   const languageExtensions = {
     JavaScript: javascript(),
@@ -35,10 +36,25 @@ export default function CodeEditor({ language = "JavaScript" }) {
   };
 
   useEffect(() => {
+    const fetchUserProfile = async () => {
+      try {
+        const response = await fetchProfile();
+        if (response.success) {
+          setProfileUsername(response.user.username); 
+        }
+      } catch (error) {
+        console.error("Error fetching profile:", error);
+      }
+    };
+
+    fetchUserProfile();
+  }, []);
+
+  useEffect(() => {
     const fetchFiles = async () => {
       try {
         console.log("Fetching files for project:", projectId);
-        const projectFiles = await getProjectFiles(projectId);
+        const projectFiles = await getAllProjectFiles(projectId);
         console.log("Fetched files:", projectFiles);
         setFiles(Array.isArray(projectFiles) ? projectFiles : []);
         if (projectFiles.length > 0) {
@@ -114,19 +130,39 @@ export default function CodeEditor({ language = "JavaScript" }) {
     }
   };
 
-  const handleDeleteFile = async (file) => {
-    await deleteFile(projectId, file);
-    const newFiles = files.filter(f => f.filepath !== file);
-    setFiles(newFiles);
-    setCurrentFile(newFiles.length > 0 ? newFiles[0].filepath : null);
+  const handleFileClick = async (filePath) => {
+    try {
+      console.log("Clicked file:", filePath); // Debugging statement
+      const fileContent = await getFileContent(projectId, filePath);
+      console.log("Fetched file content:", fileContent); // Debugging statement
+      const updatedFiles = files.map(file => 
+          file.filepath === filePath ? { ...file, content: fileContent.content } : file
+      );
+      setFiles(updatedFiles);
+      setCurrentFile(filePath);
+    } catch (error) {
+      console.error("Error fetching file content:", error);
+    }
   };
 
-  const handleRenameFile = async (oldFile, newFile) => {
-    await renameFile(projectId, oldFile, newFile);
-    const newFiles = files.map(file => file.filepath === oldFile ? { ...file, filename: newFile, filepath: newFile } : file);
-    setFiles(newFiles);
-    setCurrentFile(newFile);
-  };
+  useEffect(() => {
+    if (currentFile && editorViewRef.current) {
+      const file = files.find(file => file.filepath === currentFile);
+      if (file) {
+        const state = EditorState.create({
+          doc: file.content || "// Start coding...",
+          extensions: [
+            keymap.of([...defaultKeymap, indentWithTab]),
+            autocompletion(),
+            lintGutter(),
+            languageExtensions[language] || javascript(),
+            theme === "dark" ? oneDark : [],
+          ],
+        });
+        editorViewRef.current.setState(state);
+      }
+    }
+  }, [currentFile, files, language, theme]);
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p className="error">{error}</p>;
@@ -145,10 +181,8 @@ export default function CodeEditor({ language = "JavaScript" }) {
           <button onClick={() => handleAddFile(prompt("Enter file name"))}><FaFileAlt /> New File</button>
           <div className="file-list">
             {files.map(file => (
-              <div key={file.filepath} className={`file-item ${currentFile === file.filepath ? 'active' : ''}`} onClick={() => setCurrentFile(file.filepath)}>
-                {file.filename} 
-                <FaEdit onClick={() => handleRenameFile(file.filepath, prompt("Enter new file name", file.filename))} />
-                <FaTrash onClick={() => handleDeleteFile(file.filepath)} />
+              <div key={file.filepath} className={`file-item ${currentFile === file.filepath ? 'active' : ''}`} onClick={() => handleFileClick(file.filepath)}>
+                {file.filename}
               </div>
             ))}
           </div>
@@ -165,6 +199,9 @@ export default function CodeEditor({ language = "JavaScript" }) {
           <pre>{output}</pre>
         </div>
       </div>
+      <ChatIcon  projectId={projectId} username={profileUsername|| user?.username}/>
     </div>
   );
 }
+
+export default CodeEditor;

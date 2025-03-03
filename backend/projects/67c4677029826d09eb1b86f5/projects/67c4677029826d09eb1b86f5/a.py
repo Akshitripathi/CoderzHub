@@ -1,10 +1,14 @@
-# This program adds two numbers
+numbers = [1,2,3,4]
 
-num1 = 1.5
-num2 = 6.3
+# returns the square of a number
+def square(number):
+  return number * number
 
-# Add two numbers
-sum = num1 + num2
+# apply square() to each item of the numbers list
+squared_numbers = map(square, numbers)
 
-# Display the sum
-print('The sum of {0} and {1} is {2}'.format(num1, num2, sum))
+# converting to list for printing
+result = list(squared_numbers)
+print(result) 
+
+# Output: [1,4,9,16]

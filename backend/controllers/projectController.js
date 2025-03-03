@@ -202,18 +202,10 @@ exports.getProjectFiles = async (req, res) => {
         if (!project) return res.status(404).json({ message: 'Project not found' });
 
         const filesDir = path.join(__dirname, '..', 'projects', projectId);
-        const files = {};
-
-        if (!fs.existsSync(filesDir)) {
-            return res.status(404).json({ message: 'Project files directory not found' });
-        }
-
-        fs.readdirSync(filesDir).forEach(file => {
-            const filePath = path.join(filesDir, file);
-            const stat = fs.statSync(filePath);
-            if (stat.isFile()) {
-                files[file] = { content: fs.readFileSync(filePath, 'utf-8') };
-            }
+        const files = project.files.map(file => {
+            const filePath = path.join(filesDir, file.filename);
+            const content = fs.existsSync(filePath) ? fs.readFileSync(filePath, 'utf-8') : '';
+            return { ...file.toObject(), content };
         });
 
         res.status(200).json({ files });
@@ -253,5 +245,26 @@ exports.saveFileContent = async (req, res) => {
     } catch (error) {
         console.error('Error saving file:', error);
         res.status(500).json({ message: 'Error saving file', error: error.message });
+    }
+};
+
+exports.getFileContent = async (req, res) => {
+    console.log("Entered get file content");
+    try {
+        const { projectId } = req.params;
+        const { filePath } = req.body;
+        const project = await Project.findById(projectId);
+        if (!project) return res.status(404).json({ message: 'Project not found' });
+
+        const fullPath = path.join(__dirname, '..', 'projects', projectId, filePath);
+        if (!fs.existsSync(fullPath)) {
+            return res.status(404).json({ message: 'File not found' });
+        }
+
+        const content = fs.readFileSync(fullPath, 'utf-8');
+        res.status(200).json({ content });
+    } catch (error) {
+        console.error('Error fetching file content:', error);
+        res.status(500).json({ message: 'Error fetching file content', error: error.message });
     }
 };

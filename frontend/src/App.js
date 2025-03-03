@@ -1,5 +1,5 @@
 import "./App.css";
-import { Routes, Route } from "react-router-dom"; // ✅ No BrowserRouter here!
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Signup from "./components/Signup";
 import Login from "./components/Login";
 import Profile from "./components/Profile";
@@ -9,9 +9,8 @@ import Settings from "./components/Settings";
 import Dashboard from "./components/Dashboard";
 import AdminForm from "./components/AdminForm";
 import Project from "./components/Project";
-import Codespace from "./components/Codespace";
+import CodeEditor from "./components/Codespace"; // Correct import
 import EditProfile from "./components/EditProfile";
-import ProjectDetails from "./components/ProjectDetails";
 import { useEffect, useState } from "react";
 import Footer from "./components/Footer";
 import { AuthProvider } from "./context/AuthContext.js";
@@ -53,21 +52,22 @@ function App() {
       <div className="background-container">{dots}</div>
       <div className="main-content">
         <AuthProvider>
-          <Navbar />
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/signup" element={<Signup />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
-            <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
-            <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-            <Route path="/admin-form" element={<ProtectedRoute><AdminForm /></ProtectedRoute>} />
-            <Route path="/project" element={<ProtectedRoute><Project /></ProtectedRoute>} />
-            <Route path="/codespace/:projectId" element={<ProtectedRoute><Codespace /></ProtectedRoute>} />
-            <Route path="/edit-profile" element={<ProtectedRoute><EditProfile /></ProtectedRoute>} />
-            <Route path="/project/:id" element={<ProtectedRoute><ProjectDetails /></ProtectedRoute>} />
-          </Routes>
-          <Footer />
+          
+            <Navbar />
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/signup" element={<Signup />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+              <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
+              <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+              <Route path="/admin-form" element={<ProtectedRoute><AdminForm /></ProtectedRoute>} />
+              <Route path="/project" element={<ProtectedRoute><Project /></ProtectedRoute>} />
+              <Route path="/codespace/:projectId" element={<ProtectedRoute><CodeEditor /></ProtectedRoute>} /> {/* Correct usage */}
+              <Route path="/edit-profile" element={<ProtectedRoute><EditProfile /></ProtectedRoute>} />
+            </Routes>
+            <Footer />
+          
         </AuthProvider>
       </div>
     </>

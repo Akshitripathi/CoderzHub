@@ -22,7 +22,6 @@ router.post('/change-status-project', projectController.changeProjectStatus);
 router.get('/get-project-files/:projectId', projectController.getProjectFiles);
 router.post('/:projectId/save-file', projectController.saveFileContent); // Correct route
 
-// Upload file and add reference to project
 router.post('/:projectId/upload', upload.single('file'), async (req, res) => {
   try {
     const project = await Project.findById(req.params.projectId);
@@ -44,7 +43,6 @@ router.post('/:projectId/upload', upload.single('file'), async (req, res) => {
   }
 });
 
-// Get files for a project
 router.get('/:projectId/files', async (req, res) => {
   try {
     const project = await Project.findById(req.params.projectId);
@@ -58,7 +56,6 @@ router.get('/:projectId/files', async (req, res) => {
   }
 });
 
-// Delete file
 router.delete('/:projectId/files/:filename', async (req, res) => {
   try {
     const project = await Project.findById(req.params.projectId);
@@ -83,7 +80,6 @@ router.delete('/:projectId/files/:filename', async (req, res) => {
   }
 });
 
-// Rename file
 router.put('/:projectId/files/:filename', async (req, res) => {
   try {
     const project = await Project.findById(req.params.projectId);
@@ -96,19 +92,28 @@ router.put('/:projectId/files/:filename', async (req, res) => {
       return res.status(404).send('File not found');
     }
 
-    const oldFilePath = path.join(__dirname, '..', project.files[fileIndex].filepath);
-    const newFilePath = path.join('projects', req.body.newFilename);
+    const oldFilePath = path.join(__dirname, '..', 'projects', req.params.projectId, req.params.filename);
+    const newFilePath = path.join(__dirname, '..', 'projects', req.params.projectId, req.body.newFilename);
 
-    fs.renameSync(oldFilePath, path.join(__dirname, '..', newFilePath));
+    console.log("Old File Path:", oldFilePath); // Debugging statement
+    console.log("New File Path:", newFilePath); // Debugging statement
+
+    if (!fs.existsSync(oldFilePath)) {
+      return res.status(404).send('File not found');
+    }
+
+    fs.renameSync(oldFilePath, newFilePath);
 
     project.files[fileIndex].filename = req.body.newFilename;
-    project.files[fileIndex].filepath = newFilePath;
+    project.files[fileIndex].filepath = path.join('projects', req.params.projectId, req.body.newFilename);
     await project.save();
 
-    res.send({ success: true });
+    res.json({ success: true });
   } catch (error) {
     res.status(500).send(error.message);
   }
 });
+
+router.post('/:projectId/files/content', projectController.getFileContent);
 
 module.exports = router;
