@@ -1,5 +1,3 @@
-
-
 export const registerUser = async (userData) => {
     try {
         const response = await fetch(`${API_BASE_URL}/auth/register`, {
@@ -44,21 +42,24 @@ export const verifyEmail = async (token) => {
 };
 
 export const loginUser = async (userData) => {
-    const response = await fetch(`${API_BASE_URL}/auth/login`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(userData),
-    });
-  
-    const data = await response.json();
-  
-    if (data.token && data.userId) { // Ensure userId is stored
-      localStorage.setItem("token", data.token);
-      localStorage.setItem("userId", data.userId); // Store userId in local storage
-      window.dispatchEvent(new Event("authChange")); 
+    try {
+        const response = await fetch(`${API_BASE_URL}/auth/login`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(userData),
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            localStorage.setItem("token", data.token);
+            localStorage.setItem("userId", data.userId);
+        }
+
+        return data;
+    } catch (error) {
+        return { success: false, message: "Failed to connect to the server" };
     }
-  
-    return data;
 };
   
 export const fetchProfile = async () => {

@@ -1,7 +1,7 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { loginUser } from "../api";
-import { AuthContext } from "../context/AuthContext";
+import { AuthContext, useAuth } from "../context/AuthContext";
 import { FaEnvelope, FaLock, FaSpinner, FaEye, FaEyeSlash } from "react-icons/fa";
 import "../styles/Form.css";
 
@@ -27,8 +27,7 @@ const Login = () => {
             const response = await loginUser(formData);
             if (response.success) {
                 console.log("Login successful");
-                localStorage.setItem("token", response.token);
-                login(response.token);
+                login(response.token, response.userId); // Updated to include userId
                 navigate("/profile");
             } else {
                 setError(response.message || "Invalid credentials");
@@ -39,6 +38,14 @@ const Login = () => {
             setLoading(false);
         }
     };
+
+    // If user is already logged in, redirect to profile
+    const { user } = useAuth();
+    useEffect(() => {
+        if (user) {
+            navigate('/profile');
+        }
+    }, [user, navigate]);
 
     return (
         <div className="login-body">
@@ -54,7 +61,7 @@ const Login = () => {
 
                 <form onSubmit={handleSubmit}>
                     <div className="input-group">
-                        <FaEnvelope className="input-icon" />
+                        <FaEnvelope style={{marginLeft:"1.5rem"}} className="input-icon" />
                         <input
                             type="text"
                             name="identifier"
@@ -66,7 +73,7 @@ const Login = () => {
                     </div>
 
                     <div className="input-group">
-                        <FaLock className="input-icon" />
+                        <FaLock style={{marginLeft:"1.5rem"}} className="input-icon" />
                         <input
                             type={showPassword ? "text" : "password"}
                             name="password"
@@ -80,7 +87,7 @@ const Login = () => {
                             className="password-toggle"
                             onClick={() => setShowPassword(!showPassword)}
                         >
-                            {showPassword ? <FaEyeSlash /> : <FaEye />}
+                            {showPassword ? <FaEyeSlash style={{marginRight: "7rem"}} /> : <FaEye style={{marginRight: "7rem"}} />}
                         </button>
                     </div>
 
