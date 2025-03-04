@@ -14,7 +14,7 @@ router.get("/get-id", async (req, res) => {
     const { username } = req.query;
     if (!username) return res.status(400).json({ message: "Username is required" });
 
-    const user = await User.findOne({ username }); // Adjust according to DB schema
+    const user = await User.findOne({ username });
     if (!user) return res.status(404).json({ message: "User not found" });
 
     res.json({ userId: user._id });

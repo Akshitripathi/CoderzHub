@@ -149,7 +149,7 @@ const makeRequest = async (endpoint, method, body = null, token = null) => {
 
         if (data.token && data.userId) {
           localStorage.setItem("token", data.token);
-          localStorage.setItem("userId", data.userId);  // Ensure userId is stored
+          localStorage.setItem("userId", data.userId);  
           window.dispatchEvent(new Event("authChange")); 
         }
         return data;
@@ -162,11 +162,11 @@ const makeRequest = async (endpoint, method, body = null, token = null) => {
 
 export const createProject = async (projectData) => {
     const token = localStorage.getItem("token");
-    console.log("Sending Project Data:", projectData);  // Debugging
+    console.log("Sending Project Data:", projectData);
 
     const response = await makeRequest("/create-project", "POST", projectData, token);
     
-    console.log("Response from API:", response);  // Debugging
+    console.log("Response from API:", response); 
     return response;
 };
 
@@ -241,10 +241,10 @@ const makeRequest1 = async (url, options) => {
 
 export const saveFileContent = async (projectId, filePath, content) => {
     const url = `${API_URL}/${projectId}/save-file`;
-    console.log("Saving file to URL:", url); // Debugging
-    console.log("Project ID:", projectId); // Debugging
-    console.log("File Path:", filePath); // Debugging
-    console.log("Content:", content); // Debugging
+    console.log("Saving file to URL:", url); 
+    console.log("Project ID:", projectId); 
+    console.log("File Path:", filePath); 
+    console.log("Content:", content); 
     const options = {
         method: 'POST',
         headers: {

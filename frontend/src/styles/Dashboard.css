@@ -80,7 +80,6 @@
   transform: translateY(0);
 }
 
-/* Responsive Design */
 @media (max-width: 768px) {
   .dashboard {
     padding: 1rem;
@@ -96,7 +95,6 @@
   }
 }
 
-/* Loading States */
 .dashboard-card.loading {
   animation: pulse 1.5s infinite;
 }

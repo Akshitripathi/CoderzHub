@@ -16,8 +16,7 @@ router.put('/update-project/:id', projectController.updateProject);
 router.delete('/delete-project/:id', projectController.deleteProject);
 router.post('/add-collaborator-project', projectController.addCollaborator);
 router.post('/remove-collaborator-project', projectController.removeCollaborator);
-router.post('/like-project', projectController.likeProject);
-router.post('/unlike-project', projectController.unlikeProject);
+
 router.post('/change-status-project', projectController.changeProjectStatus);
 router.get('/get-project-files/:projectId', projectController.getProjectFiles);
 router.post('/:projectId/save-file', projectController.saveFileContent); // Correct route

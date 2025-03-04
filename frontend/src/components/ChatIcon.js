@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import './ChatIcon.css'; // Create this CSS file for styling
+import './ChatIcon.css'; 
 import ChatWindow from './ChatWindow';
 
 const ChatIcon = ({ projectId, username }) => {

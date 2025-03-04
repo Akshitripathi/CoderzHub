@@ -136,7 +136,7 @@
     background: #4a4a4a;
 }
 
-/* Message animations */
+
 @keyframes fadeIn {
     from {
         opacity: 0;
@@ -148,7 +148,7 @@
     }
 }
 
-/* Message types */
+
 .chat-message.sent {
     margin-left: auto;
     background-color: #2b5278;
@@ -159,7 +159,7 @@
     background-color: #2d2d2d;
 }
 
-/* Responsive design */
+
 @media (max-width: 768px) {
     .chat-window {
         width: 100%;

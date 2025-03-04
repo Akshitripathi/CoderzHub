@@ -69,7 +69,7 @@ const EditProfile = () => {
                 setSuccessMessage("Profile updated successfully!");
                 setTimeout(() => {
                     navigate("/profile");
-                }, 2000); // Redirect after 2 seconds
+                }, 2000); 
             } else {
                 setError(response.message || "Something went wrong. Please try again.");
             }

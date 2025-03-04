@@ -31,7 +31,6 @@ exports.createProject = async (req, res) => {
         adminUser.projects.push(project._id);
         await adminUser.save();
 
-        // Add project to each collaborator's collaborations array
         for (const collabId of collaboratorIds) {
             const collaborator = await User.findById(collabId);
             if (collaborator) {
@@ -144,40 +143,6 @@ exports.removeCollaborator = async (req, res) => {
     }
 };
 
-exports.likeProject = async (req, res) => {
-    try {
-        const { projectId, userId } = req.body;
-
-        const project = await Project.findById(projectId);
-        if (!project) return res.status(404).json({ message: 'Project not found' });
-
-        if (!project.likes.includes(userId)) {
-            project.likes.push(userId);
-            await project.save();
-        }
-
-        res.status(200).json({ message: 'Project liked successfully', project });
-    } catch (error) {
-        res.status(500).json({ message: 'Error liking project', error: error.message });
-    }
-};
-
-exports.unlikeProject = async (req, res) => {
-    try {
-        const { projectId, userId } = req.body;
-
-        const project = await Project.findById(projectId);
-        if (!project) return res.status(404).json({ message: 'Project not found' });
-
-        project.likes = project.likes.filter(like => like.toString() !== userId);
-        await project.save();
-
-        res.status(200).json({ message: 'Project unliked successfully', project });
-    } catch (error) {
-        res.status(500).json({ message: 'Error unliking project', error: error.message });
-    }
-};
-
 exports.changeProjectStatus = async (req, res) => {
     try {
         const { projectId, status } = req.body;
@@ -230,7 +195,6 @@ exports.saveFileContent = async (req, res) => {
 
         fs.writeFileSync(fullPath, content);
 
-        // Check if file already exists in project files
         const fileIndex = project.files.findIndex(file => file.filepath === filePath);
         if (fileIndex === -1) {
             project.files.push({ filename: path.basename(filePath), filepath: filePath });

@@ -14,7 +14,7 @@ export default function Project() {
     const fetchData = async () => {
       try {
         const response = await getProjects();
-        console.log("🔍 API Response:", response); 
+        console.log("API Response:", response); 
 
         if (!response) throw new Error("No response received from API.");
 
@@ -26,7 +26,7 @@ export default function Project() {
           throw new Error(response.message || "Invalid response format.");
         }
       } catch (err) {
-        console.error("⚠️ API Error:", err.message);
+        console.error(" API Error:", err.message);
         setError(err.message || "Failed to load projects.");
         setProjects([]);
       } finally {
@@ -74,7 +74,6 @@ export default function Project() {
                   <p><strong>Created:</strong> {new Date(project.createdAt).toLocaleDateString()}</p>
                 </div>
 
-                {/* Collaborators Section */}
                 <div className="collaborators-section">
                   <h4>Collaborators</h4>
                   <ul>
@@ -87,7 +86,6 @@ export default function Project() {
                   </ul>
                 </div>
 
-                {/* Project Actions */}
                 <div className="project-actions">
                   <Button 
                     onClick={() => project._id && navigate(`/codespace/${project._id}`)}

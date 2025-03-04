@@ -15,11 +15,11 @@ export default function Dashboard() {
   useEffect(() => {
     const fetchDashboardData = async () => {
       try {
-        const projectsResponse = await getProjects(); // ✅ FIXED FUNCTION NAME
-        const friendsResponse = await fetchFriends(); // ✅ FIXED FUNCTION NAME
+        const projectsResponse = await getProjects(); 
+        const friendsResponse = await fetchFriends(); 
 
         if (projectsResponse.success) setProjects(projectsResponse.projects);
-        if (friendsResponse.success) setConnections(friendsResponse.friends.length); // Assuming friends list
+        if (friendsResponse.success) setConnections(friendsResponse.friends.length); 
       } catch (err) {
         console.error("Error fetching dashboard data", err);
       } finally {

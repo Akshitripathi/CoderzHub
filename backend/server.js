@@ -4,7 +4,7 @@ const cors = require('cors');
 const connectWithDb = require('./config/db');
 const authRoutes = require('./routes/authRoutes');
 const projectRoutes = require('./routes/projectRoutes');
-const compileRouter = require('./routes/compile');
+// const compileRouter = require('./routes/compile');
 const chatRoutes = require('./routes/chatRoutes');
 const fs = require('fs');
 const path = require('path');
@@ -20,7 +20,7 @@ connectWithDb();
 
 app.use('/api/auth', authRoutes);
 app.use('/api/project', projectRoutes);
-app.use('/api', compileRouter);
+// app.use('/api', compileRouter);
 app.use('/api/chats',chatRoutes);
 
 const projectsDir = path.join(__dirname, 'projects');

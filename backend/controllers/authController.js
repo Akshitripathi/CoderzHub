@@ -89,7 +89,7 @@ const login = async (req, res) => {
             { expiresIn: "3h" }
         );
 
-        res.status(200).json({ success: true, token, userId: user._id, message: "Login successful" }); // Include userId in response
+        res.status(200).json({ success: true, token, userId: user._id, message: "Login successful" }); 
     } catch (error) {
         res.status(500).json({ success: false, message: "Server error" });
     }
@@ -177,30 +177,26 @@ const updateProfile = async (req, res) => {
         const userId = req.user.id; 
         const { name, email, phone_no, bio, github_link, linkedin_link, profile_picture } = req.body;
 
-        // Find user by ID
         const user = await User.findById(userId);
         if (!user) {
             return res.status(404).json({ success: false, message: "User not found" });
         }
 
-        // Update user details if provided
         user.name = name || user.name;
         user.email = email || user.email;
         user.phone_no = phone_no || user.phone_no;
         user.bio = bio || user.bio;
         user.profile_picture = profile_picture || user.profile_picture;
 
-        // Update social media links in both individual fields and social_profiles array
         user.github_link = github_link || user.github_link;
         user.linkedin_link = linkedin_link || user.linkedin_link;
 
-        // Ensure social_profiles array stays updated with unique values
-        let updatedSocialProfiles = new Set(user.social_profiles); // Convert to Set to avoid duplicates
+        let updatedSocialProfiles = new Set(user.social_profiles); 
 
         if (github_link) updatedSocialProfiles.add(github_link);
         if (linkedin_link) updatedSocialProfiles.add(linkedin_link);
 
-        user.social_profiles = Array.from(updatedSocialProfiles); // Convert back to array
+        user.social_profiles = Array.from(updatedSocialProfiles); 
 
         await user.save();
 
@@ -215,7 +211,7 @@ const updateProfile = async (req, res) => {
                 profile_picture: user.profile_picture,
                 github_link: user.github_link,
                 linkedin_link: user.linkedin_link,
-                social_profiles: user.social_profiles, // Return updated social_profiles array
+                social_profiles: user.social_profiles, 
             }
         });
     } catch (err) {

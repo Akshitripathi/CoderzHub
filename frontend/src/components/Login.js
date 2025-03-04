@@ -14,7 +14,7 @@ const Login = () => {
     const navigate = useNavigate();
 
     const handleChange = (e) => {
-        setError(""); // Clear error when user starts typing
+        setError(""); 
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
@@ -27,7 +27,7 @@ const Login = () => {
             const response = await loginUser(formData);
             if (response.success) {
                 console.log("Login successful");
-                login(response.token, response.userId); // Updated to include userId
+                login(response.token, response.userId);
                 navigate("/profile");
             } else {
                 setError(response.message || "Invalid credentials");
@@ -39,7 +39,6 @@ const Login = () => {
         }
     };
 
-    // If user is already logged in, redirect to profile
     const { user } = useAuth();
     useEffect(() => {
         if (user) {

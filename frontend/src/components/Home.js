@@ -9,7 +9,7 @@ const Home = () => {
 
     return (
         <div className="home-container">
-            {/* Hero Section */}
+            
             <section className="hero">
                 <h1>Empower Collaboration, Accelerate Development</h1>
                 <p>A real-time collaborative coding platform for seamless teamwork, version control, and live coding.</p>
@@ -20,7 +20,7 @@ const Home = () => {
                 )}
             </section>
 
-            {/* Problem Statement Section */}
+
             <section className="problem-statement">
                 <h2>The Challenge</h2>
                 <p>
@@ -43,7 +43,7 @@ const Home = () => {
                 </div>
             </section>
 
-            {/* Features Section */}
+            
             <section className="features">
                 <h2>Why Choose CoderzHub?</h2>
                 <div className="features-grid">
@@ -74,7 +74,7 @@ const Home = () => {
                 </div>
             </section>
 
-            {/* How It Works */}
+            
             <section className="how-it-works">
                 <h2>How CoderzHub Works?</h2>
                 <div className="steps">

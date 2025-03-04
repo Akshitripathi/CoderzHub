@@ -57,13 +57,13 @@ const Profile = () => {
                 <p><strong>Member Since:</strong> {new Date(user.createdAt).toLocaleDateString()}</p>
             </div>
 
-            {/* Bio Section */}
+           
             <div className="profile-bio">
                 <h3>Bio</h3>
                 <p>{user.bio || "No bio available."}</p>
             </div>
 
-            {/* Friends & Projects Section */}
+            
             <div className="profile-stats">
                 <div className="stat-card">
                     <h4>Friends</h4>
@@ -79,7 +79,7 @@ const Profile = () => {
                 </div>
             </div>
 
-            {/* Notifications Section */}
+            
             {user.notifications && user.notifications.length > 0 && (
                 <div className="recent-activities">
                     <h3>Recent Activities</h3>
@@ -93,7 +93,7 @@ const Profile = () => {
                 </div>
             )}
 
-            {/* Social Links Section */}
+            
             <div className="social-links">
                 <h3>Social Links</h3>
                 {user.github_link && <a href={user.github_link} target="_blank" rel="noopener noreferrer">GitHub</a>}

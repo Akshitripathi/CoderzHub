@@ -15,10 +15,10 @@ router.post('/compile', (req, res) => {
       break;
     case 'C':
     case 'Java':
-      // Add compilation commands for C and Java
+      
       break;
     case 'XML':
-      // XML is not a compilable language, handle accordingly
+      
       break;
     default:
       return res.status(400).send({ output: 'Unsupported language' });

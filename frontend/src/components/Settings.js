@@ -34,7 +34,6 @@ const Settings = () => {
     setTimeout(() => setSaveStatus(""), 2000);
   };
 
-  // Apply theme to body
   useEffect(() => {
     document.body.setAttribute("data-theme", settings.theme);
   }, [settings.theme]);
@@ -45,7 +44,7 @@ const Settings = () => {
       {saveStatus && <div className="save-status">{saveStatus}</div>}
 
       <div className="settings-grid">
-        {/* Editor Appearance */}
+        
         <div className="settings-card">
           <div className="card-header">
             <FaPalette />
@@ -60,10 +59,9 @@ const Settings = () => {
               <option value="dark">Dark Theme</option>
               <option value="light">Light Theme</option>
               <option value="dracula">Dracula</option>
-              <option value="monokai">Monokai</option>
             </select>
           </div>
-          <div className="setting-option">
+          {/* <div className="setting-option">
             <label style={{color:"white"}}>Font Size</label>
             <select 
               value={settings.fontSize}
@@ -73,10 +71,10 @@ const Settings = () => {
                 <option key={size} value={size}>{size}px</option>
               ))}
             </select>
-          </div>
+          </div> */}
         </div>
 
-        {/* Editor Behavior */}
+
         <div className="settings-card">
           <div className="card-header">
             <FaCode />
@@ -102,7 +100,6 @@ const Settings = () => {
           </div>
         </div>
 
-        {/* Collaboration Features */}
         <div className="settings-card">
           <div className="card-header">
             <FaUsers />
@@ -127,8 +124,6 @@ const Settings = () => {
             />
           </div>
         </div>
-
-        {/* Security Settings */}
         <div className="settings-card">
           <div className="card-header">
             <FaLock />
