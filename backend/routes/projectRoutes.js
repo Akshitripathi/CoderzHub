@@ -19,7 +19,7 @@ router.post('/remove-collaborator-project', projectController.removeCollaborator
 
 router.post('/change-status-project', projectController.changeProjectStatus);
 router.get('/get-project-files/:projectId', projectController.getProjectFiles);
-router.post('/:projectId/save-file', projectController.saveFileContent); // Correct route
+router.post('/:projectId/save-file', projectController.saveFileContent); 
 
 router.post('/:projectId/upload', upload.single('file'), async (req, res) => {
   try {
@@ -94,8 +94,8 @@ router.put('/:projectId/files/:filename', async (req, res) => {
     const oldFilePath = path.join(__dirname, '..', 'projects', req.params.projectId, req.params.filename);
     const newFilePath = path.join(__dirname, '..', 'projects', req.params.projectId, req.body.newFilename);
 
-    console.log("Old File Path:", oldFilePath); // Debugging statement
-    console.log("New File Path:", newFilePath); // Debugging statement
+    console.log("Old File Path:", oldFilePath); 
+    console.log("New File Path:", newFilePath); 
 
     if (!fs.existsSync(oldFilePath)) {
       return res.status(404).send('File not found');
