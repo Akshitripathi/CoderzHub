@@ -8,6 +8,8 @@ exports.createProject = async (req, res) => {
     try {
         const { name, description, admin, collaborators, files_folder, languages_used, visibility, tags } = req.body;
 
+        console.log("Admin ID during project creation:", admin); // Debugging log
+
         const adminUser = await User.findById(admin);
         if (!adminUser) {
             return res.status(404).json({ message: 'Admin user not found' });
@@ -18,7 +20,7 @@ exports.createProject = async (req, res) => {
         const project = new Project({
             name,
             description,
-            admin: new mongoose.Types.ObjectId(admin),
+            admin: new mongoose.Types.ObjectId(admin), // Ensure admin is set correctly
             collaborators: collaboratorIds,  
             files_folder,
             languages_used,
@@ -41,7 +43,7 @@ exports.createProject = async (req, res) => {
 
         res.status(201).json({ message: 'Project created successfully', project });
     } catch (error) {
-        console.error(error);
+        console.error("Error creating project:", error);
         res.status(500).json({ message: 'Error creating project', error: error.message });
     }
 };
@@ -230,5 +232,68 @@ exports.getFileContent = async (req, res) => {
     } catch (error) {
         console.error('Error fetching file content:', error);
         res.status(500).json({ message: 'Error fetching file content', error: error.message });
+    }
+};
+
+exports.getAllCollaborators = async (req, res) => {
+    try {
+        const projects = await Project.find().populate('collaborators', 'username email');
+
+        const collaboratorsData = projects.map(project => ({
+            projectName: project.name,
+            collaborators: project.collaborators.map(collab => ({
+                username: collab.username,
+                email: collab.email
+            }))
+        }));
+
+        res.json({ success: true, collaborators: collaboratorsData });
+    } catch (error) {
+        console.error("Error fetching collaborators:", error);
+        res.status(500).json({ success: false, message: "Failed to fetch collaborators" });
+    }
+};
+
+exports.getProjectsByAdmin = async (req, res) => {
+    try {
+        const { adminId } = req.params; // Correctly destructure adminId
+        console.log("Admin ID received:", adminId); // Debugging log
+
+        // Fetch projects where the admin matches the provided adminId
+        const projects = await Project.find({ admin: adminId })
+            .populate('admin', 'username email') // Populate admin details
+            .populate('collaborators', 'username email'); // Populate collaborators
+
+        console.log("Projects fetched for admin:", projects); // Debugging log
+
+        res.status(200).json({ success: true, projects });
+    } catch (error) {
+        console.error("Error fetching projects by admin:", error);
+        // Ensure the response is sent only once
+        if (!res.headersSent) {
+            res.status(500).json({ success: false, message: "Failed to fetch projects by admin" });
+        }
+    }
+};
+
+exports.getProjectsByCollaborator = async (req, res) => {
+    try {
+        const { userId } = req.params; // Correctly destructure userId
+        console.log("Collaborator ID received:", userId); // Debugging log
+
+        // Fetch projects where the user is a collaborator
+        const projects = await Project.find({ collaborators: userId })
+            .populate('admin', 'username email') // Populate admin details
+            .populate('collaborators', 'username email'); // Populate collaborators
+
+        console.log("Projects fetched for collaborator:", projects); // Debugging log
+
+        res.status(200).json({ success: true, projects });
+    } catch (error) {
+        console.error("Error fetching projects by collaborator:", error);
+        // Ensure the response is sent only once
+        if (!res.headersSent) {
+            res.status(500).json({ success: false, message: "Failed to fetch projects by collaborator" });
+        }
     }
 };

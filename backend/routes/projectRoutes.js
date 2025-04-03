@@ -21,6 +21,10 @@ router.post('/change-status-project', projectController.changeProjectStatus);
 router.get('/get-project-files/:projectId', projectController.getProjectFiles);
 router.post('/:projectId/save-file', projectController.saveFileContent); 
 
+router.get('/get-all-collaborators', projectController.getAllCollaborators);
+router.get('/get-projects-by-admin/:adminId', projectController.getProjectsByAdmin);
+router.get('/get-projects-by-collaborator/:userId', projectController.getProjectsByCollaborator);
+
 router.post('/:projectId/upload', upload.single('file'), async (req, res) => {
   try {
     const project = await Project.findById(req.params.projectId);
