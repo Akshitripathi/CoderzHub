@@ -15,7 +15,7 @@ import EditProfile from "./components/EditProfile";
 import Footer from "./components/Footer";
 import { AuthProvider } from "./context/AuthContext.js";
 import ProtectedRoute from "./components/ProtectedRoute";
-import { useAuth } from "./context/AuthContext"; // Add this import
+import { useAuth } from "./context/AuthContext"; 
 
 function App() {
   const [dots, setDots] = useState([]);

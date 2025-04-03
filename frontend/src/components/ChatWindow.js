@@ -10,7 +10,7 @@ const ChatWindow = ({ projectId, username, onClose }) => {
         const fetchMessages = async () => {
             try {
                 const response = await axios.get(`http://localhost:5000/api/chats/${projectId}`);
-                console.log('Fetched messages:', response.data); // Debugging
+                console.log('Fetched messages:', response.data); 
                 setMessages(response.data);
             } catch (error) {
                 console.error('Error fetching messages:', error);

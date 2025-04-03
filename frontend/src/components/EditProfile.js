@@ -98,7 +98,7 @@ const EditProfile = ({ onProfileUpdated }) => {
                 }
                 setTimeout(() => {
                     navigate("/profile");
-                }, 1000); // Redirect after 2 seconds
+                }, 2000); 
             } else {
                 setError(response.message || "Something went wrong. Please try again.");
             }

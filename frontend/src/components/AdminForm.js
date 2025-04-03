@@ -13,8 +13,8 @@ export default function AdminForm() {
     collaborators: [],
   });
 
-  const [collaboratorInput, setCollaboratorInput] = useState(""); // Username or Email
-  const [collaborators, setCollaborators] = useState([]); // Store collaborator names
+  const [collaboratorInput, setCollaboratorInput] = useState(""); // Username ya Email
+  const [collaborators, setCollaborators] = useState([]); //collab ka naam 
   const [errors, setErrors] = useState({});
   const navigate = useNavigate();
 
@@ -54,7 +54,7 @@ export default function AdminForm() {
             usernameInput,
           ]);
 
-          setCollaboratorInput(""); // Clear input field
+          setCollaboratorInput("");
           console.log("Collaborator added:", data.userId);
         } else {
           console.error("User not found:", data.message);

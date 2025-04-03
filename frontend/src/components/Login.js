@@ -28,14 +28,7 @@ const Login = () => {
             const response = await loginUser(formData);
             if (response.success) {
                 console.log("Login successful");
-                login(response.token, response.userId);
-                if (rememberMe) {
-                    localStorage.setItem('identifier', formData.identifier);
-                    localStorage.setItem('rememberMe', 'true');
-                } else {
-                    localStorage.removeItem('identifier');
-                    localStorage.removeItem('rememberMe');
-                }
+                login(response.token, response.userId); // Updated to include userId
                 navigate("/profile");
             } else {
                 setError(response.message || "Invalid credentials");

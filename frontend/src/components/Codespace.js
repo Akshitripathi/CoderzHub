@@ -43,7 +43,7 @@ function CodeEditor({ language = "JavaScript" }) {
       try {
         const response = await fetchProfile();
         if (response.success) {
-          setProfileUsername(response.user.username); // Extract username from profile
+          setProfileUsername(response.user.username); 
         }
       } catch (error) {
         console.error("Error fetching profile:", error);
@@ -124,8 +124,8 @@ function CodeEditor({ language = "JavaScript" }) {
         const response = await saveFileContent(projectId, currentFile, content);
         if (response.success) {
           console.log('File saved successfully');
-          const updatedFiles = await getAllProjectFiles(projectId); // Fetch updated files
-          setFiles(Array.isArray(updatedFiles) ? updatedFiles : []); // Update the files state
+          const updatedFiles = await getAllProjectFiles(projectId); 
+          setFiles(Array.isArray(updatedFiles) ? updatedFiles : []); 
         } else {
           console.error('Failed to save file:', response.message);
         }
@@ -145,10 +145,10 @@ function CodeEditor({ language = "JavaScript" }) {
   const handleRenameFile = async (oldFile, newFile) => {
     const oldFilename = oldFile.split('/').pop(); 
     const newFilename = newFile.split('/').pop(); 
-    const newFilePath = oldFile.replace(oldFilename, newFilename); // Construct the new file path
-    console.log("Old Filename:", oldFilename); // Debugging statement
-    console.log("New Filename:", newFilename); // Debugging statement
-    console.log("New File Path:", newFilePath); // Debugging statement
+    const newFilePath = oldFile.replace(oldFilename, newFilename); 
+    console.log("Old Filename:", oldFilename);
+    console.log("New Filename:", newFilename);
+    console.log("New File Path:", newFilePath); 
     
     await renameFile(projectId, oldFilename, newFilename);
     const newFiles = files.map(file => file.filepath === oldFile ? { ...file, filename: newFilename, filepath: newFilePath } : file);
@@ -158,9 +158,9 @@ function CodeEditor({ language = "JavaScript" }) {
 
   const handleFileClick = async (filePath) => {
     try {
-      console.log("Clicked file:", filePath); // Debugging statement
+      console.log("Clicked file:", filePath); 
       const fileContent = await getFileContent(projectId, filePath);
-      console.log("Fetched file content:", fileContent); // Debugging statement
+      console.log("Fetched file content:", fileContent); 
       const updatedFiles = files.map(file => 
           file.filepath === filePath ? { ...file, content: fileContent.content } : file
       );

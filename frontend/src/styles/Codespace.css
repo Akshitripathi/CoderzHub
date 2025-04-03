@@ -66,7 +66,7 @@
     max-width: 600px;
 }
 
-/* Loading animation */
+
 .loading {
     text-align: center;
     color: #4a90e2;
@@ -74,7 +74,7 @@
     margin: 2rem 0;
 }
 
-/* Responsive Design */
+
 @media (max-width: 768px) {
     .codespace-container {
         margin: 1rem;
@@ -351,7 +351,6 @@
     overflow-y: auto;
 }
 
-/* New styles for the CodeMirror editor */
 .editor-wrapper {
     position: relative;
     height: calc(100% - 60px);
@@ -378,7 +377,6 @@
     transform: translateY(-1px);
 }
 
-/* CodeMirror specific styles */
 .cm-editor {
     height: 100% !important;
     font-family: 'Fira Code', monospace;
@@ -390,19 +388,16 @@
     outline: none;
 }
 
-/* Light theme customization */
 .cm-editor.light-theme {
     background: #ffffff;
     color: #2c3e50;
 }
 
-/* Dark theme customization */
 .cm-editor.dark-theme {
     background: #1e1e1e;
     color: #d4d4d4;
 }
 
-/* Syntax highlighting colors */
 .cm-keyword { color: #569cd6; }
 .cm-operator { color: #d4d4d4; }
 .cm-variable { color: #9cdcfe; }
@@ -410,7 +405,6 @@
 .cm-comment { color: #6a9955; }
 .cm-number { color: #b5cea8; }
 
-/* Gutter styling */
 .cm-gutters {
     border-right: 1px solid #404040;
     background-color: #252526;
@@ -421,17 +415,14 @@
     color: #858585;
 }
 
-/* Active line highlight */
 .cm-activeLine {
     background: rgba(44, 62, 80, 0.1);
 }
 
-/* Selection styling */
 .cm-selectionBackground {
     background: #264f78 !important;
 }
 
-/* Scrollbar styling */
 .cm-scroller::-webkit-scrollbar {
     width: 10px;
     height: 10px;
@@ -450,7 +441,6 @@
     background: #4f4f4f;
 }
 
-/* Error and warning indicators */
 .cm-diagnostic-error {
     border-bottom: 2px wavy #ff0000;
 }
@@ -459,7 +449,6 @@
     border-bottom: 2px wavy #ffa500;
 }
 
-/* Improved scrollbar styling */
 ::-webkit-scrollbar {
     width: 8px;
     height: 8px;

@@ -104,7 +104,7 @@ const login = async (req, res) => {
 
         const token = jwt.sign({ _id: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '3h' });
 
-        res.status(200).json({ success: true, token, userId: user._id, message: 'Login successful' });
+        res.status(200).json({ success: true, token, userId: user._id, message: "Login successful" }); // Include userId in response
     } catch (error) {
         res.status(500).json({ success: false, message: 'Server error' });
     }
@@ -197,15 +197,19 @@ const updateProfile = async (req, res) => {
         user.email = email || user.email;
         user.phone_no = phone_no || user.phone_no;
         user.bio = bio || user.bio;
+        user.profile_picture = profile_picture || user.profile_picture;
 
-        if (req.file) {
-            user.profile_picture = `/uploads/${req.file.filename}`; // Add the /uploads/ prefix
-        }
+        // Update social media links in both individual fields and social_profiles array
+        user.github_link = github_link || user.github_link;
+        user.linkedin_link = linkedin_link || user.linkedin_link;
 
-        let updatedSocialProfiles = new Set(user.social_profiles);
+        // Ensure social_profiles array stays updated with unique values
+        let updatedSocialProfiles = new Set(user.social_profiles); // Convert to Set to avoid duplicates
+
         if (github_link) updatedSocialProfiles.add(github_link);
         if (linkedin_link) updatedSocialProfiles.add(linkedin_link);
-        user.social_profiles = Array.from(updatedSocialProfiles);
+
+        user.social_profiles = Array.from(updatedSocialProfiles); // Convert back to array
 
         await user.save();
 
@@ -217,9 +221,11 @@ const updateProfile = async (req, res) => {
                 email: user.email,
                 phone_no: user.phone_no,
                 bio: user.bio,
-                profile_picture: user.profile_picture, // Ensure this includes the /uploads/ prefix
-                social_profiles: user.social_profiles,
-            },
+                profile_picture: user.profile_picture,
+                github_link: user.github_link,
+                linkedin_link: user.linkedin_link,
+                social_profiles: user.social_profiles, // Return updated social_profiles array
+            }
         });
     } catch (err) {
         console.error(err);
