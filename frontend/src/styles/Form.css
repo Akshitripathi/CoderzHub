@@ -85,16 +85,27 @@
     margin-bottom: 1.8rem;
 }
 
-.input-icon {
+.login-body .input-icon {
     position: absolute;
-    left: 1rem; 
+    left: 1rem;
     top: 50%;
     transform: translateY(-50%);
     color: #4a9eff;
     font-size: 1.2rem;
     transition: all 0.3s ease;
-    z-index: 1; 
+    z-index: 1;
 }
+.signup-body .input-icon {
+    position: absolute;
+    left: 2rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #4a9eff;
+    font-size: 1.2rem;
+    transition: all 0.3s ease;
+    z-index: 1;
+}
+
 
 .input-group:focus-within .input-icon {
     color: #2980b9;
@@ -125,7 +136,7 @@
 
 .password-toggle {
     position: absolute;
-    right: -22%;
+    right: -15%;
     top: 22%;
     transform: translateY(-50%);
     background: none;
@@ -138,10 +149,10 @@
     z-index: 1; 
 }
 
-.password-toggle:hover {
-    color: #ffffff;
+/* .password-toggle:hover {
+    color: #4a9eff;
     background: rgba(74, 158, 255, 0.1);
-}
+} */
 
 .input-section {
     margin-bottom: 1.5rem;
@@ -183,7 +194,7 @@
 
 .input-section {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 1.5rem;
     margin-bottom: 1.5rem;
 }

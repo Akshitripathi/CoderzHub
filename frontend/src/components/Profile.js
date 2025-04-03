@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { fetchProfile } from "../api";
 import { useNavigate } from "react-router-dom";
+import { deleteProfile, fetchProfile } from "../api"; // Add deleteProfile to the import
 import "../styles/Profile.css";
 
 const Profile = () => {
     const [user, setUser] = useState(null);
-    const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -21,6 +21,7 @@ const Profile = () => {
                 const response = await fetchProfile();
                 if (response.success) {
                     setUser(response.user);
+                    console.log(response.user);
                 } else {
                     setError("Failed to load profile");
                     navigate("/login");
@@ -28,22 +29,54 @@ const Profile = () => {
             } catch (err) {
                 setError("Failed to fetch profile. Please try again.");
                 navigate("/login");
-            } finally {
+            }
+            finally {
                 setLoading(false);
             }
         };
 
         loadProfile();
     }, [navigate]);
+    if (loading) return <p>Loading profile...</p>;
+    if (error) return <p className="error">{error}</p>;
+    const handleProfileUpdated = (updatedUser) => {
+        setUser(updatedUser); // Update the user state with the new data
+    };
+
+    const handleDeleteProfile = async () => {
+        const confirmDelete = window.confirm("Are you sure you want to delete your profile? This action cannot be undone.");
+        if (!confirmDelete) return;
+
+        try {
+            const response = await deleteProfile(user._id);
+            if (response.success) {
+                alert("Profile deleted successfully!");
+                localStorage.removeItem("token");
+                localStorage.removeItem("userId");
+                navigate("/signup")
+            } else {
+                alert(response.message || "Failed to delete profile.");
+            }
+        } catch (error) {
+            console.error("Error deleting profile:", error);
+            alert("An error occurred while deleting the profile. Please try again.");
+        }
+    };
 
     if (loading) return <p>Loading profile...</p>;
     if (error) return <p className="error">{error}</p>;
+
+    const profilePicUrl = user?.profile_picture?.startsWith('/uploads')
+        ? `http://localhost:5000${user.profile_picture}`
+        : user?.profile_picture || "/default-profile.png";
+
+    console.log("Profile Picture URL:", profilePicUrl);
 
     return (
         <div className="profile-container">
             <div className="profile-header">
                 <img
-                    src={user.profile_picture || "https://via.placeholder.com/150"}
+                    src={profilePicUrl}
                     alt="Profile"
                     className="profile-pic"
                 />
@@ -103,9 +136,9 @@ const Profile = () => {
                 ))}
             </div>
 
-            
             <div className="profile-footer">
                 <button onClick={() => navigate("/edit-profile")}>Edit Profile</button>
+                <button onClick={handleDeleteProfile} className="delete-profile-btn">Delete Profile</button>
             </div>
         </div>
     );

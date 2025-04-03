@@ -1,20 +1,21 @@
-import React, { useContext, useState, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
+import { FaEnvelope, FaEye, FaEyeSlash, FaLock, FaSpinner } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { loginUser } from "../api";
 import { AuthContext, useAuth } from "../context/AuthContext";
-import { FaEnvelope, FaLock, FaSpinner, FaEye, FaEyeSlash } from "react-icons/fa";
 import "../styles/Form.css";
 
 const Login = () => {
-    const [formData, setFormData] = useState({ identifier: "", password: "" });
+    const [formData, setFormData] = useState({ identifier: localStorage.getItem('identifier') || "", password: "" });
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
+    const [rememberMe, setRememberMe] = useState(localStorage.getItem('rememberMe') === 'true');
     const { login } = useContext(AuthContext);
     const navigate = useNavigate();
 
     const handleChange = (e) => {
-        setError(""); 
+        setError("");
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
@@ -27,7 +28,7 @@ const Login = () => {
             const response = await loginUser(formData);
             if (response.success) {
                 console.log("Login successful");
-                login(response.token, response.userId);
+                login(response.token, response.userId); // Updated to include userId
                 navigate("/profile");
             } else {
                 setError(response.message || "Invalid credentials");
@@ -60,11 +61,12 @@ const Login = () => {
 
                 <form onSubmit={handleSubmit}>
                     <div className="input-group">
-                        <FaEnvelope style={{marginLeft:"1.5rem"}} className="input-icon" />
+                        <FaEnvelope className="input-icon" style={{ marginLeft: "1.5rem" }} />
                         <input
                             type="text"
                             name="identifier"
                             placeholder="Email or Username"
+                            value={formData.identifier}
                             onChange={handleChange}
                             required
                             disabled={loading}
@@ -72,27 +74,31 @@ const Login = () => {
                     </div>
 
                     <div className="input-group">
-                        <FaLock style={{marginLeft:"1.5rem"}} className="input-icon" />
+                        <FaLock className="input-icon" style={{ marginLeft: "1.5rem" }} />
                         <input
                             type={showPassword ? "text" : "password"}
                             name="password"
                             placeholder="Password"
                             onChange={handleChange}
                             required
-                            disabled={loading}
                         />
                         <button
                             type="button"
                             className="password-toggle"
-                            onClick={() => setShowPassword(!showPassword)}
+                            onMouseEnter={() => setShowPassword(true)}
+                            onMouseLeave={() => setShowPassword(false)}
                         >
-                            {showPassword ? <FaEyeSlash style={{marginRight: "7rem"}} /> : <FaEye style={{marginRight: "7rem"}} />}
+                            {showPassword ? <FaEye style={{ marginRight: "7rem" }} /> : <FaEyeSlash style={{ marginRight: "7rem" }} />}
                         </button>
                     </div>
 
                     <div className="form-footer">
                         <label className="remember-me">
-                            <input type="checkbox" />
+                            <input
+                                type="checkbox"
+                                checked={rememberMe}
+                                onChange={() => setRememberMe(!rememberMe)}
+                            />
                             <span>Remember me</span>
                         </label>
                         <a href="/forgot-password" className="forgot-password">
@@ -113,8 +119,7 @@ const Login = () => {
                 </form>
 
                 <p className="redirect-link">
-                    Don't have an account?{" "}
-                    <a href="/signup">Create Account</a>
+                    Don't have an account? <a href="/signup">Create Account</a>
                 </p>
             </div>
         </div>

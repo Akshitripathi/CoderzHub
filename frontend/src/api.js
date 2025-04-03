@@ -1,12 +1,24 @@
 export const registerUser = async (userData) => {
     try {
-        const response = await fetch(`${API_BASE_URL}/auth/register`, {
+        const formData = new FormData();
+        for (const key in userData) {
+            formData.append(key, userData[key]);
+        }
+
+        const response = await fetch(`http://localhost:5000/api/auth/register`, {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(userData),
+            body: formData,
         });
+
+        if (!response.ok) {
+            // Handle non-200 responses
+            const errorData = await response.json();
+            return { success: false, message: errorData.message || "Registration failed" };
+        }
+
         return await response.json();
     } catch (error) {
+        console.error("Network error during registration:", error);
         return { success: false, message: "Failed to connect to the server" };
     }
 };
@@ -87,23 +99,47 @@ export const fetchProfile = async () => {
     return response.json();
 };
 
-export const updateProfile = async (formData) => {
+export const updateProfile = async (id,formData) => {
     const token = localStorage.getItem("token");
     if (!token) {
         throw new Error("No authentication token found!");
     }
 
-    const response = await fetch(`${API_BASE_URL}/auth/updateprofile`, {
+    const response = await fetch(`http://localhost:5000/api/auth/updateprofile/${id}`, {
         method: "PUT",
         headers: {
-            "Content-Type": "application/json",
+            //"Content-Type": "application/json",
             "Authorization": `Bearer ${token}`
         },
-        body: JSON.stringify(formData)
+        body: formData,
     });
 
     if (!response.ok) {
+        const errorResponse = await response.json();
+        console.error("API Error Response:", errorResponse); // Log the error response
         throw new Error("Failed to update profile");
+    }
+
+    return response.json();
+};
+
+export const deleteProfile = async (userId) => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+        throw new Error("No authentication token found!");
+    }
+
+    const response = await fetch(`http://localhost:5000/api/auth/deleteprofile/${userId}`, {
+        method: "DELETE",
+        headers: {
+            "Authorization": `Bearer ${token}`,
+        },
+    });
+
+    if (!response.ok) {
+        const errorResponse = await response.json();
+        console.error("API Error Response:", errorResponse);
+        throw new Error(errorResponse.message || "Failed to delete profile");
     }
 
     return response.json();

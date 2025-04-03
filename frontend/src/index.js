@@ -7,7 +7,7 @@ const root = ReactDOM.createRoot(document.getElementById("root"));
 
 root.render(
   <AuthProvider>
-    <BrowserRouter>  
+    <BrowserRouter>
     <App />
   </BrowserRouter>
 

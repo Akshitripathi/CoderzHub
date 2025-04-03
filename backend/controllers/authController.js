@@ -1,24 +1,46 @@
+// userController.js (controllers/userController.js)
+
 const User = require('../models/user');
 const bcrypt = require('bcryptjs');
-const nodemailer = require('nodemailer');
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
+const nodemailer = require('nodemailer');
+const path = require('path');
+const multer = require('multer');
+const fs = require('fs');
+
 require('dotenv').config();
 
-
-const transporter = nodemailer.createTransport({
-    service: "gmail",
-    auth: {
-        user: process.env.EMAIL_USER, 
-        pass: process.env.EMAIL_PASS 
-    }
+// Multer configuration
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, 'uploads/'); // Store files in 'uploads' directory
+    },
+    filename: (req, file, cb) => {
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+        const ext = path.extname(file.originalname);
+        cb(null, file.fieldname + '-' + uniqueSuffix + ext); // Generate unique filename
+    },
 });
 
+const upload = multer({ storage: storage });
+
+const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
+    },
+});
 
 const register = async (req, res) => {
-    const { name,username, email, password, phone_no, profile_picture, bio, github_link, linkedin_link } = req.body;
-
     try {
+        const { name, username, email, password, phone_no, bio, github_link, linkedin_link } = req.body;
+
+        if (!req.file) {
+            return res.status(400).json({ message: 'No file uploaded', success: false });
+        }
+
         if (password.length < 6) {
             return res.status(400).json({ message: 'Password must be at least 6 characters long', success: false });
         }
@@ -37,37 +59,34 @@ const register = async (req, res) => {
             email,
             password: hashedPassword,
             phone_no,
-            profile_picture,
+            profile_picture: req.file.filename, // Store filename
             bio,
             social_profiles: [github_link, linkedin_link],
-            verificationToken
+            verificationToken,
         });
 
         await newUser.save();
 
         console.log(`Verification token: ${verificationToken}`);
 
-
         const mailOptions = {
             from: process.env.EMAIL_USER,
             to: email,
-            subject: "Welcome to CoderzHub",
-            text: `Hello, \n\nWelcome to CoderzHub! We're excited to have you on board. If you need any help, feel free to reach out.\n\nBest regards,\nThe CoderzHub Team`
+            subject: 'Welcome to CoderzHub',
+            text: 'Hello,\n\nWelcome to CoderzHub! We\'re excited to have you on board. If you need any help, feel free to reach out.\n\nBest regards,\nThe CoderzHub Team',
         };
-        
-       
+
         transporter.sendMail(mailOptions, (err, info) => {
-            if (err) console.error("Error sending verification email:", err);
-            else console.log("Verification email sent:", info.response);
+            if (err) console.error('Error sending verification email:', err);
+            else console.log('Verification email sent:', info.response);
         });
 
         return res.status(201).json({ message: 'User registered successfully. Please verify your email.', success: true });
     } catch (error) {
-        console.error('Error during registration:', error);
-        return res.status(500).json({ message: 'Server error', error: error.message });
+        console.error("Registration error:", error); // Log the error on the server
+        res.status(500).json({ success: false, message: error.message || 'Internal server error' });
     }
 };
-
 
 const login = async (req, res) => {
     try {
@@ -75,41 +94,36 @@ const login = async (req, res) => {
         const user = await User.findOne({ $or: [{ email: identifier }, { username: identifier }] });
 
         if (!user) {
-            return res.status(400).json({ success: false, message: "User not found" });
+            return res.status(400).json({ success: false, message: 'User not found' });
         }
 
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
-            return res.status(400).json({ success: false, message: "Invalid credentials" });
+            return res.status(400).json({ success: false, message: 'Invalid credentials' });
         }
 
-        const token = jwt.sign(
-            { _id: user._id, role: user.role },
-            process.env.JWT_SECRET,
-            { expiresIn: "3h" }
-        );
+        const token = jwt.sign({ _id: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '3h' });
 
-        res.status(200).json({ success: true, token, userId: user._id, message: "Login successful" }); 
+        res.status(200).json({ success: true, token, userId: user._id, message: "Login successful" }); // Include userId in response
     } catch (error) {
-        res.status(500).json({ success: false, message: "Server error" });
+        res.status(500).json({ success: false, message: 'Server error' });
     }
 };
-
 
 const getProfile = async (req, res) => {
     try {
-        const user = await User.findById(req.user._id).select("-password");
+        const user = await User.findById(req.user._id).select('-password');
         if (!user) {
-            return res.status(404).json({ success: false, message: "User not found" });
+            return res.status(404).json({ success: false, message: 'User not found' });
         }
-
-        res.json({ success: true, user });
+        if (user.profile_picture && !user.profile_picture.startsWith('/uploads')) {
+            user.profile_picture = `/uploads/${user.profile_picture}`;
+        }
+        res.status(200).json({ success: true, user });
     } catch (error) {
-        console.error("Error fetching user profile:", error);
-        res.status(500).json({ success: false, message: "Server error" });
+        res.status(500).json({ success: false, message: 'Error fetching profile', error: error.message });
     }
 };
-
 
 const verifyEmail = async (req, res) => {
     const { token } = req.params;
@@ -128,7 +142,6 @@ const verifyEmail = async (req, res) => {
     }
 };
 
-
 const requestPasswordReset = async (req, res) => {
     const { email } = req.body;
     try {
@@ -139,7 +152,7 @@ const requestPasswordReset = async (req, res) => {
 
         const resetToken = crypto.randomBytes(32).toString('hex');
         user.resetPasswordToken = resetToken;
-        user.resetPasswordExpires = Date.now() + 3600000; 
+        user.resetPasswordExpires = Date.now() + 3600000;
         await user.save();
 
         console.log(`Password reset token: ${resetToken}`);
@@ -149,7 +162,6 @@ const requestPasswordReset = async (req, res) => {
         return res.status(500).json({ message: 'Server error', error: error.message });
     }
 };
-
 
 const resetPassword = async (req, res) => {
     const { token, newPassword } = req.body;
@@ -171,15 +183,14 @@ const resetPassword = async (req, res) => {
     }
 };
 
-
 const updateProfile = async (req, res) => {
     try {
-        const userId = req.user.id; 
-        const { name, email, phone_no, bio, github_link, linkedin_link, profile_picture } = req.body;
+        const userId = req.params.id;
+        const { name, email, phone_no, bio, github_link, linkedin_link } = req.body;
 
         const user = await User.findById(userId);
         if (!user) {
-            return res.status(404).json({ success: false, message: "User not found" });
+            return res.status(404).json({ success: false, message: 'User not found' });
         }
 
         user.name = name || user.name;
@@ -188,21 +199,23 @@ const updateProfile = async (req, res) => {
         user.bio = bio || user.bio;
         user.profile_picture = profile_picture || user.profile_picture;
 
+        // Update social media links in both individual fields and social_profiles array
         user.github_link = github_link || user.github_link;
         user.linkedin_link = linkedin_link || user.linkedin_link;
 
-        let updatedSocialProfiles = new Set(user.social_profiles); 
+        // Ensure social_profiles array stays updated with unique values
+        let updatedSocialProfiles = new Set(user.social_profiles); // Convert to Set to avoid duplicates
 
         if (github_link) updatedSocialProfiles.add(github_link);
         if (linkedin_link) updatedSocialProfiles.add(linkedin_link);
 
-        user.social_profiles = Array.from(updatedSocialProfiles); 
+        user.social_profiles = Array.from(updatedSocialProfiles); // Convert back to array
 
         await user.save();
 
         res.json({
             success: true,
-            message: "Profile updated successfully!",
+            message: 'Profile updated successfully!',
             user: {
                 name: user.name,
                 email: user.email,
@@ -211,15 +224,39 @@ const updateProfile = async (req, res) => {
                 profile_picture: user.profile_picture,
                 github_link: user.github_link,
                 linkedin_link: user.linkedin_link,
-                social_profiles: user.social_profiles, 
+                social_profiles: user.social_profiles, // Return updated social_profiles array
             }
         });
     } catch (err) {
         console.error(err);
-        res.status(500).json({ success: false, message: "Server error. Please try again." });
+        res.status(500).json({ success: false, message: 'Server error. Please try again.' });
     }
 };
 
+const deleteProfile = async (req, res) => {
+    try {
+        const userId = req.params.id;
 
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ success: false, message: 'User not found' });
+        }
 
-module.exports = {updateProfile, register, login, getProfile, verifyEmail, requestPasswordReset, resetPassword };
+        // Delete the user's profile picture file if it exists
+        if (user.profile_picture && user.profile_picture.startsWith('/uploads')) {
+            const filePath = path.join(__dirname, '..', user.profile_picture);
+            if (fs.existsSync(filePath)) {
+                fs.unlinkSync(filePath);
+            }
+        }
+
+        await User.findByIdAndDelete(userId);
+
+        res.json({ success: true, message: 'Profile deleted successfully!' });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ success: false, message: 'Server error. Please try again.' });
+    }
+};
+
+module.exports = { upload, register, login, getProfile, verifyEmail, requestPasswordReset, resetPassword, updateProfile, deleteProfile };
