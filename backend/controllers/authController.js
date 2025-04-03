@@ -193,22 +193,32 @@ const updateProfile = async (req, res) => {
             return res.status(404).json({ success: false, message: 'User not found' });
         }
 
+        // Update user fields
         user.name = name || user.name;
         user.email = email || user.email;
         user.phone_no = phone_no || user.phone_no;
         user.bio = bio || user.bio;
-        user.profile_picture = profile_picture || user.profile_picture;
 
-        // Update social media links in both individual fields and social_profiles array
+        // Handle profile picture update
+        if (req.file) {
+            // Delete the old profile picture if it exists
+            if (user.profile_picture && user.profile_picture.startsWith('/uploads')) {
+                const oldFilePath = path.join(__dirname, '..', user.profile_picture);
+                if (fs.existsSync(oldFilePath)) {
+                    fs.unlinkSync(oldFilePath);
+                }
+            }
+            user.profile_picture = `/uploads/${req.file.filename}`; // Update with the new file path
+        }
+
+        // Update social media links
         user.github_link = github_link || user.github_link;
         user.linkedin_link = linkedin_link || user.linkedin_link;
 
         // Ensure social_profiles array stays updated with unique values
         let updatedSocialProfiles = new Set(user.social_profiles); // Convert to Set to avoid duplicates
-
         if (github_link) updatedSocialProfiles.add(github_link);
         if (linkedin_link) updatedSocialProfiles.add(linkedin_link);
-
         user.social_profiles = Array.from(updatedSocialProfiles); // Convert back to array
 
         await user.save();
@@ -225,7 +235,7 @@ const updateProfile = async (req, res) => {
                 github_link: user.github_link,
                 linkedin_link: user.linkedin_link,
                 social_profiles: user.social_profiles, // Return updated social_profiles array
-            }
+            },
         });
     } catch (err) {
         console.error(err);
