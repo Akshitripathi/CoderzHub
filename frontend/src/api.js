@@ -422,37 +422,3 @@ export const getAllCollaborators = async () => {
 
     return response.json();
 };
-
-export const getProjectsByAdmin = async (adminId) => {
-    const token = localStorage.getItem("token");
-    const response = await fetch(`${API_BASE_URL}/project/get-projects-by-admin/${adminId}`, {
-        method: "GET",
-        headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`
-        }
-    });
-
-    if (!response.ok) {
-        throw new Error("Failed to fetch projects by admin");
-    }
-
-    return response.json();
-};
-
-export const getProjectsByCollaborator = async (userId) => {
-    const token = localStorage.getItem("token");
-    const response = await fetch(`${API_BASE_URL}/project/get-projects-by-collaborator/${userId}`, {
-        method: "GET",
-        headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`
-        }
-    });
-
-    if (!response.ok) {
-        throw new Error("Failed to fetch projects by collaborator");
-    }
-
-    return response.json();
-};
