@@ -406,19 +406,3 @@ export const getProjectsByCollaborator = async (userId) => {
     return response.json();
 };
 
-export const getAllCollaborators = async () => {
-    const token = localStorage.getItem("token");
-    const response = await fetch(`${API_BASE_URL}/project/get-all-collaborators`, {
-        method: "GET",
-        headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`
-        }
-    });
-
-    if (!response.ok) {
-        throw new Error("Failed to fetch collaborators");
-    }
-
-    return response.json();
-};
