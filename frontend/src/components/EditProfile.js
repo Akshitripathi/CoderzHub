@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from "react";
-import { fetchProfile, updateProfile } from "../api";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { fetchProfile, updateProfile } from "../api";
 import "../styles/EditProfile.css";
 
-const EditProfile = () => {
+const EditProfile = ({ onProfileUpdated }) => {
     const [user, setUser] = useState(null);
     const [formData, setFormData] = useState({
         name: "",
@@ -12,7 +12,7 @@ const EditProfile = () => {
         bio: "",
         github_link: "",
         linkedin_link: "",
-        profile_picture: ""
+        profile_picture: null, // Changed to handle file input
     });
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -38,7 +38,7 @@ const EditProfile = () => {
                         bio: response.user.bio || "",
                         github_link: response.user.github_link || "",
                         linkedin_link: response.user.linkedin_link || "",
-                        profile_picture: response.user.profile_picture || ""
+                        profile_picture: null, // Reset to null for file input
                     });
                 } else {
                     setError("Failed to load profile.");
@@ -56,7 +56,12 @@ const EditProfile = () => {
     }, [navigate]);
 
     const handleChange = (e) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
+        const { name, value } = e.target;
+        setFormData({ ...formData, [name]: value });
+    };
+
+    const handleFileChange = (e) => {
+        setFormData({ ...formData, profile_picture: e.target.files[0] });
     };
 
     const handleSubmit = async (e) => {
@@ -64,12 +69,36 @@ const EditProfile = () => {
         setLoading(true);
 
         try {
-            const response = await updateProfile(formData);
+            const token = localStorage.getItem("token");
+            console.log("Auth Token:", token); // Debugging
+    
+            if (!token) {
+                setError("Authentication token is missing. Please log in again.");
+                navigate("/login");
+                return;
+            }
+            const form = new FormData();
+            for (const key in formData) {
+                form.append(key, formData[key]);
+            }
+
+            // Log the FormData contents
+            for (let [key, value] of form.entries()) {
+                console.log(`${key}:`, value);
+            }
+
+            // Pass the user ID to the updateProfile API
+            const response = await updateProfile(user._id, form);
+            console.log("API Response:", response);
             if (response.success) {
                 setSuccessMessage("Profile updated successfully!");
+                // Notify the parent component (Profile.js) about the updated user data
+                if (onProfileUpdated) {
+                    onProfileUpdated(response.user);
+                }
                 setTimeout(() => {
                     navigate("/profile");
-                }, 2000); // Redirect after 2 seconds
+                }, 1000); // Redirect after 2 seconds
             } else {
                 setError(response.message || "Something went wrong. Please try again.");
             }
@@ -87,6 +116,7 @@ const EditProfile = () => {
         <div className="edit-profile-container">
             <h2>Edit Profile</h2>
             {successMessage && <p className="success">{successMessage}</p>}
+            {error && <p className="error">{error}</p>}
             <form onSubmit={handleSubmit}>
                 <div className="form-section">
                     <div className="input-group">
@@ -121,9 +151,7 @@ const EditProfile = () => {
                             required
                         />
                     </div>
-                </div>
 
-                <div className="form-section">
                     <div className="input-group">
                         <label>Bio</label>
                         <textarea
@@ -133,7 +161,9 @@ const EditProfile = () => {
                             placeholder="Tell us about yourself"
                         ></textarea>
                     </div>
+                </div>
 
+                <div className="form-section">
                     <div className="input-group">
                         <label>GitHub Link</label>
                         <input
@@ -153,25 +183,24 @@ const EditProfile = () => {
                             onChange={handleChange}
                         />
                     </div>
-                </div>
 
-                <div className="form-section">
                     <div className="input-group">
-                        <label>Profile Picture URL</label>
+                        <label>Profile Picture</label>
                         <input
-                            type="url"
+                            type="file"
                             name="profile_picture"
-                            value={formData.profile_picture}
-                            onChange={handleChange}
-                            placeholder="URL to your profile picture"
+                            accept="image/*"
+                            onChange={handleFileChange}
                         />
+                        {formData.profile_picture && (
+                            <div className="profile-preview">
+                                <img
+                                    src={URL.createObjectURL(formData.profile_picture)}
+                                    alt="Profile Preview"
+                                />
+                            </div>
+                        )}
                     </div>
-
-                    {formData.profile_picture && (
-                        <div className="profile-preview">
-                            <img src={formData.profile_picture} alt="Profile Preview" />
-                        </div>
-                    )}
                 </div>
 
                 <div className="form-actions">
