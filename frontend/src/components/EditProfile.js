@@ -117,7 +117,7 @@ const EditProfile = ({ onProfileUpdated }) => {
             <h2>Edit Profile</h2>
             {successMessage && <p className="success">{successMessage}</p>}
             {error && <p className="error">{error}</p>}
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleSubmit} className="edit-profile-form">
                 <div className="form-section">
                     <div className="input-group">
                         <label>Name</label>

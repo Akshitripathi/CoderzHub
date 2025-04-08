@@ -61,7 +61,7 @@ const Login = () => {
 
                 <form onSubmit={handleSubmit}>
                     <div className="input-group">
-                        <FaEnvelope className="input-icon" style={{ marginLeft: "1.5rem" }} />
+                        <FaEnvelope className="input-icon" />
                         <input
                             type="text"
                             name="identifier"
@@ -70,11 +70,12 @@ const Login = () => {
                             onChange={handleChange}
                             required
                             disabled={loading}
+                            
                         />
                     </div>
 
                     <div className="input-group">
-                        <FaLock className="input-icon" style={{ marginLeft: "1.5rem" }} />
+                        <FaLock className="input-icon"  />
                         <input
                             type={showPassword ? "text" : "password"}
                             name="password"
