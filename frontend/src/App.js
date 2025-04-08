@@ -1,21 +1,23 @@
 import { useEffect, useState } from "react";
 import { Route, Routes } from "react-router-dom";
+import "react-toastify/dist/ReactToastify.css";
 import "./App.css";
-import Signup from "./components/Signup";
-import Login from "./components/Login";
-import Profile from "./components/Profile";
-import Navbar from "./components/Navbar";
-import Home from "./components/Home";
-import Settings from "./components/Settings";
-import Dashboard from "./components/Dashboard";
 import AdminForm from "./components/AdminForm";
-import Project from "./components/Project";
 import Codespace from "./components/Codespace";
+import Dashboard from "./components/Dashboard";
 import EditProfile from "./components/EditProfile";
 import Footer from "./components/Footer";
-import { AuthProvider } from "./context/AuthContext.js";
+import Home from "./components/Home";
+import Login from "./components/Login";
+import Navbar from "./components/Navbar";
+import Profile from "./components/Profile";
+import Project from "./components/Project";
 import ProtectedRoute from "./components/ProtectedRoute";
-import { useAuth } from "./context/AuthContext"; 
+import Settings from "./components/Settings";
+import Signup from "./components/Signup";
+import { useAuth } from "./context/AuthContext";
+import { AuthProvider } from "./context/AuthContext.js";
+import { ToastContainer } from "react-toastify";
 
 function App() {
   const [dots, setDots] = useState([]);
@@ -70,6 +72,18 @@ function App() {
           <Footer />
         </AuthProvider>
       </div>
+      <ToastContainer
+      position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      />
     </>
   );
 }

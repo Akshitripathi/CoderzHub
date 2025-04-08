@@ -1,8 +1,12 @@
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useState, useEffect } from "react";
-import { Button } from "../ui/button";
-import { getProjects, changeProjectStatus } from "../api";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { changeProjectStatus, getProjects } from "../api";
 import "../styles/Project.css";
+import { Button } from "../ui/button";
+
+// toast.configure();
 
 export default function Project() {
   const navigate = useNavigate();
@@ -39,13 +43,28 @@ export default function Project() {
 
   const handleChangeStatus = async (projectId, newStatus) => {
     try {
-      await changeProjectStatus(projectId, newStatus);
-      setProjects((prev) =>
-        prev.map((p) => (p.id === projectId ? { ...p, status: newStatus } : p))
-      );
+        await changeProjectStatus(projectId, newStatus);
+        setProjects((prev) =>
+            prev.map((p) => (p._id === projectId ? { ...p, status: newStatus } : p))
+        );
+        toast.success("Project status updated successfully!");
     } catch (error) {
-      setError("Failed to update project status.");
+        if (error.message === "Only the admin can change the project status") {
+            toast.error("You cannot change the status as you are not the admin of this project.");
+        } else {
+            console.error("Error changing project status:", error.message);
+            setError(error.message || "Failed to update project status.");
+            toast.error("Failed to update project status.");
+        }
     }
+};
+
+  const handleViewProject = (project) => {
+    if (project.visibility === "Private" && !project.isCollaborator) {
+      alert("You do not have access to this project.");
+      return;
+    }
+    navigate(`/codespace/${project._id}`);
   };
 
   if (loading) return <p>Loading...</p>;
@@ -81,7 +100,7 @@ export default function Project() {
           <div className="projects-grid">
             {projects.length > 0 ? (
               projects.map((project) => (
-                <div key={project.id} className="project-card">
+                <div key={project._id} className="project-card">
                   <div className="project-card-header">
                     <h3>{project.name}</h3>
                     <span className={`status ${project.status?.toLowerCase()}`}>
@@ -138,15 +157,15 @@ export default function Project() {
                   </div>
 
                   <div className="project-actions">
-                    <Button 
-                      onClick={() => project._id && navigate(`/codespace/${project._id}`)}
+                    <Button
+                      onClick={() => handleViewProject(project)}
                       className="view-details-button"
                     >
                       View Project
                     </Button>
                     <Button 
                       className="change-status-button"
-                      onClick={() => handleChangeStatus(project.id, 
+                      onClick={() => handleChangeStatus(project._id, 
                         project.status === "Completed" ? "Active" : "Completed")}
                     >
                       Change Status

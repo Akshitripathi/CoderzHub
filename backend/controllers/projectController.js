@@ -50,12 +50,36 @@ exports.createProject = async (req, res) => {
 
 exports.getProjects = async (req, res) => {
     try {
-        const projects = await Project.find({ visibility: { $in: ['Public', 'Restricted'] } })
-            .populate('admin', 'username email')
-            .populate('collaborators', 'username email');
-        res.status(200).json(projects);
+        const userId = req.user._id; // Authenticated user's ID
+
+        // Fetch projects with valid admin and collaborators
+        const projects = await Project.find({
+            $or: [
+                { visibility: "Public" },
+                { visibility: "Private", collaborators: userId },
+                { visibility: "Private", admin: userId },
+            ],
+        })
+            .populate("admin", "username email")
+            .populate("collaborators", "username email");
+
+        // Filter out projects with null admin or collaborators
+        const validProjects = projects.filter(
+            (project) => project.admin && project.collaborators
+        );
+
+        // Add a flag to indicate if the user is a collaborator
+        const projectsWithAccessInfo = validProjects.map((project) => ({
+            ...project.toObject(),
+            isCollaborator: project.collaborators.some(
+                (collab) => collab && collab._id.toString() === userId.toString()
+            ) || project.admin._id.toString() === userId.toString(),
+        }));
+
+        res.status(200).json({ success: true, projects: projectsWithAccessInfo });
     } catch (error) {
-        res.status(500).json({ message: 'Error fetching projects', error: error.message });
+        console.error("Error fetching projects:", error);
+        res.status(500).json({ message: "Error fetching projects", error: error.message });
     }
 };
 
@@ -147,17 +171,37 @@ exports.removeCollaborator = async (req, res) => {
 
 exports.changeProjectStatus = async (req, res) => {
     try {
+        console.log("Request Body:", req.body);
+        console.log("Authenticated User:", req.user);
+
         const { projectId, status } = req.body;
 
+        // Validate the new status
         if (!['Active', 'Completed', 'Archived'].includes(status)) {
             return res.status(400).json({ message: 'Invalid project status' });
         }
 
-        const project = await Project.findByIdAndUpdate(projectId, { status }, { new: true });
-        if (!project) return res.status(404).json({ message: 'Project not found' });
+        // Find the project
+        const project = await Project.findById(projectId);
+        if (!project) {
+            console.warn(`Project not found: ${projectId}`);
+            return res.status(404).json({ message: 'Project not found' });
+        }
+
+        // Check if the authenticated user is the admin of the project
+        if (project.admin.toString() !== req.user._id.toString()) {
+            return res.status(403).json({ message: 'Only the admin can change the project status' });
+        }
+
+        // Update the project status
+        project.status = status;
+        await project.save();
+
+        console.log("Project status updated:", project);
 
         res.status(200).json({ message: 'Project status updated successfully', project });
     } catch (error) {
+        console.error('Error updating project status:', error);
         res.status(500).json({ message: 'Error updating project status', error: error.message });
     }
 };

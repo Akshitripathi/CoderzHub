@@ -3,29 +3,30 @@ const multer = require('multer');
 const Project = require('../models/project');
 const path = require('path');
 const fs = require('fs');
-
+const authMiddleware = require('../middleware/authMiddleware');
 const router = express.Router();
 const upload = multer({ dest: 'projects/' });
 
 const projectController = require('../controllers/projectController');
 
-router.post('/create-project', projectController.createProject);
-router.get('/get-all-project', projectController.getProjects);
-router.get('/get-project/:id', projectController.getProjectById);
-router.put('/update-project/:id', projectController.updateProject);
-router.delete('/delete-project/:id', projectController.deleteProject);
-router.post('/add-collaborator-project', projectController.addCollaborator);
-router.post('/remove-collaborator-project', projectController.removeCollaborator);
+// Apply authMiddleware to routes that require authentication
+router.post('/create-project', authMiddleware, projectController.createProject);
+router.get('/get-all-project', authMiddleware, projectController.getProjects);
+router.get('/get-project/:id', authMiddleware, projectController.getProjectById);
+router.put('/update-project/:id', authMiddleware, projectController.updateProject);
+router.delete('/delete-project/:id', authMiddleware, projectController.deleteProject);
+router.post('/add-collaborator-project', authMiddleware, projectController.addCollaborator);
+router.post('/remove-collaborator-project', authMiddleware, projectController.removeCollaborator);
 
-router.post('/change-status-project', projectController.changeProjectStatus);
-router.get('/get-project-files/:projectId', projectController.getProjectFiles);
-router.post('/:projectId/save-file', projectController.saveFileContent); 
+router.post('/change-status-project', authMiddleware, projectController.changeProjectStatus);
+router.get('/get-project-files/:projectId', authMiddleware, projectController.getProjectFiles);
+router.post('/:projectId/save-file', authMiddleware, projectController.saveFileContent);
 
-router.get('/get-all-collaborators', projectController.getAllCollaborators);
-router.get('/get-projects-by-admin/:adminId', projectController.getProjectsByAdmin);
-router.get('/get-projects-by-collaborator/:userId', projectController.getProjectsByCollaborator);
+router.get('/get-all-collaborators', authMiddleware, projectController.getAllCollaborators);
+router.get('/get-projects-by-admin/:adminId', authMiddleware, projectController.getProjectsByAdmin);
+router.get('/get-projects-by-collaborator/:userId', authMiddleware, projectController.getProjectsByCollaborator);
 
-router.post('/:projectId/upload', upload.single('file'), async (req, res) => {
+router.post('/:projectId/upload', authMiddleware, upload.single('file'), async (req, res) => {
   try {
     const project = await Project.findById(req.params.projectId);
     if (!project) {
@@ -46,7 +47,7 @@ router.post('/:projectId/upload', upload.single('file'), async (req, res) => {
   }
 });
 
-router.get('/:projectId/files', async (req, res) => {
+router.get('/:projectId/files', authMiddleware, async (req, res) => {
   try {
     const project = await Project.findById(req.params.projectId);
     if (!project) {
@@ -59,7 +60,7 @@ router.get('/:projectId/files', async (req, res) => {
   }
 });
 
-router.delete('/:projectId/files/:filename', async (req, res) => {
+router.delete('/:projectId/files/:filename', authMiddleware, async (req, res) => {
   try {
     const project = await Project.findById(req.params.projectId);
     if (!project) {
@@ -83,7 +84,7 @@ router.delete('/:projectId/files/:filename', async (req, res) => {
   }
 });
 
-router.put('/:projectId/files/:filename', async (req, res) => {
+router.put('/:projectId/files/:filename', authMiddleware, async (req, res) => {
   try {
     const project = await Project.findById(req.params.projectId);
     if (!project) {
@@ -117,6 +118,6 @@ router.put('/:projectId/files/:filename', async (req, res) => {
   }
 });
 
-router.post('/:projectId/files/content', projectController.getFileContent);
+router.post('/:projectId/files/content', authMiddleware, projectController.getFileContent);
 
 module.exports = router;
