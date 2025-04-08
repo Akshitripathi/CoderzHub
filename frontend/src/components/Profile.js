@@ -74,71 +74,97 @@ const Profile = () => {
 
     return (
         <div className="profile-container">
-            <div className="profile-header">
-                <img
-                    src={profilePicUrl}
-                    alt="Profile"
-                    className="profile-pic"
-                />
-                <h2>{user.username}</h2>
-                <p><strong>Name:</strong> {user.name}</p>
-                <p><strong>Email:</strong> {user.email}</p>
-                <p><strong>Phone Number:</strong> {user.phone_no}</p>
-                <p><strong>Status:</strong> {user.status}</p>
-                <p><strong>Role:</strong> {user.role}</p>
-                <p><strong>Account Status:</strong> {user.account_status}</p>
-                <p><strong>Member Since:</strong> {new Date(user.createdAt).toLocaleDateString()}</p>
-            </div>
+            <div className="profile-content">
+                <div className="profile-left">
+                    <div className="profile-picture-container">
+                        <img src={profilePicUrl} alt="Profile" className="profile-pic" />
+                        <div className="profile-status" title={user.status}></div>
+                    </div>
+                    <h2>{user.username}</h2>
+                    <p className="user-role">{user.role}</p>
+                    
+                    <div className="stats-grid">
+                        
+                        <div className="stat-item">
+                            <div className="stat-value">{user.projects?.length || 0}</div>
+                            <div className="stat-label">Projects</div>
+                        </div>
+                        <div className="stat-item">
+                            <div className="stat-value">{user.collaborations?.length || 0}</div>
+                            <div className="stat-label">Collabs</div>
+                        </div>
+                    </div>
 
-           
-            <div className="profile-bio">
-                <h3>Bio</h3>
-                <p>{user.bio || "No bio available."}</p>
-            </div>
-
-            
-            <div className="profile-stats">
-                <div className="stat-card">
-                    <h4>Friends</h4>
-                    <p>{user.friends?.length || 0} Friends</p>
+                    <div className="social-links">
+                        {user.github_link && (
+                            <a href={user.github_link} target="_blank" rel="noopener noreferrer" className="social-link">
+                                GitHub
+                            </a>
+                        )}
+                        {user.linkedin_link && (
+                            <a href={user.linkedin_link} target="_blank" rel="noopener noreferrer" className="social-link">
+                                LinkedIn
+                            </a>
+                        )}
+                    </div>
                 </div>
-                <div className="stat-card">
-                    <h4>Projects</h4>
-                    <p>{user.projects?.length || 0} Projects</p>
-                </div>
-                <div className="stat-card">
-                    <h4>Collaborations</h4>
-                    <p>{user.collaborations?.length || 0} Collaborations</p>
-                </div>
-            </div>
 
-            
-            {user.notifications && user.notifications.length > 0 && (
-                <div className="recent-activities">
-                    <h3>Recent Activities</h3>
-                    <ul>
-                        {user.notifications.map((notification, index) => (
-                            <li key={index}>
-                                {notification.message} <span>{new Date(notification.createdAt).toLocaleString()}</span>
-                            </li>
-                        ))}
-                    </ul>
+                <div className="profile-right">
+                    <div className="profile-header">
+                        <h2>Personal Information</h2>
+                        <p><strong>Name:</strong> {user.name}</p>
+                        <p><strong>Email:</strong> {user.email}</p>
+                        <p><strong>Status:</strong> {user.status}</p>
+                    </div>
+
+                    <div className="profile-bio info-card">
+                        <h3>About Me</h3>
+                        <p>{user.bio || "No bio available yet."}</p>
+                    </div>
+
+                    <div className="profile-grid">
+                        {user.notifications && user.notifications.length > 0 && (
+                            <div className="info-card">
+                                <h3>Recent Activities</h3>
+                                <div className="activity-list">
+                                    {user.notifications.map((notification, index) => (
+                                        <div key={index} className="activity-item">
+                                            <div className="activity-icon">
+                                                {/* Icon would go here */}
+                                            </div>
+                                            <div>
+                                                <p>{notification.message}</p>
+                                                <small>{new Date(notification.createdAt).toLocaleString()}</small>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+                        
+                        {user.social_profiles?.length > 0 && (
+                            <div className="info-card">
+                                <h3>Connected Accounts</h3>
+                                <div className="social-links">
+                                    {user.social_profiles.map((link, index) => (
+                                        <a key={index} href={link} target="_blank" rel="noopener noreferrer" className="social-link">
+                                            Profile {index + 1}
+                                        </a>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+                    </div>
+
+                    <div className="profile-actions">
+                        <button onClick={() => navigate("/edit-profile")} className="btn btn-primary">
+                            Edit Profile
+                        </button>
+                        <button onClick={handleDeleteProfile} className="btn btn-danger">
+                            Delete Profile
+                        </button>
+                    </div>
                 </div>
-            )}
-
-            
-            <div className="social-links">
-                <h3>Social Links</h3>
-                {user.github_link && <a href={user.github_link} target="_blank" rel="noopener noreferrer">GitHub</a>}
-                {user.linkedin_link && <a href={user.linkedin_link} target="_blank" rel="noopener noreferrer">LinkedIn</a>}
-                {user.social_profiles?.map((link, index) => (
-                    <a key={index} href={link} target="_blank" rel="noopener noreferrer">{link}</a>
-                ))}
-            </div>
-
-            <div className="profile-footer">
-                <button onClick={() => navigate("/edit-profile")}>Edit Profile</button>
-                <button onClick={handleDeleteProfile} className="delete-profile-btn">Delete Profile</button>
             </div>
         </div>
     );

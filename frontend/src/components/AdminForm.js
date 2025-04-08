@@ -98,77 +98,97 @@ export default function AdminForm() {
 
   return (
     <div className="admin-form-container">
-      <h2>Create Project</h2>
-      <form onSubmit={handleSubmit}>
-        <label>Project Name:</label>
-        <input
-          type="text"
-          value={formData.name}
-          onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-        />
-        {errors.name && <span className="error">{errors.name}</span>}
+      <div className="admin-form-content">
+        <h2>Create Project</h2>
+        <form onSubmit={handleSubmit}>
+          <div className="form-group">
+            <label>Project Name:</label>
+            <input
+              type="text"
+              value={formData.name}
+              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              placeholder="Enter project name"
+            />
+            {errors.name && <span className="error">{errors.name}</span>}
+          </div>
 
-        <label>Description:</label>
-        <textarea
-          value={formData.description}
-          onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-        />
-        {errors.description && <span className="error">{errors.description}</span>}
+          <div className="form-group">
+            <label>Description:</label>
+            <textarea
+              value={formData.description}
+              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+              placeholder="Describe your project"
+            />
+            {errors.description && <span className="error">{errors.description}</span>}
+          </div>
 
-        <label>Languages Used:</label>
-        <input
-          type="text"
-          placeholder="Comma separated (e.g. JavaScript, Python)"
-          onBlur={(e) =>
-            setFormData({
-              ...formData,
-              languages_used: e.target.value.split(",").map((lang) => lang.trim()),
-            })
-          }
-        />
-        {errors.languages_used && <span className="error">{errors.languages_used}</span>}
+          <div className="form-group">
+            <label>Languages Used:</label>
+            <input
+              type="text"
+              placeholder="Comma separated (e.g. JavaScript, Python)"
+              onBlur={(e) =>
+                setFormData({
+                  ...formData,
+                  languages_used: e.target.value.split(",").map((lang) => lang.trim()),
+                })
+              }
+            />
+            {errors.languages_used && <span className="error">{errors.languages_used}</span>}
+          </div>
 
-        <label>Tags:</label>
-        <input
-          type="text"
-          placeholder="Comma separated tags"
-          onBlur={(e) =>
-            setFormData({
-              ...formData,
-              tags: e.target.value.split(",").map((tag) => tag.trim()),
-            })
-          }
-        />
-        {errors.tags && <span className="error">{errors.tags}</span>}
+          <div className="form-group">
+            <label>Tags:</label>
+            <input
+              type="text"
+              placeholder="Comma separated tags"
+              onBlur={(e) =>
+                setFormData({
+                  ...formData,
+                  tags: e.target.value.split(",").map((tag) => tag.trim()),
+                })
+              }
+            />
+            {errors.tags && <span className="error">{errors.tags}</span>}
+          </div>
 
-        <label>Visibility:</label>
-        <select
-          value={formData.visibility}
-          onChange={(e) => setFormData({ ...formData, visibility: e.target.value })}
-        >
-          <option value="Public">Public</option>
-          <option value="Private">Private</option>
-          <option value="Restricted">Restricted</option>
-        </select>
+          <div className="form-group">
+            <label>Visibility:</label>
+            <select
+              value={formData.visibility}
+              onChange={(e) => setFormData({ ...formData, visibility: e.target.value })}
+              required
+            >
+              <option value="" disabled>Select visibility</option>
+              <option value="Public">Public</option>
+              <option value="Private">Private</option>
+              <option value="Restricted">Restricted</option>
+            </select>
+          </div>
 
-        <label>Add Collaborators:</label>
-        <input
-          type="text"
-          placeholder="Enter Username"
-          value={collaboratorInput}
-          onChange={(e) => setCollaboratorInput(e.target.value)}
-        />
-        <button type="button" className="add-btn" onClick={handleAddCollaborator}>
-          Add Collaborator
-        </button>
-        <ul>
-          {collaborators.map((collaborator, index) => (
-            <li key={index}>{collaborator}</li>
-          ))}
-        </ul>
+          <div className="form-group">
+            <label>Add Collaborators:</label>
+            <div className="collaborator-input-group">
+              <input
+                type="text"
+                placeholder="Enter Username"
+                value={collaboratorInput}
+                onChange={(e) => setCollaboratorInput(e.target.value)}
+              />
+              <button type="button" className="add-btn" onClick={handleAddCollaborator}>
+                Add Collaborator
+              </button>
+            </div>
+            <ul className="collaborator-list">
+              {collaborators.map((collaborator, index) => (
+                <li key={index}>{collaborator}</li>
+              ))}
+            </ul>
+          </div>
 
-        <button type="submit">Create Project</button>
-      </form>
+          <button type="submit">Create Project</button>
+        </form>
+      </div>
     </div>
   );
 }

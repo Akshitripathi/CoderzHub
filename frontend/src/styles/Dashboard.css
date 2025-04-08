@@ -4,7 +4,7 @@
   text-align: center;
   color: white;
   min-height: calc(100vh - 6rem);
-  background: linear-gradient(135deg, rgba(17, 25, 40, 0.95), rgba(28, 41, 56, 0.95));
+  /* background: linear-gradient(135deg, rgba(17, 25, 40, 0.95), rgba(28, 41, 56, 0.95)); */
 }
 
 .dashboard-header {

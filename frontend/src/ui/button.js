@@ -1,9 +1,10 @@
 import React from "react";
+import "../styles/Button.css";
 
-export const Button = ({ children, onClick }) => {
+export const Button = ({ children, onClick, className }) => {
   return (
     <button 
-      className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition"
+      className={`custom-button ${className || ''}`}
       onClick={onClick}
     >
       {children}
