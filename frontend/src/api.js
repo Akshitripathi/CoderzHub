@@ -208,7 +208,23 @@ export const createProject = async (projectData) => {
 
 export const getProjects = async () => {
     const token = localStorage.getItem("token");
-    return makeRequest("/get-all-project", "GET", null, token);
+    if (!token) {
+        throw new Error("No authentication token found!");
+    }
+
+    const response = await fetch("http://localhost:5000/api/project/get-all-project", {
+        method: "GET",
+        headers: {
+            "Authorization": `Bearer ${token}`,
+        },
+    });
+
+    if (!response.ok) {
+        const errorResponse = await response.json();
+        throw new Error(errorResponse.message || "Failed to fetch projects");
+    }
+
+    return response.json();
 };
 
 export const getProjectById = async (id) => {
@@ -248,7 +264,25 @@ export const unlikeProject = async (projectId) => {
 
 export const changeProjectStatus = async (projectId, newStatus) => {
     const token = localStorage.getItem("token");
-    return makeRequest("/change-status-project", "POST", { projectId, newStatus }, token);
+    if (!token) {
+        throw new Error("No authentication token found!");
+    }
+
+    const response = await fetch("http://localhost:5000/api/project/change-status-project", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`,
+        },
+        body: JSON.stringify({ projectId, status: newStatus }),
+    });
+
+    if (!response.ok) {
+        const errorResponse = await response.json();
+        throw new Error(errorResponse.message || "Failed to change project status");
+    }
+
+    return response.json();
 };
 
 

@@ -6,7 +6,7 @@ const projectSchema = new mongoose.Schema({
     admin: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
     collaborators: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
     languages_used: [String],
-    visibility: { type: String, enum: ['Public', 'Restricted', 'Private'], default: 'Public' },
+    visibility: { type: String, enum: ['Public', 'Private'], default: 'Public' },
     tags: [String],
     files: [{
         filename: { type: String, required: true },
