@@ -20,3 +20,14 @@ exports.addChat = async (req, res) => {
         res.status(500).json({ message: 'Error adding chat', error });
     }
 };
+
+exports.getChatsByProjectId = async (req, res) => {
+    try {
+        const { projectId } = req.params;
+        const chats = await Chat.find({ projectId }).sort({ createdAt: 1 });
+        res.status(200).json({ success: true, chats });
+    } catch (error) {
+        console.error('Error fetching chats:', error);
+        res.status(500).json({ success: false, message: 'Error fetching chats' });
+    }
+};

@@ -7,6 +7,7 @@ const authMiddleware = async (req, res, next) => {
         console.log("Auth Header:", authHeader); 
 
         if (!authHeader || !authHeader.startsWith("Bearer ")) {
+            console.error("Authorization header is missing or invalid");
             return res.status(401).json({ success: false, message: "Unauthorized - No token provided" });
         }
 

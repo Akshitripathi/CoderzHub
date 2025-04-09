@@ -3,11 +3,15 @@ import { io } from 'socket.io-client';
 import { getChats } from '../api'; // Assuming you have an API function to fetch chat history
 import '../styles/ChatWindow.css';
 
-const socket = io('http://localhost:5000'); // Backend URL
+// Use the correct backend URL
+const socket = io('http://localhost:5000', {
+    transports: ['websocket', 'polling'], // Ensure compatibility with different transport methods
+});
 
 const ChatWindow = ({ projectId, username }) => {
     const [message, setMessage] = useState('');
     const [messages, setMessages] = useState([]);
+    const [error, setError] = useState(null);
 
     useEffect(() => {
         // Join the project room
@@ -17,9 +21,11 @@ const ChatWindow = ({ projectId, username }) => {
         const fetchChats = async () => {
             try {
                 const response = await getChats(projectId);
-                setMessages(response);
-            } catch (error) {
-                console.error('Error fetching chats:', error);
+                setMessages(Array.isArray(response) ? response : []); // Ensure messages is always an array
+            } catch (err) {
+                console.error('Error fetching chats:', err);
+                setError(err.message || 'Failed to fetch chats.');
+                setMessages([]); // Reset messages to an empty array on error
             }
         };
 
@@ -64,6 +70,8 @@ const ChatWindow = ({ projectId, username }) => {
         // Clear the input field
         setMessage('');
     };
+
+    if (error) return <p className="error">{error}</p>;
 
     return (
         <div className="chat-container">

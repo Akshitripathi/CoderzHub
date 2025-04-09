@@ -136,7 +136,7 @@ const Signup = () => {
                             />
                         </div>
                         <div className="input-group">
-                            <FaImage className="input-icon" />
+                            {/* <FaImage className="input-icon" /> */}
                             <input
                                 type="file" // Change to file input
                                 name="profile_picture"

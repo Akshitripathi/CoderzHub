@@ -212,6 +212,8 @@ exports.getProjectFiles = async (req, res) => {
         const project = await Project.findById(projectId);
         if (!project) return res.status(404).json({ message: 'Project not found' });
 
+        console.log("Project Files from Database:", project.files);
+
         const filesDir = path.join(__dirname, '..', 'projects', projectId);
         const files = project.files.map(file => {
             const filePath = path.join(filesDir, file.filename);
@@ -229,21 +231,30 @@ exports.getProjectFiles = async (req, res) => {
 exports.saveFileContent = async (req, res) => {
     try {
         const { projectId, filePath, content } = req.body;
+
+        // Find the project
         const project = await Project.findById(projectId);
         if (!project) return res.status(404).json({ message: 'Project not found' });
 
-        const fullPath = path.join(__dirname, '..', 'projects', projectId, filePath);
+        // Construct the full path for the file
+        const projectDir = path.join(__dirname, '..', 'projects', projectId);
+        const fullPath = path.join(projectDir, filePath);
 
-        const dir = path.dirname(fullPath);
-        if (!fs.existsSync(dir)) {
-            fs.mkdirSync(dir, { recursive: true });
+        // Ensure the project directory exists
+        if (!fs.existsSync(projectDir)) {
+            fs.mkdirSync(projectDir, { recursive: true });
         }
 
+        // Write the file content
         fs.writeFileSync(fullPath, content);
 
+        // Update the project files in the database
         const fileIndex = project.files.findIndex(file => file.filepath === filePath);
         if (fileIndex === -1) {
-            project.files.push({ filename: path.basename(filePath), filepath: filePath });
+            project.files.push({
+                filename: path.basename(filePath),
+                filepath: filePath,
+            });
         } else {
             project.files[fileIndex].filename = path.basename(filePath);
             project.files[fileIndex].filepath = filePath;
@@ -259,14 +270,23 @@ exports.saveFileContent = async (req, res) => {
 };
 
 exports.getFileContent = async (req, res) => {
-    console.log("Entered get file content");
     try {
         const { projectId } = req.params;
         const { filePath } = req.body;
         const project = await Project.findById(projectId);
         if (!project) return res.status(404).json({ message: 'Project not found' });
 
-        const fullPath = path.join(__dirname, '..', 'projects', projectId, filePath);
+        // Construct the full path based on the architecture
+        const fullPath = path.join(
+            __dirname,
+            '..',
+            'projects',
+            projectId,
+            'projects',
+            projectId,
+            filePath
+        );
+
         if (!fs.existsSync(fullPath)) {
             return res.status(404).json({ message: 'File not found' });
         }

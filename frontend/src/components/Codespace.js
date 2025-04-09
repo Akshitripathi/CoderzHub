@@ -104,15 +104,60 @@ function CodeEditor({ language = "JavaScript" }) {
   const handleCompileCode = async () => {
     await handleSaveFile();
     const code = editorViewRef.current.state.doc.toString();
-    const result = await compileCode(language, code);
-    setOutput(result.output);
+
+    const languageMap = {
+        JavaScript: 63, // Node.js
+        Python: 71,     // Python 3
+        C: 50,          // C (GCC 9.2.0)
+        Java: 62,       // Java (OpenJDK 13.0.1)
+        XML: null       // Not supported by Judge0
+    };
+
+    const languageId = languageMap[language];
+    if (!languageId) {
+        setOutput("Language not supported for execution.");
+        return;
+    }
+
+    try {
+        const response = await compileCode(code, languageId);
+        if (response.stdout) {
+            setOutput(response.stdout);
+        } else if (response.stderr) {
+            setOutput(`Error: ${response.stderr}`);
+        } else if (response.compile_output) {
+            setOutput(`Compilation Error: ${response.compile_output}`);
+        } else {
+            setOutput("Unknown error occurred.");
+        }
+    } catch (error) {
+        console.error("Error executing code:", error);
+        setOutput("Failed to execute code. Please try again.");
+    }
   };
 
-  const handleAddFile = (fileName) => {
+  const handleAddFile = async (fileName) => {
     if (!fileName) return;
-    const filePath = `projects/${projectId}/${fileName}`;
-    setFiles([...files, { filename: fileName, filepath: filePath, content: "" }]);
-    setCurrentFile(filePath);
+    const filePath = `${fileName}`; // Only the file name is sent, as the backend handles the project folder structure
+    const newFile = { filename: fileName, filepath: filePath, content: "" };
+
+    try {
+        const response = await saveFileContent(projectId, filePath, "");
+        if (!response.success) {
+            console.error("Failed to save new file:", response.message);
+            setError(response.message || "Failed to save new file.");
+        } else {
+            console.log("New file saved successfully");
+
+            // Refresh the file list and set the new file as the current file
+            const updatedFiles = await getAllProjectFiles(projectId);
+            setFiles(Array.isArray(updatedFiles) ? updatedFiles : []);
+            setCurrentFile(filePath); 
+        }
+    } catch (error) {
+        console.error("Error saving new file:", error);
+        setError(error.message || "Failed to save new file.");
+    }
   };
 
   const handleSaveFile = async () => {
@@ -135,24 +180,38 @@ function CodeEditor({ language = "JavaScript" }) {
   };
 
   const handleDeleteFile = async (file) => {
-    await deleteFile(projectId, file);
-    const newFiles = files.filter(f => f.filepath !== file);
-    setFiles(newFiles);
-    setCurrentFile(newFiles.length > 0 ? newFiles[0].filepath : null);
+    const filename = file.split('/').pop(); // Extract filename from path
+    console.log("Deleting file:", filename);
+
+    try {
+        await deleteFile(projectId, filename); // Ensure correct filename is sent
+        const newFiles = files.filter(f => f.filepath !== file);
+        setFiles(newFiles);
+        setCurrentFile(newFiles.length > 0 ? newFiles[0].filepath : null);
+    } catch (error) {
+        console.error("Error deleting file:", error);
+        setError(error.message || "Failed to delete file.");
+    }
   };
 
   const handleRenameFile = async (oldFile, newFile) => {
-    const oldFilename = oldFile.split('/').pop();
+    const oldFilename = oldFile.split('/').pop(); // Extract filename from path
     const newFilename = newFile.split('/').pop();
     const newFilePath = oldFile.replace(oldFilename, newFilename);
+
     console.log("Old Filename:", oldFilename);
     console.log("New Filename:", newFilename);
     console.log("New File Path:", newFilePath);
 
-    await renameFile(projectId, oldFilename, newFilename);
-    const newFiles = files.map(file => file.filepath === oldFile ? { ...file, filename: newFilename, filepath: newFilePath } : file);
-    setFiles(newFiles);
-    setCurrentFile(newFilePath);
+    try {
+        await renameFile(projectId, oldFilename, newFilename); // Ensure correct filenames are sent
+        const newFiles = files.map(file => file.filepath === oldFile ? { ...file, filename: newFilename, filepath: newFilePath } : file);
+        setFiles(newFiles);
+        setCurrentFile(newFilePath);
+    } catch (error) {
+        console.error("Error renaming file:", error);
+        setError(error.message || "Failed to rename file.");
+    }
   };
 
   const handleFileClick = async (filePath) => {

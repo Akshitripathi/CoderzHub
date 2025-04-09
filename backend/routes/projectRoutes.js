@@ -72,7 +72,22 @@ router.delete('/:projectId/files/:filename', authMiddleware, async (req, res) =>
       return res.status(404).send('File not found');
     }
 
-    const filePath = path.join(__dirname, '..', project.files[fileIndex].filepath);
+    // Construct the file path based on the updated folder structure
+    const filePath = path.join(
+      __dirname,
+      '..',
+      'projects',
+      req.params.projectId,
+      project.files[fileIndex].filename
+    );
+
+    console.log("File Path to Delete:", filePath);
+
+    if (!fs.existsSync(filePath)) {
+      console.error(`File does not exist on disk: ${filePath}`);
+      return res.status(404).send('File not found');
+    }
+
     fs.unlinkSync(filePath);
 
     project.files.splice(fileIndex, 1);
@@ -80,44 +95,84 @@ router.delete('/:projectId/files/:filename', authMiddleware, async (req, res) =>
 
     res.send({ success: true });
   } catch (error) {
+    console.error('Error deleting file:', error);
     res.status(500).send(error.message);
   }
 });
 
-router.put('/:projectId/files/:filename', authMiddleware, async (req, res) => {
+router.put('/:projectId/file/:filename', authMiddleware, async (req, res) => {
   try {
     const project = await Project.findById(req.params.projectId);
     if (!project) {
+      console.error(`Project not found: ${req.params.projectId}`);
       return res.status(404).send('Project not found');
     }
 
     const fileIndex = project.files.findIndex(file => file.filename === req.params.filename);
     if (fileIndex === -1) {
-      return res.status(404).send('File not found');
+      console.error(`File not found in project database: ${req.params.filename}`);
+      return res.status(404).send('File not found in database');
     }
 
-    const oldFilePath = path.join(__dirname, '..', 'projects', req.params.projectId, req.params.filename);
-    const newFilePath = path.join(__dirname, '..', 'projects', req.params.projectId, req.body.newFilename);
+    // Construct the old and new file paths based on the updated folder structure
+    const oldFilePath = path.join(
+      __dirname,
+      '..',
+      'projects',
+      req.params.projectId,
+      project.files[fileIndex].filename
+    );
+    const newFilePath = path.join(
+      __dirname,
+      '..',
+      'projects',
+      req.params.projectId,
+      req.body.newFilename
+    );
 
-    console.log("Old File Path:", oldFilePath); 
-    console.log("New File Path:", newFilePath); 
+    console.log("Old File Path:", oldFilePath);
+    console.log("New File Path:", newFilePath);
 
+    // Check if the file exists on disk
     if (!fs.existsSync(oldFilePath)) {
-      return res.status(404).send('File not found');
+      console.error(`File does not exist on disk: ${oldFilePath}`);
+      return res.status(404).send('File not found on disk');
     }
 
+    // Rename the file on disk
     fs.renameSync(oldFilePath, newFilePath);
 
+    // Update the file details in the database
     project.files[fileIndex].filename = req.body.newFilename;
-    project.files[fileIndex].filepath = path.join('projects', req.params.projectId, req.body.newFilename);
+    project.files[fileIndex].filepath = req.body.newFilename;
     await project.save();
 
     res.json({ success: true });
   } catch (error) {
+    console.error('Error renaming file:', error);
     res.status(500).send(error.message);
   }
 });
 
-router.post('/:projectId/files/content', authMiddleware, projectController.getFileContent);
+router.post('/:projectId/files/content', authMiddleware, async (req, res) => {
+  try {
+    const { filePath } = req.body; // Extract filePath from the request body
+    const projectDir = path.join(__dirname, '..', 'projects', req.params.projectId);
+    const fullPath = path.join(projectDir, filePath); // Construct the full file path
+
+    console.log("Fetching file content from path:", fullPath);
+
+    if (!fs.existsSync(fullPath)) {
+      console.error(`File does not exist: ${fullPath}`);
+      return res.status(404).json({ message: 'File not found' });
+    }
+
+    const content = fs.readFileSync(fullPath, 'utf-8'); // Read the file content
+    res.status(200).json({ content });
+  } catch (error) {
+    console.error('Error fetching file content:', error);
+    res.status(500).json({ message: 'Error fetching file content', error: error.message });
+  }
+});
 
 module.exports = router;

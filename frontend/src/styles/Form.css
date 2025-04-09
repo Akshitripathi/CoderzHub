@@ -102,22 +102,22 @@
     transform: translateY(-50%) scale(1.1);
 }
 
-.input-group input,
-.input-group textarea {
+.login-body .input-group input,
+.login-body .input-group textarea {
     width: 90%;
     padding: 1.2rem 1.2rem 1.2rem 3.2rem;
     background: rgba(255, 255, 255, 0.05);
-    border: 2px solid var(--border);
+    border: 1px solid var(--surface);
     border-radius: 12px;
     color: rgb(38, 38, 38);
     font-size: 1rem;
     transition: all 0.3s ease;
 }
 
-.input-group input:focus,
-.input-group textarea:focus {
+.login-body .input-group input:focus,
+.login-body .input-group textarea:focus {
     background: rgba(255, 255, 255, 0.08);
-    /* border-color: var(--primary); */
+    border-color: var(--primary);
     box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1);
     outline: none;
 }
@@ -145,7 +145,7 @@
 .signup-body .password-toggle {
     position: absolute;
     width: 10px;
-    right: -2.25rem;
+    right: -0.25rem;
     top: 55%;
     transform: translateY(-50%);
     color: var(--text-secondary);
@@ -282,18 +282,14 @@
     transition: transform 0.3s ease;
 }
 
-.signup-container .input-group:hover {
-    transform: translateX(5px);
-}
-
 .signup-container .input-group input,
 .signup-container .input-group textarea {
-    width: 100%;
-    padding: 1rem 1rem 1rem 3rem;
-    background: white;
-    border: 2px solid var(--border);
+    width: 90%;
+    padding: 1.2rem 1.2rem 1.2rem 3.2rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--surface);
     border-radius: 12px;
-    color: #1e293b;
+    color: rgb(38, 38, 38);
     font-size: 1rem;
     transition: all 0.3s ease;
 }
@@ -303,7 +299,7 @@
     border-color: var(--primary);
     box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1);
     outline: none;
-    transform: translateY(-2px);
+    /* transform: translateY(-2px); */
 }
 
 .signup-container .input-icon {
@@ -323,28 +319,72 @@
     transform: translateY(-50%) scale(1.1);
 }
 
-/* File input styling */
-.signup-container input[type="file"] {
+/* Custom styling for file input in signup form */
+.signup-container .input-group input[type="file"] {
+    width: 51%;
     padding: 1rem;
-    background: linear-gradient(45deg, #f8fafc, #fff);
+    background: #f8fafc;
     border: 2px dashed var(--primary);
+    border-radius: 12px;
+    color: var(--text-secondary);
     cursor: pointer;
+    transition: all 0.3s ease;
     position: relative;
+    display: flex;
+    align-items: center;
 }
 
-.signup-container input[type="file"]::before {
-    /* content: 'Choose Profile Picture'; */
+.signup-container .input-group input[type="file"]::-webkit-file-upload-button {
+    visibility: hidden;
+    width: 0;
+}
+
+.signup-container .input-group input[type="file"]::before {
+    content: 'Choose Profile Picture';
+    display: inline-block;
     position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
+    left: 1rem;
     color: var(--primary);
-    font-weight: 500;
+    font-size: 1rem;
+    pointer-events: none;
+    white-space: nowrap;
 }
 
-/* Textarea styling */
+.signup-container .input-group input[type="file"]:hover {
+    border-color: var(--primary-dark);
+    background: #f1f5f9;
+}
+
+.signup-container .input-group input[type="file"]:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+}
+
+.signup-container .input-group input[type="file"]::file-selector-button {
+    display: none;
+}
+
+.signup-container .input-group input[type="file"]:valid {
+    padding-left: 12rem; 
+}
+
+.signup-container .input-group input[type="file"] + .input-icon {
+    left: 1rem;
+    color: var(--primary);
+    opacity: 0.8;
+    z-index: 1;
+}
+
+.signup-container .input-group:hover input[type="file"] + .input-icon {
+    opacity: 1;
+    color: var(--primary-dark);
+}
+
 .signup-container .textarea-group textarea {
     min-height: 150px;
+    min-width: 377px;
+    margin-right: -2rem;
     resize: vertical;
     padding: 1rem;
     line-height: 1.5;

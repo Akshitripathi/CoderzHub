@@ -310,61 +310,110 @@ const makeRequest1 = async (url, options) => {
 };
 
 export const saveFileContent = async (projectId, filePath, content) => {
-    const url = `${API_URL}/${projectId}/save-file`;
-    console.log("Saving file to URL:", url); 
-    console.log("Project ID:", projectId); 
-    console.log("File Path:", filePath); 
-    console.log("Content:", content); 
+    const token = localStorage.getItem("token");
+    if (!token) {
+        throw new Error("No authentication token found!");
+    }
+
+    const url = `${API_BASE_URL}/project/${projectId}/save-file`;
+    console.log("Saving file to URL:", url);
+    console.log("Project ID:", projectId);
+    console.log("File Path:", filePath);
+    console.log("Content:", content);
+
     const options = {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
         },
         body: JSON.stringify({ projectId, filePath, content }),
     };
+
     return makeRequest1(url, options);
 };
 
-export const compileCode = async (language, code) => {
-    const response = await fetch(`${API_BASE_URL}/compile`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ language, code }),
-    });
-    return response.json();
+export const compileCode = async (source_code, language_id, stdin = '') => {
+    try {
+        const response = await fetch('http://localhost:5000/api/compile/compile-the-code', { // Ensure this matches the backend route
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ source_code, language_id, stdin }),
+        });
+
+        if (!response.ok) {
+            const errorResponse = await response.text();
+            console.error('Error response from backend:', errorResponse);
+            throw new Error(`Failed to compile code: ${response.statusText}`);
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error('Error compiling code:', error);
+        throw error;
+    }
 };
 
 export async function deleteFile(projectId, filename) {
-  try {
-    const response = await fetch(`${API_URL}/${projectId}/files/${filename}`, {
-      method: 'DELETE',
-    });
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    console.error('Error deleting file:', error);
-    throw error;
-  }
+    const token = localStorage.getItem("token");
+    if (!token) {
+        throw new Error("No authentication token found!");
+    }
+
+    console.log("Deleting file:", { projectId, filename });
+
+    try {
+        const response = await fetch(`http://localhost:5000/api/project/${projectId}/files/${filename}`, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+            },
+        });
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error("Backend error response:", errorText);
+            throw new Error('Failed to delete file');
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error('Error deleting file:', error);
+        throw error;
+    }
 }
 
 export async function renameFile(projectId, oldFilename, newFilename) {
-  try {
-    const response = await fetch(`http://localhost:5000/api/project/${projectId}/files/${oldFilename}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ newFilename }),
-    });
-    if (!response.ok) {
-      throw new Error('Failed to rename file');
+    const token = localStorage.getItem("token");
+    if (!token) {
+        throw new Error("No authentication token found!");
     }
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    console.error('Error renaming file:', error);
-    throw error;
-  }
+
+    console.log("Renaming file:", { projectId, oldFilename, newFilename });
+
+    try {
+        const response = await fetch(`${API_BASE_URL}/project/${projectId}/file/${oldFilename}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`,
+            },
+            body: JSON.stringify({ newFilename }),
+        });
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error("Backend error response:", errorText);
+            throw new Error('Failed to rename file');
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error('Error renaming file:', error);
+        throw error;
+    }
 }
 
 export const getFileContent = async (projectId, filePath) => {
@@ -373,16 +422,23 @@ export const getFileContent = async (projectId, filePath) => {
         throw new Error("No authentication token found!");
     }
 
-    const response = await fetch(`${API_BASE_URL}/project/${projectId}/files/content`, {
+    const url = `${API_BASE_URL}/project/${projectId}/files/content`; // Ensure the correct endpoint is used
+    console.log("Fetching file content from URL:", url);
+    console.log("Project ID:", projectId);
+    console.log("File Path:", filePath);
+
+    const response = await fetch(url, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`
+            "Authorization": `Bearer ${token}`,
         },
-        body: JSON.stringify({ filePath })
+        body: JSON.stringify({ filePath }), // Send the filePath in the request body
     });
 
     if (!response.ok) {
+        const errorText = await response.text();
+        console.error("Error fetching file content:", errorText);
         throw new Error("Failed to fetch file content");
     }
 
@@ -446,18 +502,24 @@ export const getChats = async (projectId) => {
         throw new Error("No authentication token found!");
     }
 
-    const response = await fetch(`http://localhost:5000/api/chat/get-project/${projectId}`, {
-        method: "GET",
-        headers: {
-            "Authorization": `Bearer ${token}`,
-        },
-    });
+    try {
+        const response = await fetch(`http://localhost:5000/api/chat/get-project/${projectId}`, {
+            method: "GET",
+            headers: {
+                "Authorization": `Bearer ${token}`,
+            },
+        });
 
-    if (!response.ok) {
-        const errorResponse = await response.json();
-        throw new Error(errorResponse.message || "Failed to fetch chats");
+        if (!response.ok) {
+            const errorResponse = await response.text(); // Read the response as text
+            console.error("Error response:", errorResponse);
+            throw new Error(`Failed to fetch chats: ${response.statusText}`);
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error("Error fetching chats:", error);
+        throw error;
     }
-
-    return response.json();
 };
 
