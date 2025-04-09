@@ -440,3 +440,24 @@ export const getProjectsByCollaborator = async (userId) => {
     return response.json();
 };
 
+export const getChats = async (projectId) => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+        throw new Error("No authentication token found!");
+    }
+
+    const response = await fetch(`http://localhost:5000/api/chat/get-project/${projectId}`, {
+        method: "GET",
+        headers: {
+            "Authorization": `Bearer ${token}`,
+        },
+    });
+
+    if (!response.ok) {
+        const errorResponse = await response.json();
+        throw new Error(errorResponse.message || "Failed to fetch chats");
+    }
+
+    return response.json();
+};
+

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { FaEnvelope, FaGithub, FaImage, FaLinkedin, FaPhone, FaUser } from "react-icons/fa";
+import { FaEnvelope, FaGithub, FaImage, FaLinkedin, FaPhone } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { updateProfile } from "../api";
 import "../styles/EditProfile.css";
@@ -53,22 +53,23 @@ const EditProfile = ({ onProfileUpdated }) => {
     };
 
     return (
-        <div className="edit-profile-container">
-            <h2>Edit Profile</h2>
-            {successMessage && <p className="success">{successMessage}</p>}
-            {error && <p className="error">{error}</p>}
-            <form onSubmit={handleSubmit}>
-                <div className="form-section">
-                    <div className="input-group">
-                        <label>Name</label>
-                        <input
-                            type="text"
-                            name="name"
-                            value={formData.name}
-                            onChange={handleChange}
-                            required
-                        />
-                    </div>
+        <>
+            <div className="edit-profile-container">
+                <h2>Edit Profile</h2>
+                {successMessage && <p className="success">{successMessage}</p>}
+                {error && <p className="error">{error}</p>}
+                <form onSubmit={handleSubmit}>
+                    <div className="form-section">
+                        <div className="input-group">
+                            <label>Name</label>
+                            <input
+                                type="text"
+                                name="name"
+                                value={formData.name}
+                                onChange={handleChange}
+                                required
+                            />
+                        </div>
 
                         <div className="input-group">
                             <FaEnvelope className="input-icon" />
@@ -144,7 +145,7 @@ const EditProfile = ({ onProfileUpdated }) => {
                     </button>
                 </form>
             </div>
-        </div>
+        </>
     );
 };
 

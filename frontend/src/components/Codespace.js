@@ -1,25 +1,24 @@
-import { useEffect, useRef, useState } from "react";
-import { useParams } from "react-router-dom";
-import { EditorState } from "@codemirror/state";
-import { EditorView } from "@codemirror/view";
+import { autocompletion } from "@codemirror/autocomplete";
+import { defaultKeymap, indentWithTab } from "@codemirror/commands";
+import { cpp } from "@codemirror/lang-cpp";
 import { javascript } from "@codemirror/lang-javascript";
 import { python } from "@codemirror/lang-python";
-import { cpp } from "@codemirror/lang-cpp";
 import { xml } from "@codemirror/lang-xml";
-import { oneDark } from "@codemirror/theme-one-dark";
-import { keymap } from "@codemirror/view";
-import { defaultKeymap, indentWithTab } from "@codemirror/commands";
-import { autocompletion } from "@codemirror/autocomplete";
 import { lintGutter } from "@codemirror/lint";
-import { FaFolderPlus, FaFileAlt, FaSave, FaPlay, FaMoon, FaSun, FaTrash, FaEdit } from 'react-icons/fa';
+import { EditorState } from "@codemirror/state";
+import { oneDark } from "@codemirror/theme-one-dark";
+import { EditorView, keymap } from "@codemirror/view";
+import { useEffect, useRef, useState } from "react";
+import { FaEdit, FaFileAlt, FaMoon, FaPlay, FaSave, FaSun, FaTrash } from 'react-icons/fa';
+import { useParams } from "react-router-dom";
+import { compileCode, deleteFile, fetchProfile, getAllProjectFiles, getFileContent, renameFile, saveFileContent } from "../api";
+import { useAuth } from "../context/AuthContext";
 import '../styles/Codespace.css';
-import { getAllProjectFiles, saveFileContent, compileCode, deleteFile, renameFile, getFileContent, fetchProfile } from "../api";
-import { useAuth } from "../context/AuthContext"; 
-import ChatIcon from "./ChatIcon.js";
+import Chat from './Chat';
 
 function CodeEditor({ language = "JavaScript" }) {
   const { projectId } = useParams();
-  const { user } = useAuth(); 
+  const { user } = useAuth();
   const editorRef = useRef(null);
   const editorViewRef = useRef(null);
   const [theme, setTheme] = useState("dark");
@@ -43,7 +42,7 @@ function CodeEditor({ language = "JavaScript" }) {
       try {
         const response = await fetchProfile();
         if (response.success) {
-          setProfileUsername(response.user.username); 
+          setProfileUsername(response.user.username);
         }
       } catch (error) {
         console.error("Error fetching profile:", error);
@@ -124,8 +123,8 @@ function CodeEditor({ language = "JavaScript" }) {
         const response = await saveFileContent(projectId, currentFile, content);
         if (response.success) {
           console.log('File saved successfully');
-          const updatedFiles = await getAllProjectFiles(projectId); 
-          setFiles(Array.isArray(updatedFiles) ? updatedFiles : []); 
+          const updatedFiles = await getAllProjectFiles(projectId);
+          setFiles(Array.isArray(updatedFiles) ? updatedFiles : []);
         } else {
           console.error('Failed to save file:', response.message);
         }
@@ -143,13 +142,13 @@ function CodeEditor({ language = "JavaScript" }) {
   };
 
   const handleRenameFile = async (oldFile, newFile) => {
-    const oldFilename = oldFile.split('/').pop(); 
-    const newFilename = newFile.split('/').pop(); 
-    const newFilePath = oldFile.replace(oldFilename, newFilename); 
+    const oldFilename = oldFile.split('/').pop();
+    const newFilename = newFile.split('/').pop();
+    const newFilePath = oldFile.replace(oldFilename, newFilename);
     console.log("Old Filename:", oldFilename);
     console.log("New Filename:", newFilename);
-    console.log("New File Path:", newFilePath); 
-    
+    console.log("New File Path:", newFilePath);
+
     await renameFile(projectId, oldFilename, newFilename);
     const newFiles = files.map(file => file.filepath === oldFile ? { ...file, filename: newFilename, filepath: newFilePath } : file);
     setFiles(newFiles);
@@ -158,11 +157,10 @@ function CodeEditor({ language = "JavaScript" }) {
 
   const handleFileClick = async (filePath) => {
     try {
-      console.log("Clicked file:", filePath); 
+      console.log("Clicked file:", filePath);
       const fileContent = await getFileContent(projectId, filePath);
-      console.log("Fetched file content:", fileContent); 
-      const updatedFiles = files.map(file => 
-          file.filepath === filePath ? { ...file, content: fileContent.content } : file
+      console.log("Fetched file content:", fileContent);
+      const updatedFiles = files.map(file => file.filepath === filePath ? { ...file, content: fileContent.content } : file
       );
       setFiles(updatedFiles);
       setCurrentFile(filePath);
@@ -195,59 +193,59 @@ function CodeEditor({ language = "JavaScript" }) {
 
   return (
     <div className="codespace-container">
-        <div className="navbar">
-            <h1>CoderzHub Editor</h1>
-            <button className="theme-toggle">
-                {theme === "light" ? <FaMoon size={18} /> : <FaSun size={18} />}
+      <div className="navbar">
+        <h1>CoderzHub Editor</h1>
+        <button className="theme-toggle">
+          {theme === "light" ? <FaMoon size={18} /> : <FaSun size={18} />}
+        </button>
+      </div>
+      <div className="codespace-layout">
+        <div className="file-explorer">
+          <h3>Explorer</h3>
+          <button className="toolbar-btn" onClick={() => handleAddFile(prompt("Enter file name"))}>
+            <FaFileAlt /> New File
+          </button>
+          <div className="file-list">
+            {files.map(file => (
+              <div
+                key={file.filepath}
+                className={`file-item ${currentFile === file.filepath ? 'active' : ''}`}
+                onClick={() => handleFileClick(file.filepath)}
+              >
+                <span>{file.filename}</span>
+                <div className="file-actions">
+                  <FaEdit onClick={(e) => {
+                    e.stopPropagation();
+                    handleRenameFile(file.filepath, prompt("Enter new file name", file.filename));
+                  } } />
+                  <FaTrash onClick={(e) => {
+                    e.stopPropagation();
+                    handleDeleteFile(file.filepath);
+                  } } />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+        <div className="code-editor">
+          <div className="editor-toolbar">
+            <button className="toolbar-btn" onClick={handleSaveFile}>
+              <FaSave /> Save
             </button>
+            <button className="toolbar-btn" onClick={handleCompileCode}>
+              <FaPlay /> Run
+            </button>
+          </div>
+          <div ref={editorRef} className={`editor-wrapper ${theme}-theme`} />
         </div>
-        <div className="codespace-layout">
-            <div className="file-explorer">
-                <h3>Explorer</h3>
-                <button className="toolbar-btn" onClick={() => handleAddFile(prompt("Enter file name"))}>
-                    <FaFileAlt /> New File
-                </button>
-                <div className="file-list">
-                    {files.map(file => (
-                        <div 
-                            key={file.filepath} 
-                            className={`file-item ${currentFile === file.filepath ? 'active' : ''}`}
-                            onClick={() => handleFileClick(file.filepath)}
-                        >
-                            <span>{file.filename}</span>
-                            <div className="file-actions">
-                                <FaEdit onClick={(e) => { 
-                                    e.stopPropagation(); 
-                                    handleRenameFile(file.filepath, prompt("Enter new file name", file.filename))
-                                }} />
-                                <FaTrash onClick={(e) => { 
-                                    e.stopPropagation(); 
-                                    handleDeleteFile(file.filepath)
-                                }} />
-                            </div>
-                        </div>
-                    ))}
-                </div>
-            </div>
-            <div className="code-editor">
-                <div className="editor-toolbar">
-                    <button className="toolbar-btn" onClick={handleSaveFile}>
-                        <FaSave /> Save
-                    </button>
-                    <button className="toolbar-btn" onClick={handleCompileCode}>
-                        <FaPlay /> Run
-                    </button>
-                </div>
-                <div ref={editorRef} className={`editor-wrapper ${theme}-theme`} />
-            </div>
-            <div className="output-panel">
-                <h3>Output</h3>
-                <pre>{output}</pre>
-            </div>
+        <div className="output-panel">
+          <h3>Output</h3>
+          <pre>{output}</pre>
         </div>
-        <ChatIcon projectId={projectId} username={profileUsername || user?.username} />
+      </div>
+      <Chat projectId={projectId} username={profileUsername || user?.username} />
     </div>
   );
-}
+};
 
 export default CodeEditor;

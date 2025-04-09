@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import './ChatIcon.css'; 
+import './Chat.css';
 import ChatWindow from './ChatWindow';
 
-const ChatIcon = ({ projectId, username }) => {
+const Chat = ({ projectId, username }) => {
     const [isChatOpen, setIsChatOpen] = useState(false);
 
     const toggleChatWindow = () => {
@@ -19,4 +19,4 @@ const ChatIcon = ({ projectId, username }) => {
     );
 };
 
-export default ChatIcon;
+export default Chat;
