@@ -1,4 +1,3 @@
-
 const User = require('../models/user');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
@@ -7,6 +6,7 @@ const nodemailer = require('nodemailer');
 const path = require('path');
 const multer = require('multer');
 const fs = require('fs');
+const mongoose = require('mongoose');
 
 require('dotenv').config();
 
@@ -185,60 +185,32 @@ const resetPassword = async (req, res) => {
 const updateProfile = async (req, res) => {
     try {
         const userId = req.params.id;
-        const { name, email, phone_no, bio, github_link, linkedin_link } = req.body;
 
-        const user = await User.findById(userId);
-        if (!user) {
-            return res.status(404).json({ success: false, message: 'User not found' });
+        if (!userId) {
+            return res.status(400).json({ success: false, message: "User ID is required" });
         }
 
-        // Update user fields
-        user.name = name || user.name;
-        user.email = email || user.email;
-        user.phone_no = phone_no || user.phone_no;
-        user.bio = bio || user.bio;
+        if (!mongoose.Types.ObjectId.isValid(userId)) {
+            return res.status(400).json({ success: false, message: "Invalid User ID" });
+        }
 
-        // Handle profile picture update
+        const updates = req.body;
+
+        // If a file is uploaded, add its path to the updates
         if (req.file) {
-            // Delete the old profile picture if it exists
-            if (user.profile_picture && user.profile_picture.startsWith('/uploads')) {
-                const oldFilePath = path.join(__dirname, '..', user.profile_picture);
-                if (fs.existsSync(oldFilePath)) {
-                    fs.unlinkSync(oldFilePath);
-                }
-            }
-            user.profile_picture = `/uploads/${req.file.filename}`; // Update with the new file path
+            updates.profile_picture = req.file.filename;
         }
 
-        // Update social media links
-        user.github_link = github_link || user.github_link;
-        user.linkedin_link = linkedin_link || user.linkedin_link;
+        const updatedUser = await User.findByIdAndUpdate(userId, updates, { new: true });
 
-        // Ensure social_profiles array stays updated with unique values
-        let updatedSocialProfiles = new Set(user.social_profiles); // Convert to Set to avoid duplicates
-        if (github_link) updatedSocialProfiles.add(github_link);
-        if (linkedin_link) updatedSocialProfiles.add(linkedin_link);
-        user.social_profiles = Array.from(updatedSocialProfiles); // Convert back to array
+        if (!updatedUser) {
+            return res.status(404).json({ success: false, message: "User not found" });
+        }
 
-        await user.save();
-
-        res.json({
-            success: true,
-            message: 'Profile updated successfully!',
-            user: {
-                name: user.name,
-                email: user.email,
-                phone_no: user.phone_no,
-                bio: user.bio,
-                profile_picture: user.profile_picture,
-                github_link: user.github_link,
-                linkedin_link: user.linkedin_link,
-                social_profiles: user.social_profiles, // Return updated social_profiles array
-            },
-        });
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({ success: false, message: 'Server error. Please try again.' });
+        res.status(200).json({ success: true, user: updatedUser });
+    } catch (error) {
+        console.error("Error updating profile:", error);
+        res.status(500).json({ success: false, message: "Failed to update profile" });
     }
 };
 
