@@ -1,20 +1,16 @@
 @import url('https://fonts.googleapis.com/css2?family=Quantico:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+
 .edit-profile-container {
-    font-family: "Quantico", serif;
-    font-weight: 400;
-    font-style: normal;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 40px 20px;
-    max-width: 1200px;
-    
-  margin-top:8rem;
-    margin-left: 10rem;
-    margin-bottom: 3rem;
-    background-color: #f4f7fc;
-    border-radius: 16px;
-    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.1);
+    font-family: "Quantico", sans-serif;
+    width: 85%; /* Decreased container width */
+    max-width: 1000px; /* Decreased max-width */
+    margin: 8rem auto 3rem;
+    padding: 2rem; /* Decreased padding */
+    background: linear-gradient(145deg, #ffffff, #f0f4f8);
+    border-radius: 20px;
+    box-shadow: 
+        0 10px 30px rgba(0, 0, 0, 0.1),
+        inset 0 -2px 6px rgba(255, 255, 255, 0.7);
     transition: all 0.3s ease;
 }
 
@@ -24,10 +20,13 @@
 }
 
 .edit-profile-container h2 {
-    font-size: 32px;
-    color: #2c3e50;
-    margin-bottom: 20px;
-    font-weight: 600;
+    color: #1a365d;
+    font-size: 2.5rem;
+    text-align: center;
+    margin-bottom: 2.5rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
 }
 
 .edit-profile-container .error {
@@ -46,60 +45,95 @@
     width: 100%;
 }
 
-.edit-profile-container .input-group {
-    margin-bottom: 20px;
+.form-section {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem 2rem; /* Decreased gap */
+    margin-bottom: 2rem;
     width: 100%;
+    justify-content: center; /* Center the grid items */
 }
 
-.edit-profile-container .input-group label {
-    font-size: 16px;
-    color: #2c3e50;
-    font-weight: 500;
-    color: #2c3e50;
-    margin-left: 3rem;
+.input-group {
+    position: relative;
+    margin-bottom: 1.5rem;
+    width: 100%;
+    max-width: 400px; /* Added max-width */
 }
 
-.edit-profile-container .input-group .input-icon {
+.input-group label {
+    display: block;
+    font-size: 0.95rem;
+    color: #4a5568;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+}
+
+.input-group .input-icon {
     position: absolute;
-    left: 1rem;
+    left: 0.75rem;
     top: 50%;
     transform: translateY(-50%);
-    color: #95a5a6;
-    font-size: 1.2rem;
+    color: #718096;
+    font-size: 1.1rem;
+    pointer-events: none;
     transition: color 0.3s ease;
     z-index: 1;
 }
 
-.edit-profile-container .input-group input,
-.edit-profile-container .input-group textarea {
-    width: 80%;
-    padding-right: 1px;
-    border-radius: 8px;
-    border: 1px solid #ddd;
-    font-size: 16px;
-    color: #2c3e50;
-    background: #f8fafc;
+.input-group input,
+.input-group textarea {
+    width: 100%;
+    padding: 0.6rem 1rem 0.6rem 2.5rem; /* Decreased padding */
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    font-size: 0.9rem; /* Decreased font size */
+    color: #2d3748;
+    background-color: white;
     transition: all 0.3s ease;
     margin: 0;
+    height: 40px; /* Decreased height */
 }
 
-.edit-profile-container .input-group.file-input {
-    margin-bottom: 1rem;
+.input-group.file-input {
+    grid-column: span 2; /* Make file input span both columns */
+    margin: 1rem 0; /* Add vertical margin */
 }
 
-.edit-profile-container .input-group.file-input input {
-    padding: 0.8rem 1rem 0.8rem 3rem;
+.input-group.file-input input {
+    height: 35px; /* Decreased height for file input */
+    padding: 0.4rem 1rem;
+    font-size: 0.9rem;
+    border: 2px dashed #cbd5e0;
+    background-color: #f7fafc;
+    cursor: pointer;
 }
 
-.edit-profile-container .input-group input:focus,
-.edit-profile-container .input-group textarea:focus {
-    border-color: #5d9dff;
-    box-shadow: 0 0 8px rgba(93, 157, 255, 0.5);
+.input-group.file-input input:hover {
+    border-color: #4299e1;
+    background-color: #ebf8ff;
 }
 
-.edit-profile-container .input-group textarea {
+.input-group input:focus,
+.input-group textarea:focus {
+    border-color: #4299e1;
+    box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.15);
+    outline: none;
+}
+
+.input-group textarea {
+    min-height: 100px; /* Decreased minimum height */
+    height: auto;
     resize: vertical;
-    height: 120px;
+}
+
+.input-group.full-width {
+    grid-column: span 4; /* Make textarea span both columns */
+    margin-top: 1rem;
+}
+
+.full-width {
+    grid-column: 1 / -1;
 }
 
 .form-actions {
@@ -133,6 +167,37 @@
     cursor: not-allowed;
 }
 
+.submit-button {
+    display: block;
+    width: 100%;
+    max-width: 300px;
+    margin: 2rem auto;
+    padding: 1rem 2rem;
+    background: linear-gradient(135deg, #4299e1, #3182ce);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.submit-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(66, 153, 225, 0.3);
+    background: linear-gradient(135deg, #3182ce, #2c5282);
+}
+
+.submit-button:active {
+    transform: translateY(0);
+}
+
+.submit-button.loading {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
 .edit-profile-container .success,
 .edit-profile-container .error {
     text-align: center;
@@ -148,6 +213,7 @@
     border-radius: 0.5rem;
     margin-bottom: 1rem;
     font-weight: 500;
+    animation: fadeIn 0.3s ease;
 }
 
 .edit-profile-container .success {
@@ -157,9 +223,9 @@
 }
 
 .success {
-    background: rgba(34, 197, 94, 0.1);
-    color: #22c55e;
-    border: 1px solid rgba(34, 197, 94, 0.2);
+    background-color: #c6f6d5;
+    color: #2f855a;
+    border: 1px solid #9ae6b4;
 }
 
 .edit-profile-container .error {
@@ -169,18 +235,31 @@
 }
 
 .error {
-    background: rgba(239, 68, 68, 0.1);
-    color: #ef4444;
-    border: 1px solid rgba(239, 68, 68, 0.2);
+    background-color: #fed7d7;
+    color: #c53030;
+    border: 1px solid #feb2b2;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 @media (max-width: 768px) {
     .edit-profile-container {
-        padding: 20px;
+        width: 90%;
+        padding: 1.2rem;
+        margin-top: 6rem;
     }
 
     .edit-profile-container h2 {
-        font-size: 28px;
+        font-size: 2rem;
     }
 
     .input-group label {
@@ -190,6 +269,26 @@
     .input-group input,
     .input-group textarea {
         font-size: 14px;
+    }
+
+    .form-section {
+        grid-template-columns: 1fr; /* Single column on mobile */
+        gap: 1rem; /* Reduced gap on mobile */
+    }
+
+    .input-group.file-input,
+    .input-group.full-width {
+        grid-column: span 1; /* Single column on mobile */
+    }
+
+    .input-group input,
+    .input-group textarea {
+        height: 35px; /* Decreased height for mobile */
+        font-size: 0.85rem; /* Decreased font size for mobile */
+    }
+
+    .submit-button {
+        max-width: 100%;
     }
 
     .form-actions button {

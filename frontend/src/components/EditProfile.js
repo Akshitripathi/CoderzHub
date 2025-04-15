@@ -1,10 +1,10 @@
 import React, { useState } from "react";
-import { FaEnvelope, FaGithub, FaImage, FaLinkedin, FaPhone } from "react-icons/fa";
+import { FaEnvelope, FaGithub, FaImage, FaLinkedin, FaPhone, FaUser } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { updateProfile } from "../api";
 import "../styles/EditProfile.css";
 
-const EditProfile = ({ onProfileUpdated }) => {
+const EditProfile = ({ onProfileUpdated = () => {} }) => {
     const [formData, setFormData] = useState({
         name: "",
         email: "",
@@ -35,11 +35,16 @@ const EditProfile = ({ onProfileUpdated }) => {
 
         try {
             const form = new FormData();
-            Object.keys(formData).forEach(key => {
-                if (formData[key]) form.append(key, formData[key]);
+            Object.keys(formData).forEach((key) => {
+                if (formData[key]) form.append(key, formData[key]); // Ensure profile_picture is included
             });
 
-            const response = await updateProfile(form);
+            const userId = localStorage.getItem("userId");
+            if (!userId) {
+                throw new Error("User ID is missing. Please log in again.");
+            }
+
+            const response = await updateProfile(userId, form);
             if (response.success) {
                 setSuccessMessage("Profile updated successfully!");
                 onProfileUpdated(response.user);
@@ -61,13 +66,13 @@ const EditProfile = ({ onProfileUpdated }) => {
                 <form onSubmit={handleSubmit}>
                     <div className="form-section">
                         <div className="input-group">
-                            <label>Name</label>
+                        <FaUser className="input-icon" />
                             <input
                                 type="text"
                                 name="name"
+                                placeholder="Name "
                                 value={formData.name}
-                                onChange={handleChange}
-                                required
+                                onChange={handleChange} // Add a placeholder to indicate it's optional
                             />
                         </div>
 
@@ -115,7 +120,7 @@ const EditProfile = ({ onProfileUpdated }) => {
                             />
                         </div>
 
-                        <div className="input-group file-input">
+                        <div className="input-group ">
                             <FaImage className="input-icon" />
                             <input
                                 type="file"
@@ -136,8 +141,8 @@ const EditProfile = ({ onProfileUpdated }) => {
                         />
                     </div>
 
-                    <button 
-                        type="submit" 
+                    <button
+                        type="submit"
                         className={`submit-button ${loading ? 'loading' : ''}`}
                         disabled={loading}
                     >
