@@ -28,9 +28,29 @@ router.post('/compile-the-code', async (req, res) => {
         res.status(200).json(response.data);
     } catch (error) {
         console.error('Error communicating with Judge0:', error?.response?.data || error.message);
-        res.status(500).json({ success: false, message: 'Error executing code', error: error.message });
-      }
-      
+
+        // Handle specific errors
+        if (error.response) {
+            // API responded with an error
+            res.status(error.response.status).json({
+                success: false,
+                message: error.response.data || 'Error from Judge0 API',
+            });
+        } else if (error.request) {
+            // No response received
+            res.status(500).json({
+                success: false,
+                message: 'No response from Judge0 API',
+            });
+        } else {
+            // Other errors
+            res.status(500).json({
+                success: false,
+                message: 'Unexpected error occurred',
+                error: error.message,
+            });
+        }
+    }
 });
 
 module.exports = router;

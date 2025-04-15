@@ -1,14 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { io } from 'socket.io-client';
-import { getChats } from '../api'; // Assuming you have an API function to fetch chat history
+import { getChats } from '../api'; 
 import '../styles/ChatWindow.css';
 
-// Use the correct backend URL
 const socket = io('http://localhost:5000', {
     transports: ['websocket', 'polling'], // Ensure compatibility with different transport methods
 });
 
-const ChatWindow = ({ projectId, username }) => {
+const ChatWindow = ({ projectId, username, onClose }) => {
     const [message, setMessage] = useState('');
     const [messages, setMessages] = useState([]);
     const [error, setError] = useState(null);
@@ -74,16 +73,24 @@ const ChatWindow = ({ projectId, username }) => {
     if (error) return <p className="error">{error}</p>;
 
     return (
-        <div className="chat-container">
+        <div className="chat-window">
             <div className="chat-header">
-                <h3>Live Chat</h3>
+                <h3>Project Chat</h3>
+                <button className="close-button" onClick={onClose}>×</button>
             </div>
             <div className="chat-messages">
                 {messages.map((msg, index) => (
-                    <div key={index} className="chat-message">
-                        <strong>{msg.username}:</strong> {msg.message}
+                    <div 
+                        key={index} 
+                        className={`chat-message ${msg.username === username ? 'sent' : 'received'}`}
+                    >
+                        <strong>{msg.username}</strong>
+                        {msg.message}
                         <span className="timestamp">
-                            {new Date(msg.timestamp).toLocaleTimeString()}
+                            {new Date(msg.timestamp).toLocaleTimeString([], {
+                                hour: '2-digit',
+                                minute: '2-digit'
+                            })}
                         </span>
                     </div>
                 ))}
@@ -91,9 +98,10 @@ const ChatWindow = ({ projectId, username }) => {
             <div className="chat-input">
                 <input
                     type="text"
-                    placeholder="Type a message..."
+                    placeholder="Type your message..."
                     value={message}
                     onChange={(e) => setMessage(e.target.value)}
+                    onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
                 />
                 <button onClick={handleSendMessage}>Send</button>
             </div>

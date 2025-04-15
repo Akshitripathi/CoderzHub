@@ -335,7 +335,7 @@ export const saveFileContent = async (projectId, filePath, content) => {
 
 export const compileCode = async (source_code, language_id, stdin = '') => {
     try {
-        const response = await fetch('http://localhost:5000/api/compile/compile-the-code', { // Ensure this matches the backend route
+        const response = await fetch('http://localhost:5000/api/compile/compile-the-code', { 
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

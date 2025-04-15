@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Switch, Tooltip } from "@mui/material";
 import { FaCode, FaPalette, FaCog, FaLock, FaUsers, FaKeyboard } from "react-icons/fa";
 import "../styles/Settings.css";
+import { themes } from '../config/themes';
 
 const Settings = () => {
   const [settings, setSettings] = useState({
@@ -34,9 +35,24 @@ const Settings = () => {
     setTimeout(() => setSaveStatus(""), 2000);
   };
 
+  const applyTheme = (themeName) => {
+    const theme = themes[themeName];
+    const root = document.documentElement;
+    
+    // Apply all theme colors to CSS variables
+    Object.entries(theme.colors).forEach(([key, value]) => {
+      root.style.setProperty(`--${key}`, value);
+    });
+    
+    // Store theme preference in localStorage
+    localStorage.setItem('preferred-theme', themeName);
+    updateSetting("theme", themeName);
+  };
+
   useEffect(() => {
-    document.body.setAttribute("data-theme", settings.theme);
-  }, [settings.theme]);
+    const savedTheme = localStorage.getItem('preferred-theme') || 'dark';
+    applyTheme(savedTheme);
+  }, []);
 
   return (
     <div className="settings-container">
@@ -47,31 +63,21 @@ const Settings = () => {
         
         <div className="settings-card">
           <div className="card-header">
-            <FaPalette />
-            <h3>Editor Appearance</h3>
+            <FaPalette className="card-icon" />
+            <h3>Theme Settings</h3>
           </div>
           <div className="setting-option">
-            <label style={{color:"white", marginRight:"1rem"}}>Theme</label>
+            <label>Select Theme</label>
             <select 
               value={settings.theme} 
-              onChange={(e) => updateSetting("theme", e.target.value)}
+              onChange={(e) => applyTheme(e.target.value)}
+              className="theme-select"
             >
-              <option value="dark">Dark Theme</option>
-              <option value="light">Light Theme</option>
-              <option value="dracula">Dracula</option>
-            </select>
-          </div>
-          {/* <div className="setting-option">
-            <label style={{color:"white"}}>Font Size</label>
-            <select 
-              value={settings.fontSize}
-              onChange={(e) => updateSetting("fontSize", e.target.value)}
-            >
-              {[12, 14, 16, 18, 20].map(size => (
-                <option key={size} value={size}>{size}px</option>
+              {Object.entries(themes).map(([key, theme]) => (
+                <option key={key} value={key}>{theme.name}</option>
               ))}
             </select>
-          </div> */}
+          </div>
         </div>
 
 

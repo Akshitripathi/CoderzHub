@@ -13,11 +13,11 @@ import Navbar from "./components/Navbar";
 import Profile from "./components/Profile";
 import Project from "./components/Project";
 import ProtectedRoute from "./components/ProtectedRoute";
-import Settings from "./components/Settings";
 import Signup from "./components/Signup";
 import { useAuth } from "./context/AuthContext";
 import { AuthProvider } from "./context/AuthContext.js";
 import { ToastContainer } from "react-toastify";
+import { ThemeProvider } from './components/ThemeProvider';
 
 function App() {
   const [dots, setDots] = useState([]);
@@ -55,22 +55,23 @@ function App() {
     <>
       <div className="background-container">{dots}</div>
       <div className="main-content">
-        <AuthProvider>
-          <Navbar />
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/signup" element={<Signup />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
-            <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
-            <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-            <Route path="/admin-form" element={<ProtectedRoute><AdminForm /></ProtectedRoute>} />
-            <Route path="/project" element={<ProtectedRoute><Project /></ProtectedRoute>} />
-            <Route path="/codespace/:projectId" element={<ProtectedRoute><Codespace /></ProtectedRoute>} />
-            <Route path="/edit-profile" element={<ProtectedRoute><EditProfile /></ProtectedRoute>} />
-          </Routes>
-          <Footer />
-        </AuthProvider>
+        <ThemeProvider>
+          <AuthProvider>
+            <Navbar />
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/signup" element={<Signup />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+              <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+              <Route path="/admin-form" element={<ProtectedRoute><AdminForm /></ProtectedRoute>} />
+              <Route path="/project" element={<ProtectedRoute><Project /></ProtectedRoute>} />
+              <Route path="/codespace/:projectId" element={<ProtectedRoute><Codespace /></ProtectedRoute>} />
+              <Route path="/edit-profile" element={<ProtectedRoute><EditProfile /></ProtectedRoute>} />
+            </Routes>
+            <Footer />
+          </AuthProvider>
+        </ThemeProvider>
       </div>
       <ToastContainer
       position="top-right"

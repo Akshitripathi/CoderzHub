@@ -50,6 +50,30 @@
   transform: scale(1.05);
 }
 
+.hero-content {
+    display: grid;
+    grid-template-columns: 1fr 300px;
+    gap: 2rem;
+    align-items: center;
+}
+
+.hero-clock {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    /* background: rgba(255, 255, 255, 0.05); */
+    padding: 1.5rem;
+    /* border-radius: 12px; */
+    /* box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); */
+}
+
+.clock-caption {
+    font-size: 1rem;
+    color: var(--textSecondary);
+    margin-top: 0.5rem;
+}
+
 .problem-statement, .features, .how-it-works, .use-cases, .testimonials, .cta {
   width: 100%;
   max-width: 1000px;

@@ -7,7 +7,7 @@ import { xml } from "@codemirror/lang-xml";
 import { lintGutter } from "@codemirror/lint";
 import { EditorState } from "@codemirror/state";
 import { oneDark } from "@codemirror/theme-one-dark";
-import { EditorView, keymap } from "@codemirror/view";
+import { EditorView, keymap, lineNumbers } from "@codemirror/view";
 import { useEffect, useRef, useState } from "react";
 import { FaEdit, FaFileAlt, FaMoon, FaPlay, FaSave, FaSun, FaTrash } from 'react-icons/fa';
 import { useParams } from "react-router-dom";
@@ -86,6 +86,9 @@ function CodeEditor({ language = "JavaScript" }) {
         keymap.of([...defaultKeymap, indentWithTab]),
         autocompletion(),
         lintGutter(),
+        lineNumbers(),
+        EditorView.lineWrapping,
+        EditorState.tabSize.of(2),
         languageExtensions[language] || javascript(),
         theme === "dark" ? oneDark : [],
       ],
@@ -110,7 +113,7 @@ function CodeEditor({ language = "JavaScript" }) {
         Python: 71,     // Python 3
         C: 50,          // C (GCC 9.2.0)
         Java: 62,       // Java (OpenJDK 13.0.1)
-        XML: null       // Not supported by Judge0
+        XML: null       
     };
 
     const languageId = languageMap[language];
@@ -144,15 +147,14 @@ function CodeEditor({ language = "JavaScript" }) {
     try {
         const response = await saveFileContent(projectId, filePath, "");
         if (!response.success) {
+          console.log("New file saved successfully");
+          const updatedFiles = await getAllProjectFiles(projectId);
+          setFiles(Array.isArray(updatedFiles) ? updatedFiles : []);
+          setCurrentFile(filePath);
+        } else {
             console.error("Failed to save new file:", response.message);
             setError(response.message || "Failed to save new file.");
-        } else {
-            console.log("New file saved successfully");
-
-            // Refresh the file list and set the new file as the current file
-            const updatedFiles = await getAllProjectFiles(projectId);
-            setFiles(Array.isArray(updatedFiles) ? updatedFiles : []);
-            setCurrentFile(filePath); 
+             
         }
     } catch (error) {
         console.error("Error saving new file:", error);

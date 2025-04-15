@@ -1,6 +1,7 @@
 import React, { useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
+import Clock from "./Clock"; // Import the Clock component
 import "../styles/Home.css";
 
 const Home = () => {
@@ -9,17 +10,23 @@ const Home = () => {
 
     return (
         <div className="home-container">
-            
             <section className="hero">
-                <h1>Empower Collaboration, Accelerate Development</h1>
-                <p>A real-time collaborative coding platform for seamless teamwork, version control, and live coding.</p>
-                {!user ? (
-                    <button onClick={() => navigate("/signup")}>Join Now</button>
-                ) : (
-                    <button onClick={() => navigate("/project")}>Explore Projects</button>
-                )}
+                <div className="hero-content">
+                    <div className="hero-text">
+                        <h1>Empower Collaboration, Accelerate Development</h1>
+                        <p>A real-time collaborative coding platform for seamless teamwork, version control, and live coding.</p>
+                        {!user ? (
+                            <button onClick={() => navigate("/signup")}>Join Now</button>
+                        ) : (
+                            <button onClick={() => navigate("/project")}>Explore Projects</button>
+                        )}
+                    </div>
+                    <div className="hero-clock">
+                        <Clock /> {/* Add the clock here */}
+                        <p className="clock-caption">System Time</p>
+                    </div>
+                </div>
             </section>
-
 
             <section className="problem-statement">
                 <h2>The Challenge</h2>
@@ -43,7 +50,6 @@ const Home = () => {
                 </div>
             </section>
 
-            
             <section className="features">
                 <h2>Why Choose CoderzHub?</h2>
                 <div className="features-grid">
@@ -74,7 +80,6 @@ const Home = () => {
                 </div>
             </section>
 
-            
             <section className="how-it-works">
                 <h2>How CoderzHub Works?</h2>
                 <div className="steps">
@@ -111,7 +116,6 @@ const Home = () => {
                 </div>
             </section>
 
-
             <section className="testimonials">
                 <h2>What Developers Say</h2>
                 <div className="testimonial-card">
@@ -123,7 +127,6 @@ const Home = () => {
                     <h4>- Sarah Lee, Web Developer</h4>
                 </div>
             </section>
-
 
             <section className="cta">
                 <h2>Ready to Code Smarter?</h2>
